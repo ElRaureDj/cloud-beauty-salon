@@ -12,9 +12,11 @@ type EstadoExperiencia = {
   capituloActivo: IdCapitulo;
   overlay: Overlay;
   ultimoScrollEn: number; // para el micro-parallax de invitación (§4 Cap. 0)
+  cargaProgreso: number; // 0–1, carga real del GLB para el preloader (§4 Cap. 0)
   lenis: Lenis | null;
   setProgreso: (p: number) => void;
   marcarActividad: () => void;
+  setCargaProgreso: (c: number) => void;
   abrirOverlay: (overlay: Exclude<Overlay, "ninguno">) => void;
   cerrarOverlay: () => void;
   setLenis: (lenis: Lenis | null) => void;
@@ -25,10 +27,12 @@ export const useExperiencia = create<EstadoExperiencia>()((set) => ({
   capituloActivo: "cap0",
   overlay: "ninguno",
   ultimoScrollEn: 0,
+  cargaProgreso: 0,
   lenis: null,
   setProgreso: (p) =>
     set({ progreso: p, capituloActivo: capituloEn(p), ultimoScrollEn: Date.now() }),
   marcarActividad: () => set({ ultimoScrollEn: Date.now() }),
+  setCargaProgreso: (c) => set({ cargaProgreso: c }),
   abrirOverlay: (overlay) => set({ overlay }),
   cerrarOverlay: () => set({ overlay: "ninguno" }),
   setLenis: (lenis) => set({ lenis }),

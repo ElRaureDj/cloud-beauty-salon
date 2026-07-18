@@ -16,7 +16,11 @@ export function capituloEn(p: number): IdCapitulo {
   return "post-fase-1";
 }
 
-// Modelo placeholder con origen en los pies; cabeza centrada en y ≈ 1.58.
+// Todo modelo se normaliza a esta altura con los pies en y = 0 (Escena.tsx),
+// así el asset comprado sustituye al placeholder sin tocar la coreografía.
+export const ALTURA_MODELO = 1.7;
+
+// Cabeza centrada en y ≈ 1.58 con la figura normalizada a 1.7.
 export const ANCLAS = {
   rostro: [0, 1.56, 0] as const,
   cabeza: [0, 1.58, 0] as const,

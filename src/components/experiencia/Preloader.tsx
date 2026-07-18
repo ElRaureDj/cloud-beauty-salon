@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { t } from "@/lib/i18n/es";
+import { useExperiencia } from "@/stores/experiencia";
 
 // §4 Cap. 0: logo + barra ligada a la carga; mínimo 1,2 s en pantalla.
 const MINIMO_VISIBLE_MS = 1200;
@@ -15,16 +16,13 @@ type Fase = "visible" | "saliendo" | "fuera";
 
 export default function Preloader({ listo }: { listo: boolean }) {
   const [fase, setFase] = useState<Fase>("visible");
-  const [ancho, setAncho] = useState(8);
+  // §4 Cap. 0: la barra sigue la carga real del GLB (bytes descargados).
+  const carga = useExperiencia((s) => s.cargaProgreso);
   const nacimiento = useRef(0);
   const esReentrada = useRef(yaSeMostro);
 
   useEffect(() => {
     nacimiento.current = performance.now();
-    // TODO(guion): ligar la barra a la carga real (useProgress) cuando exista
-    // el GLB (§8); con el placeholder no hay assets que esperar.
-    const arranque = window.setTimeout(() => setAncho(62), 60);
-    return () => window.clearTimeout(arranque);
   }, []);
 
   useEffect(() => {
@@ -66,7 +64,7 @@ export default function Preloader({ listo }: { listo: boolean }) {
         <div className="h-0.5 w-44 overflow-hidden rounded-full bg-fondo-1">
           <div
             className="h-full bg-acento transition-[width] duration-700 ease-out"
-            style={{ width: `${listo ? 100 : ancho}%` }}
+            style={{ width: `${listo ? 100 : Math.max(6, Math.round(carga * 92))}%` }}
           />
         </div>
         <span className="sr-only">{t("cargando.experiencia")}</span>

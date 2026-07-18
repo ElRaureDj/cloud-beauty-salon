@@ -1,26 +1,80 @@
 "use client";
 
-import { useRef } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Suspense, useMemo, useRef } from "react";
+import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
 import * as THREE from "three";
+import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import {
+  ALTURA_MODELO,
   camaraEn,
   intensidadLuzClave,
   orbitaRespiracion,
 } from "@/lib/escena/coreografia";
 import { useExperiencia } from "@/stores/experiencia";
-import ModeloPlaceholder from "./ModeloPlaceholder";
+
+// Placeholder de desarrollo con licencia CC-BY (crédito en CREDITS.md).
+// El asset comprado (§8, GLB + Draco) lo sustituye cambiando solo esta ruta:
+// la escala y la posición se normalizan en tiempo de ejecución.
+const RUTA_MODELO = "/modelos/placeholder-cc-by.glb";
+const TAMANO_MODELO_BYTES = 2_168_608; // respaldo si falta content-length
 
 const RETRASO_INVITACION_MS = 6000; // §4 Cap. 0: invitación a moverse tras 6 s
 
+let draco: DRACOLoader | null = null;
+
+function conDraco(cargador: unknown) {
+  if (!draco) {
+    draco = new DRACOLoader();
+    draco.setDecoderPath("/draco/");
+  }
+  (cargador as GLTFLoader).setDRACOLoader(draco);
+}
+
+type PropsModelo = { alPrimerFrame: () => void };
+
+function ModeloGlb({ alPrimerFrame }: PropsModelo) {
+  const gltf = useLoader(GLTFLoader, RUTA_MODELO, conDraco, (evento) => {
+    // [DOM] La barra del preloader sigue la carga real del asset (§4 Cap. 0).
+    const total = evento.total || TAMANO_MODELO_BYTES;
+    useExperiencia.getState().setCargaProgreso(Math.min(1, evento.loaded / total));
+  });
+
+  const modelo = useMemo(() => {
+    const raiz = gltf.scene;
+    // Normaliza cualquier asset a la altura del guion con los pies en y = 0,
+    // centrado en x/z — la coreografía (claves de cámara) no depende del GLB.
+    const caja = new THREE.Box3().setFromObject(raiz);
+    const alto = caja.max.y - caja.min.y || 1;
+    raiz.scale.setScalar(ALTURA_MODELO / alto);
+    caja.setFromObject(raiz);
+    const centro = caja.getCenter(new THREE.Vector3());
+    raiz.position.set(
+      raiz.position.x - centro.x,
+      raiz.position.y - caja.min.y,
+      raiz.position.z - centro.z,
+    );
+    return raiz;
+  }, [gltf]);
+
+  // El primer frame se avisa desde aquí (y no desde el Rig) para que el
+  // preloader no se retire hasta que el modelo esté cargado y pintado (§2).
+  const avisado = useRef(false);
+  useFrame(() => {
+    if (avisado.current) return;
+    avisado.current = true;
+    alPrimerFrame();
+  });
+
+  return <primitive object={modelo} />;
+}
+
 type PropsRig = {
-  alPrimerFrame: () => void;
   luzRef: React.RefObject<THREE.DirectionalLight | null>;
 };
 
-function Rig({ alPrimerFrame, luzRef }: PropsRig) {
+function Rig({ luzRef }: PropsRig) {
   const { camera } = useThree();
-  const avisado = useRef(false);
   const posicion = useRef(new THREE.Vector3());
   const objetivo = useRef(new THREE.Vector3());
 
@@ -59,11 +113,6 @@ function Rig({ alPrimerFrame, luzRef }: PropsRig) {
 
     // [3D] La luz clave gana intensidad sobre el pelo en el Cap. 1 (§4).
     if (luzRef.current) luzRef.current.intensity = intensidadLuzClave(progreso);
-
-    if (!avisado.current) {
-      avisado.current = true;
-      alPrimerFrame();
-    }
   });
 
   return null;
@@ -90,8 +139,10 @@ export default function Escena({ alPrimerFrame }: PropsEscena) {
         intensity={1.2}
         color={0xffe9d6}
       />
-      <ModeloPlaceholder />
-      <Rig alPrimerFrame={alPrimerFrame} luzRef={luzRef} />
+      <Suspense fallback={null}>
+        <ModeloGlb alPrimerFrame={alPrimerFrame} />
+      </Suspense>
+      <Rig luzRef={luzRef} />
     </Canvas>
   );
 }

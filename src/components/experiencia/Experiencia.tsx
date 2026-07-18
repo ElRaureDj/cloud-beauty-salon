@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Component, useCallback, useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
@@ -24,6 +24,27 @@ const Escena = dynamic(() => import("./Escena"), { ssr: false });
 const ESPERA_PRIMER_FRAME_MS = 4000;
 
 type Modo = "decidiendo" | "3d" | "fallback";
+
+// Si el canvas revienta (GLB corrupto, contexto WebGL perdido…), la venta
+// no se cae con él: pasamos al fallback estático (§2).
+class CapturaErrorEscena extends Component<
+  { alFallar: () => void; children: React.ReactNode },
+  { fallo: boolean }
+> {
+  state = { fallo: false };
+
+  static getDerivedStateFromError() {
+    return { fallo: true };
+  }
+
+  componentDidCatch() {
+    this.props.alFallar();
+  }
+
+  render() {
+    return this.state.fallo ? null : this.props.children;
+  }
+}
 
 export default function Experiencia() {
   const [modo, setModo] = useState<Modo>("decidiendo");
@@ -124,7 +145,11 @@ export default function Experiencia() {
         style={{ height: "var(--alto-experiencia)" }}
       >
         <div className="degradado-marca fixed inset-0" aria-hidden>
-          {modo === "3d" && <Escena alPrimerFrame={alPrimerFrame} />}
+          {modo === "3d" && (
+            <CapturaErrorEscena alFallar={() => setModo("fallback")}>
+              <Escena alPrimerFrame={alPrimerFrame} />
+            </CapturaErrorEscena>
+          )}
         </div>
         <CapitulosDom activo={modo === "3d" && escenaLista} />
       </div>
