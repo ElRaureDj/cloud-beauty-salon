@@ -86,7 +86,9 @@ export default function ModalBase({
             </svg>
           </button>
         </div>
-        <div className="mt-5 flex-1">{children}</div>
+        {/* min-h-0: sin él, los hijos con overflow-y-auto (p. ej. la lista del
+          carrito) nunca activan su scroll interno y el pie se sale en móvil. */}
+      <div className="mt-5 min-h-0 flex-1">{children}</div>
       </div>
     </dialog>
   );

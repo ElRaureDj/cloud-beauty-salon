@@ -1,4 +1,4 @@
-// Claves i18n desde el día 1 (GUION §7). Español primero; en Fase 2 esto se
+// Claves i18n desde el día 1 (GUION §7). Español primero; en Fase 3 esto se
 // conecta a next-intl (o similar) sin refactor: las claves son el contrato.
 export const es = {
   "hero.tagline": "Tu pelo, versión profesional.", // TODO(guion): validar tagline (§4 Cap. 0)
@@ -13,12 +13,150 @@ export const es = {
   "header.carrito": "Abrir el carrito",
   "tienda.titulo": "Tienda",
   "tienda.volver": "← Volver a la experiencia",
+  "tienda.meta.descripcion":
+    "Productos capilares profesionales Trust: champús, acondicionadores, máscaras y leave-ins por etapa del cronograma capilar.",
+  "tienda.filtros.grupo": "Filtros",
+  "tienda.filtros.todo": "Todo",
+  "tienda.filtros.categoria": "Categoría",
+  "tienda.filtros.etapa": "Etapa del cronograma",
+  "tienda.filtros.linea": "Línea",
+  "tienda.filtros.limpiar": "Quitar filtros",
+  "tienda.sinResultados": "Ningún producto coincide con esos filtros. Prueba a quitar alguno.",
   "copy.marca.trust":
     "Distribuidor autorizado Trust · Cosmética profesional brasileña", // §4 Cap. 3 — se reutiliza en Fase 3
+  "precio.porConfirmar": "Precio por confirmar",
+  "etapa.hidratacion": "Hidratación",
+  "etapa.nutricion": "Nutrición",
+  "etapa.reconstruccion": "Reconstrucción",
+  "categoria.champu": "Champú",
+  "categoria.acondicionador": "Acondicionador",
+  "categoria.mascara": "Máscara",
+  "categoria.leave-in": "Leave-in",
+  "categoria.booster": "Booster",
+  "producto.agregar": "Agregar al carrito",
+  "producto.verCarrito": "Ver el carrito",
+  "producto.modoDeUso": "Modo de uso",
+  "producto.combinaCon": "Combina con",
+  "producto.volverTienda": "← Volver a la tienda",
   "carrito.titulo": "Tu carrito",
   "carrito.vacio": "Tu carrito está listo para su primer producto.",
   "carrito.irTienda": "Ir a la tienda",
+  "carrito.quitar": "Quitar",
+  "carrito.linea.restar": "Restar una unidad de {nombre}",
+  "carrito.linea.sumar": "Sumar una unidad de {nombre}",
+  "carrito.subtotal": "Subtotal",
+  "carrito.bundle": "Rutina del diagnóstico",
+  "carrito.bundle.descuento": "Descuento por rutina completa",
+  "carrito.preciosPendientes":
+    "Los precios se mostrarán al confirmar el catálogo Trust.",
+  "carrito.checkout": "Finalizar compra",
   "quiz.titulo": "Diagnóstico capilar",
+  "quiz.paso": "Paso {actual} de {total}",
+  "quiz.saltar": "Saltar a la tienda",
+  "quiz.atras": "Atrás",
+  "quiz.siguiente": "Siguiente",
+  "quiz.verRutina": "Ver mi rutina",
+  "quiz.pregunta.patron": "¿Cómo es tu patrón natural?",
+  "quiz.pregunta.grosor": "¿Y el grosor de tu hebra?",
+  "quiz.pregunta.porosidad": "¿Qué tan rápido absorbe agua tu pelo?",
+  "quiz.pregunta.porosidad.ayuda":
+    "Truco de la gota: pon un mechón limpio en un vaso de agua. Si flota mucho rato, porosidad baja; si se hunde rápido, alta.",
+  "quiz.pregunta.cuero": "¿Cómo se comporta tu cuero cabelludo?",
+  "quiz.pregunta.quimica": "¿Tu pelo tiene química activa?",
+  "quiz.pregunta.quimica.ayuda": "Marca todas las que apliquen.",
+  "quiz.pregunta.colores": "Tu color, antes y ahora",
+  "quiz.pregunta.colores.original": "Color natural",
+  "quiz.pregunta.colores.actual": "Color actual",
+  "quiz.pregunta.largo": "¿Qué largo llevas?",
+  "quiz.pregunta.calor": "¿Usas secador o plancha?",
+  "quiz.pregunta.lavado": "¿Cada cuánto te lavas el pelo?",
+  "quiz.pregunta.objetivo": "¿Qué quieres lograr? (elige hasta 2)",
+  "patron.1": "Liso",
+  "patron.2": "Ondulado",
+  "patron.3": "Rizado",
+  "patron.4": "Muy rizado",
+  "op.grosor.fino": "Fino",
+  "op.grosor.fino.d": "Casi no lo sientes entre los dedos",
+  "op.grosor.medio": "Medio",
+  "op.grosor.medio.d": "Como un hilo de coser",
+  "op.grosor.grueso": "Grueso",
+  "op.grosor.grueso.d": "Firme y con cuerpo",
+  "op.porosidad.baja": "Le cuesta",
+  "op.porosidad.baja.d": "Tarda en mojarse y en secarse",
+  "op.porosidad.media": "Normal",
+  "op.porosidad.media.d": "Ni mucho ni poco",
+  "op.porosidad.alta": "Al instante",
+  "op.porosidad.alta.d": "Absorbe todo enseguida",
+  "op.cuero.graso": "Graso",
+  "op.cuero.graso.d": "Se engrasa al día siguiente",
+  "op.cuero.normal": "Normal",
+  "op.cuero.seco": "Seco",
+  "op.cuero.seco.d": "Tirantez o descamación fina",
+  "op.cuero.sensible": "Sensible",
+  "op.cuero.sensible.d": "Se irrita con facilidad",
+  "op.cuero.caspa": "Con caspa",
+  "op.quimica.tinte": "Tinte",
+  "op.quimica.decoloracion": "Decoloración",
+  "op.quimica.alisado": "Alisado / progresiva",
+  "op.quimica.permanente": "Permanente",
+  "op.quimica.ninguna": "Ninguna",
+  "op.largo.corto": "Corto",
+  "op.largo.corto.d": "Por encima del hombro",
+  "op.largo.medio": "Medio",
+  "op.largo.medio.d": "Al hombro o un poco más",
+  "op.largo.largo": "Largo",
+  "op.largo.largo.d": "Media espalda",
+  "op.largo.extra": "Extra largo",
+  "op.largo.extra.d": "Cintura o más",
+  "op.calor.nunca": "Nunca",
+  "op.calor.aveces": "A veces",
+  "op.calor.diario": "A diario",
+  "op.lavado.diario": "Todos los días",
+  "op.lavado.interdiario": "Día por medio",
+  "op.lavado.semanal": "2 veces por semana o menos",
+  "op.objetivo.hidratacion": "Hidratación",
+  "op.objetivo.frizz": "Control de frizz",
+  "op.objetivo.color": "Protección de color",
+  "op.objetivo.reconstruccion": "Reconstrucción",
+  "op.objetivo.crecimiento": "Crecimiento",
+  "op.objetivo.volumen": "Volumen",
+  "swatch.negro": "Negro",
+  "swatch.castanoOscuro": "Castaño oscuro",
+  "swatch.castano": "Castaño",
+  "swatch.castanoClaro": "Castaño claro",
+  "swatch.cobrizo": "Cobrizo",
+  "swatch.rubioOscuro": "Rubio oscuro",
+  "swatch.rubio": "Rubio",
+  "swatch.platino": "Platino",
+  "swatch.rojo": "Rojo",
+  "swatch.gris": "Gris / canas",
+  "swatch.fantasia": "Fantasía",
+  "reco.razon.reconstruccion":
+    "Con decoloración o porosidad alta, tu fibra pide reconstrucción antes que nada.",
+  "reco.razon.frizz":
+    "Para controlar el frizz (y más con la humedad del sur de Florida), la nutrición es tu aliada.",
+  "reco.razon.color":
+    "Tu color va tratado: línea de protección para que el tono dure entre retoques.",
+  "reco.razon.grasoPuntas":
+    "Cuero cabelludo graso con largos sedientos: champú equilibrante y la máscara solo de medios a puntas.",
+  "reco.razon.graso":
+    "Cuero cabelludo graso: champú equilibrante para mantener la raíz fresca.",
+  "reco.razon.termico":
+    "Calor a diario: el protector térmico es obligatorio en tu paquete.",
+  "reco.razon.crecimiento":
+    "Sin química y buscando crecimiento: hidratación + línea fortalecedora.",
+  "reco.razon.base":
+    "Tu pelo pide una base de {etapa} constante: esta rutina la cubre de principio a fin.",
+  "quiz.resultado.titulo": "Tu rutina, lista",
+  "quiz.resultado.etapa": "Tu cronograma arranca por",
+  "quiz.resultado.total": "Total de la rutina",
+  "quiz.resultado.ahorro": "Ahorras {ahorro} frente a comprarla suelta",
+  "quiz.resultado.agregarTodo": "Agregar todo al carrito",
+  "quiz.resultado.precioPendiente":
+    "El precio del paquete y tu ahorro aparecerán al confirmar el catálogo (§9.6).",
+  "quiz.resultado.repetir": "Repetir diagnóstico",
+  "noEncontrado.titulo": "Página no encontrada",
+  "noEncontrado.mensaje": "Esta página no existe, pero tu rutina sí.",
   "comun.cerrar": "Cerrar",
   "cargando.experiencia": "Cargando la experiencia",
 } as const;
@@ -27,4 +165,15 @@ export type ClaveI18n = keyof typeof es;
 
 export function t(clave: ClaveI18n): string {
   return es[clave];
+}
+
+// Interpolación simple para claves con {parametros}.
+export function tf(
+  clave: ClaveI18n,
+  vars: Record<string, string | number>,
+): string {
+  return Object.entries(vars).reduce(
+    (texto, [k, v]) => texto.replaceAll(`{${k}}`, String(v)),
+    es[clave] as string,
+  );
 }

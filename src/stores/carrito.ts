@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-// Esquema alineado con §5.2 (el catálogo productos.json llega en Fase 2).
 export type LineaCarrito = {
   id: string;
   nombre: string;
@@ -10,26 +9,111 @@ export type LineaCarrito = {
   imagen?: string;
 };
 
-export type RespuestasQuiz = Record<string, string | string[]>;
+// Respuestas del quiz capilar (§5.1) — anónimas, persistidas en localStorage.
+export type RespuestasQuiz = {
+  patron?: string; // "1A".."4C"
+  grosor?: "fino" | "medio" | "grueso";
+  porosidad?: "baja" | "media" | "alta";
+  cuero?: "graso" | "normal" | "seco" | "sensible" | "caspa";
+  quimica?: string[]; // tinte, decoloracion, alisado, permanente, ninguna
+  colorOriginal?: string;
+  colorActual?: string;
+  largo?: "corto" | "medio" | "largo" | "extra";
+  calor?: "nunca" | "aveces" | "diario";
+  lavado?: "diario" | "interdiario" | "semanal";
+  objetivos?: string[]; // máx. 2 (§5.1)
+};
 
 type EstadoTienda = {
   carrito: LineaCarrito[];
-  respuestasQuiz: RespuestasQuiz | null; // §5.1 — se rellena en Fase 2
-  // Las acciones de carrito (agregar, quitar, bundle del quiz) llegan en Fase 2.
+  respuestasQuiz: RespuestasQuiz | null;
+  // Ids del último bundle recomendado agregado desde el quiz (§5.3: la línea
+  // de bundle lleva descuento si viene del quiz).
+  bundleIds: string[];
+  agregar: (linea: Omit<LineaCarrito, "cantidad">, cantidad?: number) => void;
+  quitar: (id: string) => void;
+  setCantidad: (id: string, cantidad: number) => void;
+  vaciar: () => void;
+  setRespuestasQuiz: (respuestas: RespuestasQuiz) => void;
+  marcarBundle: (ids: string[]) => void;
+};
+
+const estadoInicial = {
+  carrito: [] as LineaCarrito[],
+  respuestasQuiz: null as RespuestasQuiz | null,
+  bundleIds: [] as string[],
 };
 
 // Carrito y respuestas persisten en localStorage (GUION §2). skipHydration:
 // el HTML del servidor siempre pinta el estado vacío; rehidratamos tras montar
 // (Header) para no romper la hidratación de React cuando haya carrito guardado.
-const estadoInicial: EstadoTienda = {
-  carrito: [],
-  respuestasQuiz: null,
-};
-
 export const useTienda = create<EstadoTienda>()(
-  persist(() => estadoInicial, { name: "cbs-tienda", skipHydration: true }),
+  persist(
+    (set) => ({
+      ...estadoInicial,
+      agregar: (linea, cantidad = 1) =>
+        set((s) => {
+          const existente = s.carrito.find((l) => l.id === linea.id);
+          if (existente) {
+            return {
+              carrito: s.carrito.map((l) =>
+                l.id === linea.id ? { ...l, cantidad: l.cantidad + cantidad } : l,
+              ),
+            };
+          }
+          return { carrito: [...s.carrito, { ...linea, cantidad }] };
+        }),
+      // No tocamos bundleIds: si falta una línea del bundle, bundleActivo()
+      // debe fallar — mismo comportamiento que bajar la cantidad a 0.
+      quitar: (id) =>
+        set((s) => ({
+          carrito: s.carrito.filter((l) => l.id !== id),
+        })),
+      setCantidad: (id, cantidad) =>
+        set((s) => ({
+          carrito:
+            cantidad <= 0
+              ? s.carrito.filter((l) => l.id !== id)
+              : s.carrito.map((l) => (l.id === id ? { ...l, cantidad } : l)),
+        })),
+      vaciar: () => set({ carrito: [], bundleIds: [] }),
+      setRespuestasQuiz: (respuestas) => set({ respuestasQuiz: respuestas }),
+      marcarBundle: (ids) => set({ bundleIds: ids }),
+    }),
+    {
+      name: "cbs-tienda",
+      skipHydration: true,
+      partialize: (s) => ({
+        carrito: s.carrito,
+        respuestasQuiz: s.respuestasQuiz,
+        bundleIds: s.bundleIds,
+      }),
+    },
+  ),
 );
 
 export function contarArticulos(estado: EstadoTienda): number {
   return estado.carrito.reduce((total, linea) => total + linea.cantidad, 0);
+}
+
+export function subtotalCarrito(estado: EstadoTienda): number {
+  return estado.carrito.reduce((total, l) => total + l.precio * l.cantidad, 0);
+}
+
+// True si el carrito aún contiene el bundle completo del quiz (§5.3).
+export function bundleActivo(estado: EstadoTienda): boolean {
+  return (
+    estado.bundleIds.length > 0 &&
+    estado.bundleIds.every((id) => estado.carrito.some((l) => l.id === id))
+  );
+}
+
+// §5.3: el descuento pertenece al bundle — 1 unidad por producto del bundle,
+// nunca al resto del carrito ni a unidades extra.
+export function valorBundle(estado: EstadoTienda): number {
+  if (!bundleActivo(estado)) return 0;
+  return estado.bundleIds.reduce((total, id) => {
+    const linea = estado.carrito.find((l) => l.id === id);
+    return total + (linea?.precio ?? 0);
+  }, 0);
 }
