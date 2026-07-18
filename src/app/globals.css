@@ -1,0 +1,143 @@
+@import "tailwindcss";
+
+/* TODO(guion): paleta pendiente del manual de marca {{MARCA}} (§3, §9.5).
+   Placeholders: degradado profundo cálido + 1 acento cálido para CTAs. */
+:root {
+  --fondo-0: #171012;
+  --fondo-1: #34222b;
+  --tinta: #f3ece7;
+  --tinta-suave: #c9bab3;
+  --acento: #d99a63;
+  --acento-tinta: #221306;
+
+  /* §0: la página mide ~800vh en móvil y ~700vh en desktop. */
+  --alto-experiencia: 800vh;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --alto-experiencia: 700vh;
+  }
+}
+
+@theme inline {
+  --color-fondo-0: var(--fondo-0);
+  --color-fondo-1: var(--fondo-1);
+  --color-tinta: var(--tinta);
+  --color-tinta-suave: var(--tinta-suave);
+  --color-acento: var(--acento);
+  --color-acento-tinta: var(--acento-tinta);
+  --font-sans: var(--font-sans-base);
+  --font-display: var(--font-display-base);
+}
+
+body {
+  background: var(--fondo-0);
+  color: var(--tinta);
+  font-family: var(--font-sans-base), system-ui, sans-serif;
+}
+
+.degradado-marca {
+  background: radial-gradient(120% 90% at 50% 12%, var(--fondo-1) 0%, var(--fondo-0) 70%);
+}
+
+/* Botones: dicen exactamente lo que hacen (§3). */
+.boton-primario {
+  @apply inline-flex items-center justify-center rounded-full bg-acento px-6 py-3 text-sm font-medium text-acento-tinta transition-transform active:scale-95;
+}
+
+.boton-secundario {
+  @apply inline-flex items-center justify-center rounded-full border border-tinta-suave/40 px-6 py-3 text-sm font-medium text-tinta transition-colors hover:border-tinta-suave;
+}
+
+.nota-todo {
+  @apply inline-block rounded-lg bg-fondo-1/70 px-3 py-2 font-mono text-xs text-tinta-suave;
+}
+
+/* Fondo de los overlays nativos <dialog>. */
+dialog::backdrop {
+  background: rgba(23, 16, 18, 0.6);
+  backdrop-filter: blur(4px);
+}
+
+/* Micro-interacciones solo en CTAs activos e indicador de scroll (§3).
+   El pulso anima solo transform/opacity (compositor): animar box-shadow
+   repintaría en CPU cada frame junto al canvas WebGL. */
+@keyframes pulso-suave {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  70%,
+  100% {
+    transform: scale(1.28);
+    opacity: 0;
+  }
+}
+
+.pulso-activo {
+  position: relative;
+}
+
+.pulso-activo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--acento) 55%, transparent);
+  animation: pulso-suave 2.4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes deriva-desliza {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.9;
+  }
+  50% {
+    transform: translateY(6px);
+    opacity: 0.5;
+  }
+}
+
+.anima-desliza {
+  animation: deriva-desliza 1.8s ease-in-out infinite;
+}
+
+@keyframes aparecer-suave {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.anima-aparecer {
+  animation: aparecer-suave 0.28s ease-out both;
+}
+
+@keyframes entrar-derecha {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: none;
+  }
+}
+
+.anima-entrar-derecha {
+  animation: entrar-derecha 0.3s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulso-activo::after,
+  .anima-desliza,
+  .anima-aparecer,
+  .anima-entrar-derecha {
+    animation: none;
+  }
+}
