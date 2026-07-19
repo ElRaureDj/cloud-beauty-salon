@@ -21,13 +21,15 @@ const IDS_VITRINA = [
   "trust-termico",
 ];
 
-// Huecos en pantalla (fracciones del semiancho/semialto del frustum).
+// Huecos en pantalla (fracciones del semiancho/semialto del frustum) con
+// profundidad propia: cada tarjeta vive a SU distancia de la cámara — la
+// cercana se ve mayor y claramente delante (parallax legible al scrollear).
 const HUECOS = [
-  { x: -0.62, y: 0.34 },
-  { x: 0.62, y: 0.18 },
-  { x: -0.58, y: -0.12 },
-  { x: 0.58, y: -0.34 },
-  { x: -0.05, y: -0.55 },
+  { x: -0.62, y: 0.34, distancia: 1.0 },
+  { x: 0.62, y: 0.18, distancia: 1.35 },
+  { x: -0.58, y: -0.12, distancia: 1.55 },
+  { x: 0.58, y: -0.34, distancia: 1.1 },
+  { x: -0.05, y: -0.55, distancia: 1.75 },
 ];
 
 function texturaTarjeta(producto: Producto): THREE.CanvasTexture {
@@ -98,6 +100,10 @@ export default function VitrinaFlotante({
             transparent: true,
             opacity: 0,
             side: THREE.DoubleSide,
+            // Sin escritura de profundidad: las esquinas transparentes de una
+            // tarjeta no deben perforar a las de atrás; el orden lo fija
+            // renderOrder por distancia en cada frame.
+            depthWrite: false,
           }),
       ),
     [productos],
@@ -130,27 +136,28 @@ export default function VitrinaFlotante({
     const alfa = Math.min(1, Math.min(local, 1 - local) * 8);
 
     const camara = estado.camera as THREE.PerspectiveCamera;
-    const distancia = 1.15;
-    const semialto = distancia * Math.tan((camara.fov * Math.PI) / 360);
-    const semiancho = semialto * camara.aspect;
-
     camara.getWorldDirection(ADELANTE);
     DERECHA.crossVectors(ADELANTE, camara.up).normalize();
     ARRIBA.crossVectors(DERECHA, ADELANTE).normalize();
 
     grupo.children.forEach((hijo, i) => {
       const hueco = HUECOS[i % HUECOS.length];
-      const vaiven = Math.sin(estado.clock.elapsedTime * 0.4 + i * 1.7) * 0.04;
-      const deriva = (local - 0.5) * 0.25 * (i % 2 === 0 ? 1 : -1);
+      const semialto = hueco.distancia * Math.tan((camara.fov * Math.PI) / 360);
+      const semiancho = semialto * camara.aspect;
+      // Deriva y vaivén cortos: las tarjetas respiran sin cruzarse de hueco.
+      const vaiven = Math.sin(estado.clock.elapsedTime * 0.4 + i * 1.7) * 0.02;
+      const deriva = (local - 0.5) * 0.1 * (i % 2 === 0 ? 1 : -1);
       hijo.position
         .copy(camara.position)
-        .addScaledVector(ADELANTE, distancia)
+        .addScaledVector(ADELANTE, hueco.distancia)
         .addScaledVector(DERECHA, (hueco.x + deriva) * semiancho)
         .addScaledVector(ARRIBA, (hueco.y + vaiven) * semialto);
       hijo.quaternion.copy(camara.quaternion); // billboard
-      // La tarjeta cabe en el hueco tanto en vertical como en horizontal.
+      // La tarjeta cabe en su hueco a cualquier aspecto.
       const escala = Math.min(1, (semiancho * 0.55) / 0.24);
       hijo.scale.setScalar(escala);
+      // Orden de pintado estable: de lejos a cerca.
+      hijo.renderOrder = Math.round(100 - hueco.distancia * 10);
       materiales[i].opacity = alfa;
     });
   });
