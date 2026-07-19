@@ -31,10 +31,12 @@ export default function PaginaPrivacidad() {
           <ul className="mt-3 list-disc space-y-2 pl-5">
             <li>
               <strong>Lista de espera.</strong> Si te apuntas para que te
-              avisemos de la apertura de un servicio, guardamos tu nombre, el
+              avisemos de la apertura de un servicio, recogemos tu nombre, el
               contacto que nos dejes (WhatsApp o email) y los servicios que te
-              interesan. Los usamos únicamente para avisarte de la apertura y
-              de tu beneficio de apertura.
+              interesan. Estos datos se nos envían por correo electrónico a
+              través de nuestro proveedor de email (Resend) y los usamos
+              únicamente para avisarte de la apertura y de tu beneficio de
+              apertura.
             </li>
             <li>
               <strong>Compras.</strong> El pago se procesa en Stripe. Nosotros
@@ -75,8 +77,9 @@ export default function PaginaPrivacidad() {
           <h2 className="font-display text-xl">Con quién los compartimos</h2>
           <p className="mt-3">
             Solo con los proveedores imprescindibles para operar: Stripe
-            (pagos e impuestos) y el transportista que entregue tu pedido. No
-            vendemos ni cedemos tus datos a terceros con fines publicitarios.
+            (pagos e impuestos), Resend (envío del correo de la lista de
+            espera) y el transportista que entregue tu pedido. No vendemos ni
+            cedemos tus datos a terceros con fines publicitarios.
           </p>
         </section>
 
