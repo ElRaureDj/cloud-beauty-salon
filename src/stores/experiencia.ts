@@ -2,7 +2,13 @@ import { create } from "zustand";
 import type Lenis from "lenis";
 import { capituloEn, type IdCapitulo } from "@/lib/escena/coreografia";
 
-export type Overlay = "ninguno" | "quiz" | "espera-peluqueria" | "carrito";
+export type Overlay =
+  | "ninguno"
+  | "quiz"
+  | "espera-peluqueria"
+  | "espera-manicura"
+  | "espera-pedicura"
+  | "carrito";
 
 type EstadoExperiencia = {
   // scrollProgress del timeline global 0–1 (GUION §2). La cámara lo lee con

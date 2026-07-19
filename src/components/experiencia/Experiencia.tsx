@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
 import { Component, useCallback, useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -50,8 +51,16 @@ export default function Experiencia() {
   const [modo, setModo] = useState<Modo>("decidiendo");
   const [escenaLista, setEscenaLista] = useState(false);
   const contenedorRef = useRef<HTMLDivElement | null>(null);
+  const router = useRouter();
 
   const alPrimerFrame = useCallback(() => setEscenaLista(true), []);
+
+  // La vitrina del cap. 3 vive dentro del canvas: el router no cruza el
+  // reconciliador de r3f, así que navega vía callback (§4 Cap. 3).
+  const alAbrirProducto = useCallback(
+    (id: string) => router.push(`/producto/${id}`),
+    [router],
+  );
 
   // Decisión de modo (§2): sin WebGL o con prefers-reduced-motion → fallback.
   // setTimeout y no requestAnimationFrame: rAF no corre en pestañas ocultas
@@ -147,7 +156,7 @@ export default function Experiencia() {
         <div className="degradado-marca fixed inset-0" aria-hidden>
           {modo === "3d" && (
             <CapturaErrorEscena alFallar={() => setModo("fallback")}>
-              <Escena alPrimerFrame={alPrimerFrame} />
+              <Escena alPrimerFrame={alPrimerFrame} alAbrirProducto={alAbrirProducto} />
             </CapturaErrorEscena>
           )}
         </div>

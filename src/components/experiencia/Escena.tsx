@@ -12,6 +12,7 @@ import {
   orbitaRespiracion,
 } from "@/lib/escena/coreografia";
 import { useExperiencia } from "@/stores/experiencia";
+import VitrinaFlotante from "./VitrinaFlotante";
 
 // Asset definitivo (§8): "Business Lady 02" de ida-faber (CGTrader, licencia
 // Royalty Free — ver CREDITS.md), compuesta en Blender: pose estática, melena
@@ -119,9 +120,12 @@ function Rig({ luzRef }: PropsRig) {
   return null;
 }
 
-type PropsEscena = { alPrimerFrame: () => void };
+type PropsEscena = {
+  alPrimerFrame: () => void;
+  alAbrirProducto: (id: string) => void;
+};
 
-export default function Escena({ alPrimerFrame }: PropsEscena) {
+export default function Escena({ alPrimerFrame, alAbrirProducto }: PropsEscena) {
   const luzRef = useRef<THREE.DirectionalLight | null>(null);
 
   return (
@@ -143,6 +147,7 @@ export default function Escena({ alPrimerFrame }: PropsEscena) {
       <Suspense fallback={null}>
         <ModeloGlb alPrimerFrame={alPrimerFrame} />
       </Suspense>
+      <VitrinaFlotante alAbrirProducto={alAbrirProducto} />
       <Rig luzRef={luzRef} />
     </Canvas>
   );
