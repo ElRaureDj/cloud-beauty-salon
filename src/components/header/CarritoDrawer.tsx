@@ -1,10 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { t, tf } from "@/lib/i18n/es";
 import { DESCUENTO_BUNDLE, textoPrecio } from "@/lib/formato";
 import {
   bundleActivo,
+  CANTIDAD_MAXIMA,
   contarArticulos,
   subtotalCarrito,
   useTienda,
@@ -30,6 +32,41 @@ export default function CarritoDrawer() {
   // El descuento aplica solo a la línea de bundle (1 unidad por producto §5.3),
   // nunca a productos ajenos ni a unidades extra.
   const descuento = conBundle ? baseBundle * DESCUENTO_BUNDLE : 0;
+
+  const [pago, setPago] = useState<
+    "quieto" | "cargando" | "sin-config" | "revisa" | "error"
+  >("quieto");
+
+  const irAlPago = async () => {
+    setPago("cargando");
+    try {
+      const respuesta = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          lineas: carrito.map((l) => ({ id: l.id, cantidad: l.cantidad })),
+          bundleIds: conBundle ? useTienda.getState().bundleIds : [],
+        }),
+      });
+      if (respuesta.status === 503) {
+        setPago("sin-config");
+        return;
+      }
+      if (respuesta.status === 400) {
+        // El servidor rechazó el carrito: que el error diga qué revisar (§7).
+        setPago("revisa");
+        return;
+      }
+      const datos = (await respuesta.json()) as { ok?: boolean; url?: string };
+      if (!respuesta.ok || !datos.url) throw new Error("checkout");
+      // Marca de checkout propio: /compra/exito solo vacía el carrito si
+      // venimos de aquí (no por visitar la URL a mano o volver del historial).
+      sessionStorage.setItem("cbs-checkout-en-curso", "1");
+      window.location.assign(datos.url);
+    } catch {
+      setPago("error");
+    }
+  };
 
   return (
     <ModalBase
@@ -87,7 +124,8 @@ export default function CarritoDrawer() {
                       type="button"
                       aria-label={tf("carrito.linea.sumar", { nombre: linea.nombre })}
                       onClick={() => setCantidad(linea.id, linea.cantidad + 1)}
-                      className="grid h-7 w-7 place-items-center rounded-full border border-tinta-suave/30 hover:border-tinta-suave"
+                      disabled={linea.cantidad >= CANTIDAD_MAXIMA}
+                      className="grid h-7 w-7 place-items-center rounded-full border border-tinta-suave/30 hover:border-tinta-suave disabled:opacity-30"
                     >
                       +
                     </button>
@@ -123,9 +161,31 @@ export default function CarritoDrawer() {
                 </div>
               </>
             )}
-            {/* TODO(guion §9.2): habilitar al decidir pasarela (Stripe / PayPal / Shopify). */}
-            <button type="button" disabled className="boton-primario mt-4 w-full opacity-40">
-              {t("carrito.checkout")} · {articulos}
+            {/* §9.2 RESUELTO: Stripe Checkout — precios validados en servidor. */}
+            {pago === "sin-config" && (
+              <p className="nota-todo mt-3 w-full text-center" role="alert">
+                {t("carrito.checkout.noConfigurado")}
+              </p>
+            )}
+            {pago === "revisa" && (
+              <p className="mt-3 text-sm text-acento" role="alert">
+                {t("carrito.checkout.revisa")}
+              </p>
+            )}
+            {pago === "error" && (
+              <p className="mt-3 text-sm text-acento" role="alert">
+                {t("carrito.checkout.error")}
+              </p>
+            )}
+            <button
+              type="button"
+              onClick={irAlPago}
+              disabled={preciosPendientes || pago === "cargando"}
+              className="boton-primario mt-4 w-full disabled:opacity-40"
+            >
+              {pago === "cargando"
+                ? t("carrito.checkout.cargando")
+                : `${t("carrito.checkout")} · ${articulos}`}
             </button>
           </div>
         </div>

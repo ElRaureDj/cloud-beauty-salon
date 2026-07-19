@@ -26,6 +26,15 @@ function buscar(
   return CATALOGO.find((p) => p.categoria === categoria);
 }
 
+// Para boosters la coincidencia debe ser real: mejor ningún extra que un
+// producto que no corresponde a la señal del quiz.
+function buscarEstricto(
+  categoria: Producto["categoria"],
+  cumple: (p: Producto) => boolean,
+): Producto | undefined {
+  return CATALOGO.find((p) => p.categoria === categoria && cumple(p));
+}
+
 // Con empate de señales, la urgencia manda: reconstruir > nutrir > hidratar.
 const PRIORIDAD_EMPATE: Etapa[] = ["reconstruccion", "nutricion", "hidratacion"];
 
@@ -73,8 +82,23 @@ export function recomendar(r: RespuestasQuiz): Recomendacion {
 
   const deEtapa = (p: Producto) => p.etapa.includes(etapaPrincipal);
   const deColor = (p: Producto) => p.tags.includes("proteccion-color");
-  const antiFrizz = (p: Producto) => p.tags.includes("anti-frizz");
   const deCrecimiento = (p: Producto) => p.tags.includes("crecimiento");
+  // Con el catálogo real las líneas tienen carácter: el matizador (Blond
+  // Revolution) es para decoloradas, no para cualquier tinte; y la línea de
+  // rizos (Curly) solo si el patrón es rizado (3x/4x).
+  const esRizada = (r.patron ?? "").startsWith("3") || (r.patron ?? "").startsWith("4");
+  const colorPref = (p: Producto) =>
+    deColor(p) &&
+    (quimica.includes("decoloracion") || !p.tags.includes("matizador"));
+  const antiFrizz = (p: Producto) =>
+    esRizada
+      ? p.tags.includes("rizos")
+      : p.tags.includes("anti-frizz") && !p.tags.includes("rizos");
+  const nutritivo = (p: Producto) => p.tags.includes("nutritivo");
+  // Fallback genérico sin carácter de color: que el orden alfabético del
+  // catálogo real no cuele el matizador de rubias a quien no lo pidió.
+  const deEtapaNeutro = (p: Producto) =>
+    deEtapa(p) && !p.tags.includes("matizador") && !p.tags.includes("proteccion-color");
 
   // Champú — precedencia: graso con puntas secas (regla 4 completa) > color
   // tratado (regla 2) > sin química + crecimiento (regla 6) > graso a solas.
@@ -83,31 +107,48 @@ export function recomendar(r: RespuestasQuiz): Recomendacion {
     champu = buscar("champu", [(p) => p.tags.includes("equilibrante")]);
     razones.push(t("reco.razon.grasoPuntas"));
   } else if (conColor) {
-    champu = buscar("champu", [deColor, deEtapa]);
+    champu = buscar("champu", [colorPref, deColor, deEtapa]);
     razones.push(t("reco.razon.color"));
   } else if (sinQuimica && objetivos.includes("crecimiento")) {
-    champu = buscar("champu", [deCrecimiento, deEtapa]);
+    // El catálogo real no tiene línea "crecimiento": la fortalecedora
+    // (Therapy) es su equivalente §5.2.
+    champu = buscar("champu", [
+      (p) => p.tags.includes("fortalecedor") || deCrecimiento(p),
+      deEtapaNeutro,
+      deEtapa,
+    ]);
     razones.push(t("reco.razon.crecimiento"));
   } else if (r.cuero === "graso") {
     champu = buscar("champu", [(p) => p.tags.includes("equilibrante")]);
     razones.push(t("reco.razon.graso"));
   } else {
-    champu = buscar("champu", [deEtapa]);
+    champu = buscar("champu", [deEtapaNeutro, deEtapa]);
   }
 
-  // Acondicionador y leave-in
+  // Acondicionador y leave-in: primero la señal fuerte (frizz o color),
+  // después la etapa.
   const acondicionador = buscar("acondicionador", [
-    objetivos.includes("frizz") ? antiFrizz : deEtapa,
+    ...(objetivos.includes("frizz") ? [antiFrizz] : []),
+    ...(conColor ? [colorPref] : []),
+    deEtapaNeutro,
     deEtapa,
   ]);
   const leaveIn = buscar("leave-in", [
-    objetivos.includes("frizz") ? antiFrizz : deEtapa,
+    ...(conColor ? [colorPref] : []),
+    ...(objetivos.includes("frizz") ? [antiFrizz] : []),
+    deEtapaNeutro,
     deEtapa,
   ]);
 
-  // Máscara: el corazón del cronograma
+  // Máscara: el corazón del cronograma. La reconstrucción manda sobre las
+  // preferencias de frizz/color (§5.2 regla 1).
   const mascara = buscar("mascara", [
-    conColor && etapaPrincipal !== "reconstruccion" ? deColor : deEtapa,
+    ...(conColor && etapaPrincipal !== "reconstruccion" ? [colorPref] : []),
+    ...(objetivos.includes("frizz") && etapaPrincipal !== "reconstruccion"
+      ? [antiFrizz]
+      : []),
+    ...(etapaPrincipal === "nutricion" ? [nutritivo] : []),
+    deEtapaNeutro,
     deEtapa,
   ]);
 
@@ -117,18 +158,23 @@ export function recomendar(r: RespuestasQuiz): Recomendacion {
   );
 
   if (r.calor === "diario") {
-    const termico = buscar("booster", [(p) => p.tags.includes("termico")]);
+    const termico = buscarEstricto("booster", (p) => p.tags.includes("termico"));
     if (termico) {
       paquete.push(termico);
       razones.push(t("reco.razon.termico"));
     }
   }
   if (etapaPrincipal === "reconstruccion") {
-    const choque = buscar("booster", [(p) => p.tags.includes("choque")]);
+    const choque = buscarEstricto("booster", (p) => p.tags.includes("choque"));
     if (choque && !paquete.some((p) => p.id === choque.id)) paquete.push(choque);
   } else if (sinQuimica && objetivos.includes("crecimiento")) {
-    const tonico = buscar("booster", [deCrecimiento]);
-    if (tonico && !paquete.some((p) => p.id === tonico.id)) paquete.push(tonico);
+    const fortalecedorExtra = buscarEstricto(
+      "booster",
+      (p) => p.tags.includes("fortalecedor") || deCrecimiento(p),
+    );
+    if (fortalecedorExtra && !paquete.some((p) => p.id === fortalecedorExtra.id)) {
+      paquete.push(fortalecedorExtra);
+    }
   }
 
   if (razones.length === 0) {

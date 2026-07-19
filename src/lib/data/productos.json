@@ -1,235 +1,1311 @@
 [
   {
-    "id": "trust-hid-champu",
-    "nombre": "Champú Hidratación Profunda",
-    "linea": "Hidratación Profunda",
+    "id": "amino",
+    "nombre": "Amino",
+    "tamano": "225 ML/7.61 FLOZ",
+    "linea": "Amino",
+    "categoria": "booster",
+    "etapa": [
+      "reconstruccion"
+    ],
+    "tags": [
+      "fortalecedor",
+      "proteina",
+      "sin-enjuague"
+    ],
+    "aptoPara": {},
+    "precio": 53.0,
+    "stock": 1,
+    "imagen": "/productos/amino.webp",
+    "descripcion": "Aminoácidos que refuerzan la hebra a diario y previenen la rotura.",
+    "modoDeUso": "Úsalo como refuerzo de tu rutina siguiendo la dosis del envase; poco producto bien repartido rinde más."
+  },
+  {
+    "id": "blond-revolution-immediate-neutralizing-mousse-300ml",
+    "nombre": "Blond Revolution Immediate Neutralizing Mousse",
+    "tamano": "300ML",
+    "linea": "Blond Revolution",
+    "categoria": "booster",
+    "etapa": [
+      "hidratacion",
+      "nutricion"
+    ],
+    "tags": [
+      "proteccion-color",
+      "matizador"
+    ],
+    "aptoPara": {
+      "quimica": [
+        "decoloracion",
+        "tinte"
+      ]
+    },
+    "precio": 58.0,
+    "stock": 1,
+    "imagen": "/productos/blond-revolution-immediate-neutralizing-mousse-300ml.webp",
+    "descripcion": "Para rubias: neutraliza el amarillo y cuida la fibra decolorada.",
+    "modoDeUso": "Úsalo como refuerzo de tu rutina siguiendo la dosis del envase; poco producto bien repartido rinde más."
+  },
+  {
+    "id": "blond-revolution-impassable-blond-finisher",
+    "nombre": "Blond Revolution Impassable Blond",
+    "tamano": "100ML / 3.3 FL.OZ",
+    "linea": "Blond Revolution",
+    "categoria": "booster",
+    "etapa": [
+      "hidratacion",
+      "nutricion"
+    ],
+    "tags": [
+      "proteccion-color",
+      "matizador"
+    ],
+    "aptoPara": {
+      "quimica": [
+        "decoloracion",
+        "tinte"
+      ]
+    },
+    "precio": 42.0,
+    "stock": 1,
+    "imagen": "/productos/blond-revolution-impassable-blond-finisher.webp",
+    "descripcion": "Para rubias: neutraliza el amarillo y cuida la fibra decolorada.",
+    "modoDeUso": "Úsalo como refuerzo de tu rutina siguiendo la dosis del envase; poco producto bien repartido rinde más."
+  },
+  {
+    "id": "blond-revolution-antioxidant-shampoo",
+    "nombre": "Blond Revolution Antioxidant Shampoo",
+    "tamano": "300ML / 10.1 FL.OZ",
+    "linea": "Blond Revolution",
     "categoria": "champu",
-    "etapa": ["hidratacion"],
-    "tags": ["hidratante", "uso-frecuente"],
-    "aptoPara": { "porosidad": ["baja", "media"], "quimica": ["ninguna", "tinte"] },
-    "precio": 0,
-    "stock": 0,
-    "imagen": "/productos/trust-hid-champu.jpg",
-    "descripcion": "Limpia sin arrastrar la hidratación natural. La base de cualquier rutina: pelo limpio, suave y listo para recibir tratamiento.",
-    "modoDeUso": "Aplica sobre el cabello mojado, masajea el cuero cabelludo con las yemas y enjuaga bien. Repite si usas mucho producto de peinado."
+    "etapa": [
+      "hidratacion",
+      "nutricion"
+    ],
+    "tags": [
+      "proteccion-color",
+      "matizador"
+    ],
+    "aptoPara": {
+      "quimica": [
+        "decoloracion",
+        "tinte"
+      ]
+    },
+    "precio": 35.0,
+    "stock": 1,
+    "imagen": "/productos/blond-revolution-antioxidant-shampoo.webp",
+    "descripcion": "Para rubias: neutraliza el amarillo y cuida la fibra decolorada.",
+    "modoDeUso": "Aplica sobre el cabello mojado, masajea el cuero cabelludo con las yemas y enjuaga bien."
   },
   {
-    "id": "trust-hid-acondicionador",
-    "nombre": "Acondicionador Hidratación Profunda",
-    "linea": "Hidratación Profunda",
+    "id": "color-shield-conditioner-300ml-10-1-fl-oz",
+    "nombre": "Color Shield Conditioner",
+    "tamano": "300ML / 10.1 FL.OZ",
+    "linea": "Color Shield",
     "categoria": "acondicionador",
-    "etapa": ["hidratacion"],
-    "tags": ["hidratante", "desenredante"],
-    "aptoPara": { "porosidad": ["baja", "media", "alta"] },
-    "precio": 0,
-    "stock": 0,
-    "imagen": "/productos/trust-hid-acondicionador.jpg",
-    "descripcion": "Sella la cutícula después del lavado y desenreda sin esfuerzo. Suavidad inmediata sin apelmazar.",
-    "modoDeUso": "Tras el champú, aplica de medios a puntas, deja actuar 2 minutos y enjuaga con agua fría para más brillo."
+    "etapa": [
+      "hidratacion",
+      "nutricion"
+    ],
+    "tags": [
+      "proteccion-color"
+    ],
+    "aptoPara": {
+      "quimica": [
+        "tinte",
+        "decoloracion"
+      ]
+    },
+    "precio": 36.0,
+    "stock": 1,
+    "imagen": "/productos/color-shield-conditioner-300ml-10-1-fl-oz.webp",
+    "descripcion": "Escudo del color: limpieza sin arrastre de pigmento y sellado que alarga la vida del tinte.",
+    "modoDeUso": "Tras el champú, aplica de medios a puntas, deja actuar 2 minutos y enjuaga con agua fría."
   },
   {
-    "id": "trust-hid-mascara",
-    "nombre": "Máscara Hidratación Profunda",
-    "linea": "Hidratación Profunda",
-    "categoria": "mascara",
-    "etapa": ["hidratacion"],
-    "tags": ["hidratante", "cronograma"],
-    "aptoPara": { "porosidad": ["baja", "media", "alta"] },
-    "precio": 0,
-    "stock": 0,
-    "imagen": "/productos/trust-hid-mascara.jpg",
-    "descripcion": "El paso de hidratación del cronograma capilar. Devuelve agua y elasticidad al pelo que se siente áspero o sin vida.",
-    "modoDeUso": "Una o dos veces por semana: aplica mechón a mechón sobre pelo limpio y húmedo, deja actuar 10–15 minutos y enjuaga."
+    "id": "color-shield-shampoo-300ml-10-1-fl-oz",
+    "nombre": "Color Shield Shampoo",
+    "tamano": "300ML / 10.1 FL.OZ",
+    "linea": "Color Shield",
+    "categoria": "champu",
+    "etapa": [
+      "hidratacion",
+      "nutricion"
+    ],
+    "tags": [
+      "proteccion-color"
+    ],
+    "aptoPara": {
+      "quimica": [
+        "tinte",
+        "decoloracion"
+      ]
+    },
+    "precio": 35.0,
+    "stock": 1,
+    "imagen": "/productos/color-shield-shampoo-300ml-10-1-fl-oz.webp",
+    "descripcion": "Escudo del color: limpieza sin arrastre de pigmento y sellado que alarga la vida del tinte.",
+    "modoDeUso": "Aplica sobre el cabello mojado, masajea el cuero cabelludo con las yemas y enjuaga bien."
   },
   {
-    "id": "trust-hid-leavein",
-    "nombre": "Leave-in Hidratación Profunda",
-    "linea": "Hidratación Profunda",
+    "id": "color-shield-leave-in-200ml-6-7-fl-oz",
+    "nombre": "Color Shield Leave-in",
+    "tamano": "200ML / 6.7 FL.OZ",
+    "linea": "Color Shield",
     "categoria": "leave-in",
-    "etapa": ["hidratacion"],
-    "tags": ["hidratante", "sin-enjuague"],
-    "precio": 0,
-    "stock": 0,
-    "imagen": "/productos/trust-hid-leavein.jpg",
-    "descripcion": "Hidratación que se queda contigo todo el día. Define, protege del ambiente y facilita el peinado.",
+    "etapa": [
+      "hidratacion",
+      "nutricion"
+    ],
+    "tags": [
+      "proteccion-color"
+    ],
+    "aptoPara": {
+      "quimica": [
+        "tinte",
+        "decoloracion"
+      ]
+    },
+    "precio": 44.0,
+    "stock": 1,
+    "imagen": "/productos/color-shield-leave-in-200ml-6-7-fl-oz.webp",
+    "descripcion": "Escudo del color: limpieza sin arrastre de pigmento y sellado que alarga la vida del tinte.",
     "modoDeUso": "Sobre pelo húmedo o seco, reparte una pequeña cantidad de medios a puntas. No se enjuaga."
   },
   {
-    "id": "trust-nut-champu",
-    "nombre": "Champú Nutrición Anti-Frizz",
-    "linea": "Nutrición Anti-Frizz",
-    "categoria": "champu",
-    "etapa": ["nutricion"],
-    "tags": ["anti-frizz", "nutritivo", "clima-humedo"],
-    "aptoPara": { "porosidad": ["media", "alta"] },
-    "precio": 0,
-    "stock": 0,
-    "imagen": "/productos/trust-nut-champu.jpg",
-    "descripcion": "Limpieza cremosa con aceites que disciplinan el frizz desde el primer paso. Pensado para climas húmedos como el sur de Florida.",
-    "modoDeUso": "Aplica sobre el cabello mojado, masajea y enjuaga. Combínalo con su máscara para un efecto anti-frizz duradero."
-  },
-  {
-    "id": "trust-nut-acondicionador",
-    "nombre": "Acondicionador Nutrición Anti-Frizz",
-    "linea": "Nutrición Anti-Frizz",
+    "id": "curly-conditioner",
+    "nombre": "Curly Conditioner",
+    "tamano": "300 ML/10.14 FL.OZ",
+    "linea": "Curly",
     "categoria": "acondicionador",
-    "etapa": ["nutricion"],
-    "tags": ["anti-frizz", "nutritivo"],
-    "precio": 0,
-    "stock": 0,
-    "imagen": "/productos/trust-nut-acondicionador.jpg",
-    "descripcion": "Nutre la fibra y cierra la cutícula para que la humedad del ambiente no despeine tu día.",
-    "modoDeUso": "Después del champú, de medios a puntas, 2–3 minutos y enjuaga."
+    "etapa": [
+      "nutricion"
+    ],
+    "tags": [
+      "rizos",
+      "anti-frizz"
+    ],
+    "aptoPara": {
+      "porosidad": [
+        "media",
+        "alta"
+      ]
+    },
+    "precio": 36.0,
+    "stock": 1,
+    "imagen": "/productos/curly-conditioner.webp",
+    "descripcion": "Para rizos y ondas: definición, hidratación y cero encrespamiento.",
+    "modoDeUso": "Tras el champú, aplica de medios a puntas, deja actuar 2 minutos y enjuaga con agua fría."
   },
   {
-    "id": "trust-nut-mascara",
-    "nombre": "Máscara Nutrición Anti-Frizz",
-    "linea": "Nutrición Anti-Frizz",
-    "categoria": "mascara",
-    "etapa": ["nutricion"],
-    "tags": ["anti-frizz", "nutritivo", "cronograma"],
-    "aptoPara": { "porosidad": ["media", "alta"] },
-    "precio": 0,
-    "stock": 0,
-    "imagen": "/productos/trust-nut-mascara.jpg",
-    "descripcion": "El paso de nutrición del cronograma: aceites y mantecas que reponen lípidos, dan brillo y mantienen el frizz a raya.",
-    "modoDeUso": "Una vez por semana (o alternada con tu máscara de hidratación): 10–15 minutos sobre pelo limpio y húmedo, y enjuaga."
+    "id": "curly-twist",
+    "nombre": "Curly Twist",
+    "tamano": "650 ML/21.98 FL.OZ",
+    "linea": "Curly",
+    "categoria": "booster",
+    "etapa": [
+      "nutricion"
+    ],
+    "tags": [
+      "rizos",
+      "anti-frizz"
+    ],
+    "aptoPara": {
+      "porosidad": [
+        "media",
+        "alta"
+      ]
+    },
+    "precio": 70.0,
+    "stock": 1,
+    "imagen": "/productos/curly-twist.webp",
+    "descripcion": "Para rizos y ondas: definición, hidratación y cero encrespamiento.",
+    "modoDeUso": "Úsalo como refuerzo de tu rutina siguiendo la dosis del envase; poco producto bien repartido rinde más."
   },
   {
-    "id": "trust-nut-leavein",
-    "nombre": "Leave-in Nutrición Anti-Frizz",
-    "linea": "Nutrición Anti-Frizz",
+    "id": "curly-shampoo",
+    "nombre": "Curly Shampoo",
+    "tamano": "300 ML/10.14 FL.OZ",
+    "linea": "Curly",
+    "categoria": "champu",
+    "etapa": [
+      "nutricion"
+    ],
+    "tags": [
+      "rizos",
+      "anti-frizz"
+    ],
+    "aptoPara": {
+      "porosidad": [
+        "media",
+        "alta"
+      ]
+    },
+    "precio": 35.0,
+    "stock": 1,
+    "imagen": "/productos/curly-shampoo.webp",
+    "descripcion": "Para rizos y ondas: definición, hidratación y cero encrespamiento.",
+    "modoDeUso": "Aplica sobre el cabello mojado, masajea el cuero cabelludo con las yemas y enjuaga bien."
+  },
+  {
+    "id": "curly-fix",
+    "nombre": "Curly Fix",
+    "tamano": "250 ML/8.45 FL.OZ",
+    "linea": "Curly",
     "categoria": "leave-in",
-    "etapa": ["nutricion"],
-    "tags": ["anti-frizz", "sin-enjuague", "clima-humedo"],
-    "precio": 0,
-    "stock": 0,
-    "imagen": "/productos/trust-nut-leavein.jpg",
-    "descripcion": "Escudo diario contra la humedad: pelo alineado, con movimiento y sin escarcha.",
-    "modoDeUso": "Reparte poca cantidad sobre pelo húmedo antes de peinar. Ideal antes de salir a la calle."
+    "etapa": [
+      "nutricion"
+    ],
+    "tags": [
+      "rizos",
+      "anti-frizz"
+    ],
+    "aptoPara": {
+      "porosidad": [
+        "media",
+        "alta"
+      ]
+    },
+    "precio": 40.0,
+    "stock": 1,
+    "imagen": "/productos/curly-fix.webp",
+    "descripcion": "Para rizos y ondas: definición, hidratación y cero encrespamiento.",
+    "modoDeUso": "Sobre pelo húmedo o seco, reparte una pequeña cantidad de medios a puntas. No se enjuaga."
   },
   {
-    "id": "trust-rec-champu",
-    "nombre": "Champú Reconstrucción Total",
-    "linea": "Reconstrucción Total",
-    "categoria": "champu",
-    "etapa": ["reconstruccion"],
-    "tags": ["post-quimica", "fortalecedor"],
-    "aptoPara": { "porosidad": ["alta"], "quimica": ["decoloracion", "tinte", "alisado", "permanente"] },
-    "precio": 0,
-    "stock": 0,
-    "imagen": "/productos/trust-rec-champu.jpg",
-    "descripcion": "Limpieza suave con aminoácidos para pelo debilitado por química o calor. Primer paso para recuperar la fuerza.",
-    "modoDeUso": "Aplica, masajea con suavidad y enjuaga. Úsalo mientras tu pelo esté en fase de recuperación."
+    "id": "curly-light",
+    "nombre": "Curly Light",
+    "tamano": "250 ML/8.45 FL.OZ",
+    "linea": "Curly",
+    "categoria": "leave-in",
+    "etapa": [
+      "nutricion"
+    ],
+    "tags": [
+      "rizos",
+      "anti-frizz"
+    ],
+    "aptoPara": {
+      "porosidad": [
+        "media",
+        "alta"
+      ]
+    },
+    "precio": 40.0,
+    "stock": 1,
+    "imagen": "/productos/curly-light.webp",
+    "descripcion": "Para rizos y ondas: definición, hidratación y cero encrespamiento.",
+    "modoDeUso": "Sobre pelo húmedo o seco, reparte una pequeña cantidad de medios a puntas. No se enjuaga."
   },
   {
-    "id": "trust-rec-mascara",
-    "nombre": "Máscara Reconstrucción Total",
-    "linea": "Reconstrucción Total",
-    "categoria": "mascara",
-    "etapa": ["reconstruccion"],
-    "tags": ["post-quimica", "cronograma", "proteina"],
-    "aptoPara": { "porosidad": ["alta"], "quimica": ["decoloracion", "tinte", "alisado", "permanente"] },
-    "precio": 0,
-    "stock": 0,
-    "imagen": "/productos/trust-rec-mascara.jpg",
-    "descripcion": "El paso de reconstrucción del cronograma: proteínas que rellenan la fibra y devuelven elasticidad al pelo dañado.",
-    "modoDeUso": "Cada 15 días (o semanal si hay decoloración): 15 minutos sobre pelo limpio y húmedo. No exceder la frecuencia."
+    "id": "deluxe-prime-conditioner-300ml-10-1-fl-oz",
+    "nombre": "Deluxe Prime Conditioner",
+    "tamano": "300ML/10.1 FL.OZ",
+    "linea": "Deluxe Prime",
+    "categoria": "acondicionador",
+    "etapa": [
+      "reconstruccion"
+    ],
+    "tags": [
+      "post-quimica",
+      "proteina"
+    ],
+    "aptoPara": {
+      "porosidad": [
+        "alta"
+      ],
+      "quimica": [
+        "decoloracion",
+        "tinte",
+        "alisado",
+        "permanente"
+      ]
+    },
+    "precio": 36.0,
+    "stock": 1,
+    "imagen": "/productos/deluxe-prime-conditioner-300ml-10-1-fl-oz.webp",
+    "descripcion": "El icono reconstructor de Truss: devuelve cuerpo, fuerza y elasticidad al pelo dañado.",
+    "modoDeUso": "Tras el champú, aplica de medios a puntas, deja actuar 2 minutos y enjuaga con agua fría."
   },
   {
-    "id": "trust-rec-ampolla",
-    "nombre": "Ampolla Choque Reconstructor",
-    "linea": "Reconstrucción Total",
+    "id": "deluxe-prime-champagne-blond",
+    "nombre": "Deluxe Prime Champagne Blond",
+    "tamano": "260 ML/8.79 FL.OZ",
+    "linea": "Deluxe Prime",
     "categoria": "booster",
-    "etapa": ["reconstruccion"],
-    "tags": ["post-quimica", "choque", "proteina"],
-    "aptoPara": { "porosidad": ["alta"], "quimica": ["decoloracion"] },
-    "precio": 0,
-    "stock": 0,
-    "imagen": "/productos/trust-rec-ampolla.jpg",
-    "descripcion": "Tratamiento intensivo de una dosis para momentos críticos: post-decoloración o pelo que se quiebra.",
-    "modoDeUso": "Sobre pelo limpio y húmedo, deja actuar 10 minutos y enjuaga. Máximo una vez por semana."
+    "etapa": [
+      "reconstruccion"
+    ],
+    "tags": [
+      "post-quimica",
+      "proteina"
+    ],
+    "aptoPara": {
+      "porosidad": [
+        "alta"
+      ],
+      "quimica": [
+        "decoloracion",
+        "tinte",
+        "alisado",
+        "permanente"
+      ]
+    },
+    "precio": 43.0,
+    "stock": 1,
+    "imagen": "/productos/deluxe-prime-champagne-blond.webp",
+    "descripcion": "El icono reconstructor de Truss: devuelve cuerpo, fuerza y elasticidad al pelo dañado.",
+    "modoDeUso": "Úsalo como refuerzo de tu rutina siguiendo la dosis del envase; poco producto bien repartido rinde más."
   },
   {
-    "id": "trust-color-champu",
-    "nombre": "Champú Protección del Color",
-    "linea": "Protección del Color",
-    "categoria": "champu",
-    "etapa": ["hidratacion", "nutricion"],
-    "tags": ["proteccion-color", "post-quimica"],
-    "aptoPara": { "quimica": ["tinte", "decoloracion"] },
-    "precio": 0,
-    "stock": 0,
-    "imagen": "/productos/trust-color-champu.jpg",
-    "descripcion": "Limpieza sin sulfatos agresivos que alarga la vida de tu color. El tinte se queda en el pelo, no en el desagüe.",
-    "modoDeUso": "Úsalo en cada lavado desde el día del color. Agua tibia o fría: el calor abre la cutícula y escapa el pigmento."
-  },
-  {
-    "id": "trust-color-mascara",
-    "nombre": "Máscara Protección del Color",
-    "linea": "Protección del Color",
-    "categoria": "mascara",
-    "etapa": ["hidratacion", "nutricion"],
-    "tags": ["proteccion-color", "cronograma"],
-    "aptoPara": { "quimica": ["tinte", "decoloracion"] },
-    "precio": 0,
-    "stock": 0,
-    "imagen": "/productos/trust-color-mascara.jpg",
-    "descripcion": "Nutrición pensada para pelo teñido: sella el pigmento, aporta brillo y mantiene el tono vivo entre retoques.",
-    "modoDeUso": "Una vez por semana, 10 minutos sobre pelo limpio y húmedo, y enjuaga con agua fría."
-  },
-  {
-    "id": "trust-fuerza-champu",
-    "nombre": "Champú Fuerza & Crecimiento",
-    "linea": "Fuerza & Crecimiento",
-    "categoria": "champu",
-    "etapa": ["hidratacion"],
-    "tags": ["fortalecedor", "crecimiento"],
-    "aptoPara": { "quimica": ["ninguna"] },
-    "precio": 0,
-    "stock": 0,
-    "imagen": "/productos/trust-fuerza-champu.jpg",
-    "descripcion": "Estimula el cuero cabelludo y refuerza la raíz. Para pelo sano que quiere más largo y más cuerpo.",
-    "modoDeUso": "Masajea el cuero cabelludo 1–2 minutos antes de enjuagar para activar la microcirculación."
-  },
-  {
-    "id": "trust-fuerza-tonico",
-    "nombre": "Tónico Capilar Fortalecedor",
-    "linea": "Fuerza & Crecimiento",
+    "id": "deluxe-prime-reconstructive-oil-30ml-1-0-fl-oz",
+    "nombre": "Deluxe Prime Reconstructive Oil",
+    "tamano": "30ML/1.0 FL.OZ",
+    "linea": "Deluxe Prime",
     "categoria": "booster",
-    "etapa": ["hidratacion"],
-    "tags": ["fortalecedor", "crecimiento", "sin-enjuague"],
-    "aptoPara": { "quimica": ["ninguna"] },
-    "precio": 0,
-    "stock": 0,
-    "imagen": "/productos/trust-fuerza-tonico.jpg",
-    "descripcion": "Gotas concentradas para la raíz: refuerzan el folículo y acompañan el crecimiento día a día.",
-    "modoDeUso": "Aplica directamente en el cuero cabelludo con el pelo seco o húmedo y masajea. No se enjuaga."
+    "etapa": [
+      "reconstruccion"
+    ],
+    "tags": [
+      "post-quimica",
+      "proteina"
+    ],
+    "aptoPara": {
+      "porosidad": [
+        "alta"
+      ],
+      "quimica": [
+        "decoloracion",
+        "tinte",
+        "alisado",
+        "permanente"
+      ]
+    },
+    "precio": 23.0,
+    "stock": 1,
+    "imagen": "/productos/deluxe-prime-reconstructive-oil-30ml-1-0-fl-oz.webp",
+    "descripcion": "El icono reconstructor de Truss: devuelve cuerpo, fuerza y elasticidad al pelo dañado.",
+    "modoDeUso": "Úsalo como refuerzo de tu rutina siguiendo la dosis del envase; poco producto bien repartido rinde más."
   },
   {
-    "id": "trust-eq-champu",
-    "nombre": "Champú Equilibrante Raíz Fresca",
-    "linea": "Equilibrio",
+    "id": "deluxe-prime-shampoo-300ml-10-1-fl-oz",
+    "nombre": "Deluxe Prime Shampoo",
+    "tamano": "300ML/10.1 FL.OZ",
+    "linea": "Deluxe Prime",
     "categoria": "champu",
-    "etapa": ["hidratacion"],
-    "tags": ["equilibrante", "cuero-graso", "uso-frecuente"],
-    "precio": 0,
-    "stock": 0,
-    "imagen": "/productos/trust-eq-champu.jpg",
-    "descripcion": "Regula el exceso de grasa en la raíz sin resecar los largos. Frescura que dura hasta el siguiente lavado.",
-    "modoDeUso": "Concentra el producto en el cuero cabelludo y deja que la espuma limpie los largos al enjuagar. Apto para uso diario."
+    "etapa": [
+      "reconstruccion"
+    ],
+    "tags": [
+      "post-quimica",
+      "proteina"
+    ],
+    "aptoPara": {
+      "porosidad": [
+        "alta"
+      ],
+      "quimica": [
+        "decoloracion",
+        "tinte",
+        "alisado",
+        "permanente"
+      ]
+    },
+    "precio": 35.0,
+    "stock": 1,
+    "imagen": "/productos/deluxe-prime-shampoo-300ml-10-1-fl-oz.webp",
+    "descripcion": "El icono reconstructor de Truss: devuelve cuerpo, fuerza y elasticidad al pelo dañado.",
+    "modoDeUso": "Aplica sobre el cabello mojado, masajea el cuero cabelludo con las yemas y enjuaga bien."
   },
   {
-    "id": "trust-termico",
-    "nombre": "Protector Térmico Multiusos",
+    "id": "deluxe-prime-mask",
+    "nombre": "Deluxe Prime Mask",
+    "tamano": "180 G/6.33 OZ",
+    "linea": "Deluxe Prime",
+    "categoria": "mascara",
+    "etapa": [
+      "reconstruccion"
+    ],
+    "tags": [
+      "post-quimica",
+      "proteina"
+    ],
+    "aptoPara": {
+      "porosidad": [
+        "alta"
+      ],
+      "quimica": [
+        "decoloracion",
+        "tinte",
+        "alisado",
+        "permanente"
+      ]
+    },
+    "precio": 43.0,
+    "stock": 1,
+    "imagen": "/productos/deluxe-prime-mask.webp",
+    "descripcion": "El icono reconstructor de Truss: devuelve cuerpo, fuerza y elasticidad al pelo dañado.",
+    "modoDeUso": "Una o dos veces por semana: aplica mechón a mechón sobre pelo limpio y húmedo, deja actuar 10–15 minutos y enjuaga."
+  },
+  {
+    "id": "deluxe-prime-plus-conditioner",
+    "nombre": "Deluxe Prime Plus Conditioner",
+    "tamano": "300 ML/10.55 OZ",
+    "linea": "Deluxe Prime Plus",
+    "categoria": "acondicionador",
+    "etapa": [
+      "reconstruccion"
+    ],
+    "tags": [
+      "post-quimica",
+      "proteina"
+    ],
+    "aptoPara": {
+      "porosidad": [
+        "alta"
+      ],
+      "quimica": [
+        "decoloracion",
+        "tinte",
+        "alisado",
+        "permanente"
+      ]
+    },
+    "precio": 36.0,
+    "stock": 1,
+    "imagen": "/productos/deluxe-prime-plus-conditioner.webp",
+    "descripcion": "Reconstrucción premium potenciada para fibra muy castigada por química o calor.",
+    "modoDeUso": "Tras el champú, aplica de medios a puntas, deja actuar 2 minutos y enjuaga con agua fría."
+  },
+  {
+    "id": "deluxe-prime-plus",
+    "nombre": "Deluxe Prime Plus +",
+    "tamano": "260 ML/9.15 OZ",
+    "linea": "Deluxe Prime Plus",
+    "categoria": "booster",
+    "etapa": [
+      "reconstruccion"
+    ],
+    "tags": [
+      "post-quimica",
+      "proteina"
+    ],
+    "aptoPara": {
+      "porosidad": [
+        "alta"
+      ],
+      "quimica": [
+        "decoloracion",
+        "tinte",
+        "alisado",
+        "permanente"
+      ]
+    },
+    "precio": 43.0,
+    "stock": 1,
+    "imagen": "/productos/deluxe-prime-plus.webp",
+    "descripcion": "Reconstrucción premium potenciada para fibra muy castigada por química o calor.",
+    "modoDeUso": "Úsalo como refuerzo de tu rutina siguiendo la dosis del envase; poco producto bien repartido rinde más."
+  },
+  {
+    "id": "deluxe-prime-plus-shampoo",
+    "nombre": "Deluxe Prime Plus Shampoo",
+    "tamano": "300 ML/10.55 OZ",
+    "linea": "Deluxe Prime Plus",
+    "categoria": "champu",
+    "etapa": [
+      "reconstruccion"
+    ],
+    "tags": [
+      "post-quimica",
+      "proteina"
+    ],
+    "aptoPara": {
+      "porosidad": [
+        "alta"
+      ],
+      "quimica": [
+        "decoloracion",
+        "tinte",
+        "alisado",
+        "permanente"
+      ]
+    },
+    "precio": 35.0,
+    "stock": 1,
+    "imagen": "/productos/deluxe-prime-plus-shampoo.webp",
+    "descripcion": "Reconstrucción premium potenciada para fibra muy castigada por química o calor.",
+    "modoDeUso": "Aplica sobre el cabello mojado, masajea el cuero cabelludo con las yemas y enjuaga bien."
+  },
+  {
+    "id": "equilibrium-conditioner",
+    "nombre": "Equilibrium Conditioner",
+    "tamano": "300 ML/10.14 FL.OZ",
+    "linea": "Equilibrium",
+    "categoria": "acondicionador",
+    "etapa": [
+      "hidratacion"
+    ],
+    "tags": [
+      "equilibrante",
+      "cuero-graso",
+      "uso-frecuente"
+    ],
+    "aptoPara": {},
+    "precio": 36.0,
+    "stock": 1,
+    "imagen": "/productos/equilibrium-conditioner.webp",
+    "descripcion": "Equilibrio del cuero cabelludo: raíz fresca por más tiempo sin resecar los largos.",
+    "modoDeUso": "Tras el champú, aplica de medios a puntas, deja actuar 2 minutos y enjuaga con agua fría."
+  },
+  {
+    "id": "equilibrium-shampoo",
+    "nombre": "Equilibrium Shampoo",
+    "tamano": "300 ML/10.14 FL.OZ",
+    "linea": "Equilibrium",
+    "categoria": "champu",
+    "etapa": [
+      "hidratacion"
+    ],
+    "tags": [
+      "equilibrante",
+      "cuero-graso",
+      "uso-frecuente"
+    ],
+    "aptoPara": {},
+    "precio": 35.0,
+    "stock": 1,
+    "imagen": "/productos/equilibrium-shampoo.webp",
+    "descripcion": "Equilibrio del cuero cabelludo: raíz fresca por más tiempo sin resecar los largos.",
+    "modoDeUso": "Aplica sobre el cabello mojado, masajea el cuero cabelludo con las yemas y enjuaga bien."
+  },
+  {
+    "id": "acqua-gel",
+    "nombre": "Acqua Gel",
+    "tamano": "180GR./6.35 FL.OZ",
     "linea": "Esenciales",
     "categoria": "booster",
-    "etapa": ["hidratacion", "nutricion", "reconstruccion"],
-    "tags": ["termico", "sin-enjuague", "obligatorio-calor"],
-    "precio": 0,
-    "stock": 0,
-    "imagen": "/productos/trust-termico.jpg",
-    "descripcion": "Si usas secador o plancha, esto no es opcional: escudo hasta 230 °C que evita que el calor se lleve tu tratamiento.",
-    "modoDeUso": "Pulveriza sobre el pelo húmedo o seco antes de cualquier herramienta de calor, mechón a mechón."
+    "etapa": [
+      "nutricion"
+    ],
+    "tags": [
+      "fijacion",
+      "sin-enjuague"
+    ],
+    "aptoPara": {},
+    "precio": 20.0,
+    "stock": 1,
+    "imagen": "/productos/acqua-gel.webp",
+    "descripcion": "Gel de agua: definición fresca sin residuo.",
+    "modoDeUso": "Úsalo como refuerzo de tu rutina siguiendo la dosis del envase; poco producto bien repartido rinde más."
+  },
+  {
+    "id": "beach-waves",
+    "nombre": "Beach Waves",
+    "tamano": "260 ML/8.79 FL.OZ",
+    "linea": "Esenciales",
+    "categoria": "booster",
+    "etapa": [
+      "nutricion"
+    ],
+    "tags": [
+      "ondas",
+      "sin-enjuague"
+    ],
+    "aptoPara": {},
+    "precio": 40.0,
+    "stock": 1,
+    "imagen": "/productos/beach-waves.webp",
+    "descripcion": "Ondas de playa al instante, con textura y movimiento.",
+    "modoDeUso": "Úsalo como refuerzo de tu rutina siguiendo la dosis del envase; poco producto bien repartido rinde más."
+  },
+  {
+    "id": "fluid-fix",
+    "nombre": "Fluid Fix",
+    "tamano": "250 ML/8.45 FL.OZ",
+    "linea": "Esenciales",
+    "categoria": "booster",
+    "etapa": [
+      "nutricion"
+    ],
+    "tags": [
+      "sin-enjuague",
+      "fijacion"
+    ],
+    "aptoPara": {},
+    "precio": 40.0,
+    "stock": 1,
+    "imagen": "/productos/fluid-fix.webp",
+    "descripcion": "Fijación fluida: control y forma sin efecto acartonado.",
+    "modoDeUso": "Úsalo como refuerzo de tu rutina siguiendo la dosis del envase; poco producto bien repartido rinde más."
+  },
+  {
+    "id": "gloss-shine",
+    "nombre": "Gloss Shine",
+    "tamano": "90 ML/3.04 FL.OZ",
+    "linea": "Esenciales",
+    "categoria": "booster",
+    "etapa": [
+      "nutricion"
+    ],
+    "tags": [
+      "brillo",
+      "sin-enjuague"
+    ],
+    "aptoPara": {},
+    "precio": 40.0,
+    "stock": 1,
+    "imagen": "/productos/gloss-shine.webp",
+    "descripcion": "Brillo espejo de acabado profesional.",
+    "modoDeUso": "Úsalo como refuerzo de tu rutina siguiendo la dosis del envase; poco producto bien repartido rinde más."
+  },
+  {
+    "id": "hair-protector",
+    "nombre": "Hair Protector",
+    "tamano": "250 ML/8.45 FL.OZ",
+    "linea": "Esenciales",
+    "categoria": "booster",
+    "etapa": [
+      "hidratacion",
+      "nutricion",
+      "reconstruccion"
+    ],
+    "tags": [
+      "termico",
+      "sin-enjuague",
+      "obligatorio-calor"
+    ],
+    "aptoPara": {},
+    "precio": 40.0,
+    "stock": 1,
+    "imagen": "/productos/hair-protector.webp",
+    "descripcion": "Si usas secador o plancha, esto no es opcional: escudo térmico que protege tu tratamiento.",
+    "modoDeUso": "Úsalo como refuerzo de tu rutina siguiendo la dosis del envase; poco producto bien repartido rinde más."
+  },
+  {
+    "id": "body-volume",
+    "nombre": "Body Volume",
+    "tamano": "250 ML/8.45 FL.OZ",
+    "linea": "Esenciales",
+    "categoria": "leave-in",
+    "etapa": [
+      "hidratacion"
+    ],
+    "tags": [
+      "volumen",
+      "sin-enjuague"
+    ],
+    "aptoPara": {},
+    "precio": 40.0,
+    "stock": 1,
+    "imagen": "/productos/body-volume.webp",
+    "descripcion": "Volumen con cuerpo desde la raíz, sin rigidez.",
+    "modoDeUso": "Sobre pelo húmedo o seco, reparte una pequeña cantidad de medios a puntas. No se enjuaga."
+  },
+  {
+    "id": "brush",
+    "nombre": "Brush Keratin",
+    "tamano": "250 ML/8.45 FL.OZ",
+    "linea": "Esenciales",
+    "categoria": "leave-in",
+    "etapa": [
+      "nutricion"
+    ],
+    "tags": [
+      "sin-enjuague",
+      "alisado"
+    ],
+    "aptoPara": {},
+    "precio": 40.0,
+    "stock": 1,
+    "imagen": "/productos/brush.webp",
+    "descripcion": "Keratina de brushing: alinea, protege del calor y acelera el secado.",
+    "modoDeUso": "Sobre pelo húmedo o seco, reparte una pequeña cantidad de medios a puntas. No se enjuaga."
+  },
+  {
+    "id": "day-by-day",
+    "nombre": "Day By Day",
+    "tamano": "250 ML/8.45 FL.OZ",
+    "linea": "Esenciales",
+    "categoria": "leave-in",
+    "etapa": [
+      "hidratacion"
+    ],
+    "tags": [
+      "sin-enjuague",
+      "uso-frecuente"
+    ],
+    "aptoPara": {},
+    "precio": 40.0,
+    "stock": 1,
+    "imagen": "/productos/day-by-day.webp",
+    "descripcion": "El leave-in de diario: desenreda, protege y deja el pelo listo para peinar.",
+    "modoDeUso": "Sobre pelo húmedo o seco, reparte una pequeña cantidad de medios a puntas. No se enjuaga."
+  },
+  {
+    "id": "frizz-zero-conditioner",
+    "nombre": "Frizz Zero Conditioner",
+    "tamano": "300 ML/10.55 OZ",
+    "linea": "Frizz Zero",
+    "categoria": "acondicionador",
+    "etapa": [
+      "nutricion"
+    ],
+    "tags": [
+      "anti-frizz",
+      "clima-humedo"
+    ],
+    "aptoPara": {
+      "porosidad": [
+        "media",
+        "alta"
+      ]
+    },
+    "precio": 36.0,
+    "stock": 1,
+    "imagen": "/productos/frizz-zero-conditioner.webp",
+    "descripcion": "La línea anti-frizz: disciplina el pelo en clima húmedo sin restarle movimiento.",
+    "modoDeUso": "Tras el champú, aplica de medios a puntas, deja actuar 2 minutos y enjuaga con agua fría."
+  },
+  {
+    "id": "frizz-zero",
+    "nombre": "Frizz Zero",
+    "tamano": "260ML/9.15 OZ",
+    "linea": "Frizz Zero",
+    "categoria": "booster",
+    "etapa": [
+      "nutricion"
+    ],
+    "tags": [
+      "anti-frizz",
+      "clima-humedo"
+    ],
+    "aptoPara": {
+      "porosidad": [
+        "media",
+        "alta"
+      ]
+    },
+    "precio": 45.0,
+    "stock": 1,
+    "imagen": "/productos/frizz-zero.webp",
+    "descripcion": "La línea anti-frizz: disciplina el pelo en clima húmedo sin restarle movimiento.",
+    "modoDeUso": "Úsalo como refuerzo de tu rutina siguiendo la dosis del envase; poco producto bien repartido rinde más."
+  },
+  {
+    "id": "frizz-zero-shampoo",
+    "nombre": "Frizz Zero Shampoo",
+    "tamano": "300 ML/10.55 OZ",
+    "linea": "Frizz Zero",
+    "categoria": "champu",
+    "etapa": [
+      "nutricion"
+    ],
+    "tags": [
+      "anti-frizz",
+      "clima-humedo"
+    ],
+    "aptoPara": {
+      "porosidad": [
+        "media",
+        "alta"
+      ]
+    },
+    "precio": 35.0,
+    "stock": 1,
+    "imagen": "/productos/frizz-zero-shampoo.webp",
+    "descripcion": "La línea anti-frizz: disciplina el pelo en clima húmedo sin restarle movimiento.",
+    "modoDeUso": "Aplica sobre el cabello mojado, masajea el cuero cabelludo con las yemas y enjuaga bien."
+  },
+  {
+    "id": "instant-repair",
+    "nombre": "Instant Repair",
+    "tamano": "45ML/1.58 FL.OZ",
+    "linea": "Instant Repair",
+    "categoria": "booster",
+    "etapa": [
+      "reconstruccion"
+    ],
+    "tags": [
+      "choque",
+      "post-quimica",
+      "proteina"
+    ],
+    "aptoPara": {
+      "porosidad": [
+        "alta"
+      ]
+    },
+    "precio": 40.0,
+    "stock": 1,
+    "imagen": "/productos/instant-repair.webp",
+    "descripcion": "Reparación instantánea para momentos críticos de rotura.",
+    "modoDeUso": "Úsalo como refuerzo de tu rutina siguiendo la dosis del envase; poco producto bien repartido rinde más."
+  },
+  {
+    "id": "miracle-conditioner",
+    "nombre": "Miracle Conditioner",
+    "tamano": "300 ML/10.14 FL.OZ",
+    "linea": "Miracle",
+    "categoria": "acondicionador",
+    "etapa": [
+      "hidratacion",
+      "nutricion"
+    ],
+    "tags": [
+      "hidratante",
+      "multibeneficio"
+    ],
+    "aptoPara": {},
+    "precio": 36.0,
+    "stock": 1,
+    "imagen": "/productos/miracle-conditioner.webp",
+    "descripcion": "El multibeneficio de Truss: hidrata, nutre y da brillo en un solo gesto.",
+    "modoDeUso": "Tras el champú, aplica de medios a puntas, deja actuar 2 minutos y enjuaga con agua fría."
+  },
+  {
+    "id": "miracle-shampoo",
+    "nombre": "Miracle Shampoo",
+    "tamano": "300 ML/10.14 FL.OZ",
+    "linea": "Miracle",
+    "categoria": "champu",
+    "etapa": [
+      "hidratacion",
+      "nutricion"
+    ],
+    "tags": [
+      "hidratante",
+      "multibeneficio"
+    ],
+    "aptoPara": {},
+    "precio": 35.0,
+    "stock": 1,
+    "imagen": "/productos/miracle-shampoo.webp",
+    "descripcion": "El multibeneficio de Truss: hidrata, nutre y da brillo en un solo gesto.",
+    "modoDeUso": "Aplica sobre el cabello mojado, masajea el cuero cabelludo con las yemas y enjuaga bien."
+  },
+  {
+    "id": "miracle-mask",
+    "nombre": "Miracle Mask",
+    "tamano": "180 G/6.35 FL.OZ",
+    "linea": "Miracle",
+    "categoria": "mascara",
+    "etapa": [
+      "hidratacion",
+      "nutricion"
+    ],
+    "tags": [
+      "hidratante",
+      "multibeneficio"
+    ],
+    "aptoPara": {},
+    "precio": 43.0,
+    "stock": 1,
+    "imagen": "/productos/miracle-mask.webp",
+    "descripcion": "El multibeneficio de Truss: hidrata, nutre y da brillo en un solo gesto.",
+    "modoDeUso": "Una o dos veces por semana: aplica mechón a mechón sobre pelo limpio y húmedo, deja actuar 10–15 minutos y enjuaga."
+  },
+  {
+    "id": "night-spa",
+    "nombre": "Night Spa",
+    "tamano": "250 ML/8.45 FL.OZ",
+    "linea": "Night Spa",
+    "categoria": "booster",
+    "etapa": [
+      "hidratacion",
+      "nutricion"
+    ],
+    "tags": [
+      "nocturno",
+      "sin-enjuague"
+    ],
+    "aptoPara": {},
+    "precio": 52.0,
+    "stock": 1,
+    "imagen": "/productos/night-spa.webp",
+    "descripcion": "Sérum de noche: trabaja mientras duermes y amaneces con el pelo en su mejor versión.",
+    "modoDeUso": "Úsalo como refuerzo de tu rutina siguiendo la dosis del envase; poco producto bien repartido rinde más."
+  },
+  {
+    "id": "nutri-infusion-conditioner-300-ml-10-14-fl-oz",
+    "nombre": "Nutri Infusion Conditioner",
+    "tamano": "300 ML/10.14 FL.OZ",
+    "linea": "Nutri Infusion",
+    "categoria": "acondicionador",
+    "etapa": [
+      "nutricion"
+    ],
+    "tags": [
+      "nutritivo",
+      "anti-frizz"
+    ],
+    "aptoPara": {
+      "porosidad": [
+        "media",
+        "alta"
+      ]
+    },
+    "precio": 36.0,
+    "stock": 1,
+    "imagen": "/productos/nutri-infusion-conditioner-300-ml-10-14-fl-oz.webp",
+    "descripcion": "Nutrición con lípidos que repone lo que la humedad y el sol se llevan: brillo y frizz a raya.",
+    "modoDeUso": "Tras el champú, aplica de medios a puntas, deja actuar 2 minutos y enjuaga con agua fría."
+  },
+  {
+    "id": "nutri-infusion-oil-30ml",
+    "nombre": "Nutri Infusion Oil",
+    "tamano": "30ML",
+    "linea": "Nutri Infusion",
+    "categoria": "booster",
+    "etapa": [
+      "nutricion"
+    ],
+    "tags": [
+      "nutritivo",
+      "anti-frizz"
+    ],
+    "aptoPara": {
+      "porosidad": [
+        "media",
+        "alta"
+      ]
+    },
+    "precio": 23.0,
+    "stock": 1,
+    "imagen": "/productos/nutri-infusion-oil-30ml.webp",
+    "descripcion": "Nutrición con lípidos que repone lo que la humedad y el sol se llevan: brillo y frizz a raya.",
+    "modoDeUso": "Úsalo como refuerzo de tu rutina siguiendo la dosis del envase; poco producto bien repartido rinde más."
+  },
+  {
+    "id": "nutri-infusion-shampoo-300-ml-10-14-fl-oz",
+    "nombre": "Nutri Infusion Shampoo",
+    "tamano": "300 ML /10.14 FL.OZ",
+    "linea": "Nutri Infusion",
+    "categoria": "champu",
+    "etapa": [
+      "nutricion"
+    ],
+    "tags": [
+      "nutritivo",
+      "anti-frizz"
+    ],
+    "aptoPara": {
+      "porosidad": [
+        "media",
+        "alta"
+      ]
+    },
+    "precio": 35.0,
+    "stock": 1,
+    "imagen": "/productos/nutri-infusion-shampoo-300-ml-10-14-fl-oz.webp",
+    "descripcion": "Nutrición con lípidos que repone lo que la humedad y el sol se llevan: brillo y frizz a raya.",
+    "modoDeUso": "Aplica sobre el cabello mojado, masajea el cuero cabelludo con las yemas y enjuaga bien."
+  },
+  {
+    "id": "nutri-infusion-mask-180g-6-35-fl-oz",
+    "nombre": "Nutri Infusion Mask",
+    "tamano": "180G/6.35 FL.OZ",
+    "linea": "Nutri Infusion",
+    "categoria": "mascara",
+    "etapa": [
+      "nutricion"
+    ],
+    "tags": [
+      "nutritivo",
+      "anti-frizz"
+    ],
+    "aptoPara": {
+      "porosidad": [
+        "media",
+        "alta"
+      ]
+    },
+    "precio": 43.0,
+    "stock": 1,
+    "imagen": "/productos/nutri-infusion-mask-180g-6-35-fl-oz.webp",
+    "descripcion": "Nutrición con lípidos que repone lo que la humedad y el sol se llevan: brillo y frizz a raya.",
+    "modoDeUso": "Una o dos veces por semana: aplica mechón a mechón sobre pelo limpio y húmedo, deja actuar 10–15 minutos y enjuaga."
+  },
+  {
+    "id": "perfect-conditioner",
+    "nombre": "Perfect Conditioner",
+    "tamano": "300 ML/10.14 FL.OZ",
+    "linea": "Perfect",
+    "categoria": "acondicionador",
+    "etapa": [
+      "nutricion"
+    ],
+    "tags": [
+      "alisado",
+      "anti-frizz"
+    ],
+    "aptoPara": {
+      "quimica": [
+        "alisado"
+      ]
+    },
+    "precio": 36.0,
+    "stock": 1,
+    "imagen": "/productos/perfect-conditioner.webp",
+    "descripcion": "Liso pulido y disciplinado: alarga el efecto del alisado y aporta brillo espejo.",
+    "modoDeUso": "Tras el champú, aplica de medios a puntas, deja actuar 2 minutos y enjuaga con agua fría."
+  },
+  {
+    "id": "perfect-shampoo",
+    "nombre": "Perfect Shampoo",
+    "tamano": "300 ML/10.14 FL.OZ",
+    "linea": "Perfect",
+    "categoria": "champu",
+    "etapa": [
+      "nutricion"
+    ],
+    "tags": [
+      "alisado",
+      "anti-frizz"
+    ],
+    "aptoPara": {
+      "quimica": [
+        "alisado"
+      ]
+    },
+    "precio": 35.0,
+    "stock": 1,
+    "imagen": "/productos/perfect-shampoo.webp",
+    "descripcion": "Liso pulido y disciplinado: alarga el efecto del alisado y aporta brillo espejo.",
+    "modoDeUso": "Aplica sobre el cabello mojado, masajea el cuero cabelludo con las yemas y enjuaga bien."
+  },
+  {
+    "id": "perfect-mask",
+    "nombre": "Perfect Mask",
+    "tamano": "180G/6.35 FL.OZ",
+    "linea": "Perfect",
+    "categoria": "mascara",
+    "etapa": [
+      "nutricion"
+    ],
+    "tags": [
+      "alisado",
+      "anti-frizz"
+    ],
+    "aptoPara": {
+      "quimica": [
+        "alisado"
+      ]
+    },
+    "precio": 43.0,
+    "stock": 1,
+    "imagen": "/productos/perfect-mask.webp",
+    "descripcion": "Liso pulido y disciplinado: alarga el efecto del alisado y aporta brillo espejo.",
+    "modoDeUso": "Una o dos veces por semana: aplica mechón a mechón sobre pelo limpio y húmedo, deja actuar 10–15 minutos y enjuaga."
+  },
+  {
+    "id": "shock-repair-1-box-with-4-units",
+    "nombre": "Shock Repair Ampoules",
+    "tamano": "17 ML/0.59 OZ",
+    "linea": "Shock Repair",
+    "categoria": "booster",
+    "etapa": [
+      "reconstruccion"
+    ],
+    "tags": [
+      "choque",
+      "post-quimica",
+      "proteina"
+    ],
+    "aptoPara": {
+      "porosidad": [
+        "alta"
+      ],
+      "quimica": [
+        "decoloracion"
+      ]
+    },
+    "precio": 34.0,
+    "stock": 1,
+    "imagen": "/productos/shock-repair-1-box-with-4-units.webp",
+    "descripcion": "La ampolla de choque: reconstrucción intensiva en una dosis.",
+    "modoDeUso": "Úsalo como refuerzo de tu rutina siguiendo la dosis del envase; poco producto bien repartido rinde más."
+  },
+  {
+    "id": "specific-mask",
+    "nombre": "Specific Mask",
+    "tamano": "180 G/6.35 FL.OZ",
+    "linea": "Specific",
+    "categoria": "mascara",
+    "etapa": [
+      "hidratacion"
+    ],
+    "tags": [
+      "cuero-sensible",
+      "caspa"
+    ],
+    "aptoPara": {},
+    "precio": 43.0,
+    "stock": 1,
+    "imagen": "/productos/specific-mask.webp",
+    "descripcion": "Cuidado específico del cuero cabelludo con tendencia a caspa.",
+    "modoDeUso": "Una o dos veces por semana: aplica mechón a mechón sobre pelo limpio y húmedo, deja actuar 10–15 minutos y enjuaga."
+  },
+  {
+    "id": "scrub-therapy",
+    "nombre": "Scrub Therapy",
+    "tamano": "170 G/6.00 OZ",
+    "linea": "Therapy",
+    "categoria": "booster",
+    "etapa": [
+      "hidratacion"
+    ],
+    "tags": [
+      "cuero-sensible",
+      "equilibrante",
+      "detox"
+    ],
+    "aptoPara": {},
+    "precio": 38.0,
+    "stock": 1,
+    "imagen": "/productos/scrub-therapy.webp",
+    "descripcion": "Exfoliación del cuero cabelludo: renueva la raíz y potencia cualquier rutina.",
+    "modoDeUso": "Úsalo como refuerzo de tu rutina siguiendo la dosis del envase; poco producto bien repartido rinde más."
+  },
+  {
+    "id": "therapy-shampoo",
+    "nombre": "Therapy Shampoo",
+    "tamano": "300 ML / 10.14 FL.OZ",
+    "linea": "Therapy",
+    "categoria": "champu",
+    "etapa": [
+      "hidratacion"
+    ],
+    "tags": [
+      "cuero-sensible",
+      "equilibrante",
+      "fortalecedor"
+    ],
+    "aptoPara": {},
+    "precio": 35.0,
+    "stock": 1,
+    "imagen": "/productos/therapy-shampoo.webp",
+    "descripcion": "Terapia del cuero cabelludo: calma, purifica y refuerza desde la raíz.",
+    "modoDeUso": "Aplica sobre el cabello mojado, masajea el cuero cabelludo con las yemas y enjuaga bien."
+  },
+  {
+    "id": "ultra-hydration-conditioner",
+    "nombre": "Ultra Hydration Conditioner",
+    "tamano": "300 ML/10.14 FL.OZ",
+    "linea": "Ultra Hydration",
+    "categoria": "acondicionador",
+    "etapa": [
+      "hidratacion"
+    ],
+    "tags": [
+      "hidratante",
+      "uso-frecuente"
+    ],
+    "aptoPara": {
+      "porosidad": [
+        "baja",
+        "media"
+      ]
+    },
+    "precio": 36.0,
+    "stock": 1,
+    "imagen": "/productos/ultra-hydration-conditioner.webp",
+    "descripcion": "La base de hidratación diaria de Truss: limpieza suave y cutícula sellada.",
+    "modoDeUso": "Tras el champú, aplica de medios a puntas, deja actuar 2 minutos y enjuaga con agua fría."
+  },
+  {
+    "id": "ultra-hydration-shampoo",
+    "nombre": "Ultra Hydration Shampoo",
+    "tamano": "300 ML/10.14 FL.OZ",
+    "linea": "Ultra Hydration",
+    "categoria": "champu",
+    "etapa": [
+      "hidratacion"
+    ],
+    "tags": [
+      "hidratante",
+      "uso-frecuente"
+    ],
+    "aptoPara": {
+      "porosidad": [
+        "baja",
+        "media"
+      ]
+    },
+    "precio": 35.0,
+    "stock": 1,
+    "imagen": "/productos/ultra-hydration-shampoo.webp",
+    "descripcion": "La base de hidratación diaria de Truss: limpieza suave y cutícula sellada.",
+    "modoDeUso": "Aplica sobre el cabello mojado, masajea el cuero cabelludo con las yemas y enjuaga bien."
+  },
+  {
+    "id": "ultra-hydration-plus-conditioner",
+    "nombre": "Ultra Hydration Plus Conditioner",
+    "tamano": "300 ML/10.14 FL.OZ",
+    "linea": "Ultra Hydration Plus",
+    "categoria": "acondicionador",
+    "etapa": [
+      "hidratacion"
+    ],
+    "tags": [
+      "hidratante"
+    ],
+    "aptoPara": {
+      "porosidad": [
+        "media",
+        "alta"
+      ]
+    },
+    "precio": 36.0,
+    "stock": 1,
+    "imagen": "/productos/ultra-hydration-plus-conditioner.webp",
+    "descripcion": "Hidratación intensiva para pelo que pide agua: suavidad inmediata y elasticidad sin apelmazar.",
+    "modoDeUso": "Tras el champú, aplica de medios a puntas, deja actuar 2 minutos y enjuaga con agua fría."
+  },
+  {
+    "id": "ultra-hydration-plus-shampoo",
+    "nombre": "Ultra Hydration Plus Shampoo",
+    "tamano": "300 ML/10.14 FL.OZ",
+    "linea": "Ultra Hydration Plus",
+    "categoria": "champu",
+    "etapa": [
+      "hidratacion"
+    ],
+    "tags": [
+      "hidratante"
+    ],
+    "aptoPara": {
+      "porosidad": [
+        "media",
+        "alta"
+      ]
+    },
+    "precio": 35.0,
+    "stock": 1,
+    "imagen": "/productos/ultra-hydration-plus-shampoo.webp",
+    "descripcion": "Hidratación intensiva para pelo que pide agua: suavidad inmediata y elasticidad sin apelmazar.",
+    "modoDeUso": "Aplica sobre el cabello mojado, masajea el cuero cabelludo con las yemas y enjuaga bien."
+  },
+  {
+    "id": "vegan-detox-shampoo",
+    "nombre": "Vegan Detox Shampoo",
+    "tamano": "300 ML/10.14 FL.OZ",
+    "linea": "Vegan Detox",
+    "categoria": "champu",
+    "etapa": [
+      "hidratacion"
+    ],
+    "tags": [
+      "equilibrante",
+      "detox",
+      "uso-frecuente"
+    ],
+    "aptoPara": {},
+    "precio": 35.0,
+    "stock": 1,
+    "imagen": "/productos/vegan-detox-shampoo.webp",
+    "descripcion": "Detox vegano: limpieza profunda que resetea el pelo sin agredirlo.",
+    "modoDeUso": "Aplica sobre el cabello mojado, masajea el cuero cabelludo con las yemas y enjuaga bien."
   }
 ]

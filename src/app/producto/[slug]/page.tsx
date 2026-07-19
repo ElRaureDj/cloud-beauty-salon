@@ -42,14 +42,19 @@ export default async function PaginaProducto(props: PageProps<"/producto/[slug]"
       </nav>
 
       <div className="mt-6 grid gap-8 sm:grid-cols-2">
-        <ImagenProducto producto={producto} clase="aspect-[3/4] w-full" />
+        <ImagenProducto producto={producto} clase="aspect-square w-full" prioritaria />
 
         <div>
           <p className="text-xs uppercase tracking-widest text-tinta-suave">
             {producto.linea}
           </p>
           <h1 className="mt-1 font-display text-3xl">{producto.nombre}</h1>
-          <p className="mt-2 text-tinta-suave">{textoPrecio(producto.precio)}</p>
+          {producto.tamano && (
+            <p className="mt-1 text-xs uppercase tracking-wide text-tinta-suave">
+              {producto.tamano}
+            </p>
+          )}
+          <p className="mt-2 text-lg">{textoPrecio(producto.precio)}</p>
 
           <div className="mt-3 flex flex-wrap gap-2">
             {producto.etapa.map((e) => (

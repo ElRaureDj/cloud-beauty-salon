@@ -24,6 +24,9 @@ export type RespuestasQuiz = {
   objetivos?: string[]; // máx. 2 (§5.1)
 };
 
+// Mismo tope que valida /api/checkout: los límites cliente/servidor van a la par.
+export const CANTIDAD_MAXIMA = 20;
+
 type EstadoTienda = {
   carrito: LineaCarrito[];
   respuestasQuiz: RespuestasQuiz | null;
@@ -57,11 +60,18 @@ export const useTienda = create<EstadoTienda>()(
           if (existente) {
             return {
               carrito: s.carrito.map((l) =>
-                l.id === linea.id ? { ...l, cantidad: l.cantidad + cantidad } : l,
+                l.id === linea.id
+                  ? { ...l, cantidad: Math.min(CANTIDAD_MAXIMA, l.cantidad + cantidad) }
+                  : l,
               ),
             };
           }
-          return { carrito: [...s.carrito, { ...linea, cantidad }] };
+          return {
+            carrito: [
+              ...s.carrito,
+              { ...linea, cantidad: Math.min(CANTIDAD_MAXIMA, cantidad) },
+            ],
+          };
         }),
       // No tocamos bundleIds: si falta una línea del bundle, bundleActivo()
       // debe fallar — mismo comportamiento que bajar la cantidad a 0.
@@ -74,7 +84,11 @@ export const useTienda = create<EstadoTienda>()(
           carrito:
             cantidad <= 0
               ? s.carrito.filter((l) => l.id !== id)
-              : s.carrito.map((l) => (l.id === id ? { ...l, cantidad } : l)),
+              : s.carrito.map((l) =>
+                  l.id === id
+                    ? { ...l, cantidad: Math.min(CANTIDAD_MAXIMA, cantidad) }
+                    : l,
+                ),
         })),
       vaciar: () => set({ carrito: [], bundleIds: [] }),
       setRespuestasQuiz: (respuestas) => set({ respuestasQuiz: respuestas }),

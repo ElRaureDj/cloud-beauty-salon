@@ -14,11 +14,11 @@ import { useExperiencia } from "@/stores/experiencia";
 // escaparate exista igual en 390×844 que en escritorio.
 // TODO(guion §8): sustituir por packshots reales cuando existan.
 const IDS_VITRINA = [
-  "trust-hid-champu",
-  "trust-nut-mascara",
-  "trust-color-champu",
-  "trust-rec-ampolla",
-  "trust-termico",
+  "ultra-hydration-shampoo",
+  "nutri-infusion-mask-180g-6-35-fl-oz",
+  "color-shield-shampoo-300ml-10-1-fl-oz",
+  "shock-repair-1-box-with-4-units",
+  "hair-protector",
 ];
 
 // Huecos en pantalla (fracciones del semiancho/semialto del frustum) con
@@ -37,38 +37,58 @@ function texturaTarjeta(producto: Producto): THREE.CanvasTexture {
   lienzo.width = 256;
   lienzo.height = 340;
   const ctx = lienzo.getContext("2d")!;
-  ctx.beginPath();
-  ctx.roundRect(4, 4, 248, 332, 28);
-  ctx.fillStyle = "#34222b";
-  ctx.fill();
-  ctx.strokeStyle = "rgba(201,186,179,0.35)";
-  ctx.lineWidth = 2;
-  ctx.stroke();
-  ctx.fillStyle = "rgba(201,186,179,0.6)";
-  ctx.font = "600 92px system-ui, sans-serif";
-  ctx.textAlign = "center";
-  ctx.fillText(producto.nombre.charAt(0), 128, 150);
-  ctx.font = "500 20px system-ui, sans-serif";
-  ctx.fillStyle = "#f3ece7";
-  const palabras = producto.nombre.split(" ");
-  let linea = "";
-  let y = 210;
-  for (const palabra of palabras) {
-    const prueba = linea ? `${linea} ${palabra}` : palabra;
-    if (ctx.measureText(prueba).width > 216 && linea) {
-      ctx.fillText(linea, 128, y);
-      linea = palabra;
-      y += 26;
-    } else {
-      linea = prueba;
+
+  const pintarBase = () => {
+    ctx.clearRect(0, 0, 256, 340);
+    ctx.beginPath();
+    ctx.roundRect(4, 4, 248, 332, 28);
+    ctx.fillStyle = "#ffffff";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(201,186,179,0.5)";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    // Etiqueta inferior con nombre y categoría
+    ctx.textAlign = "center";
+    ctx.font = "600 17px system-ui, sans-serif";
+    ctx.fillStyle = "#2b1d24";
+    const palabras = producto.nombre.split(" ");
+    let linea = "";
+    let y = 288;
+    for (const palabra of palabras) {
+      const prueba = linea ? `${linea} ${palabra}` : palabra;
+      if (ctx.measureText(prueba).width > 220 && linea) {
+        ctx.fillText(linea, 128, y);
+        linea = palabra;
+        y += 20;
+      } else {
+        linea = prueba;
+      }
     }
-  }
-  ctx.fillText(linea, 128, y);
-  ctx.font = "400 16px system-ui, sans-serif";
-  ctx.fillStyle = "rgba(217,154,99,0.9)";
-  ctx.fillText(nombreCategoria(producto.categoria).toUpperCase(), 128, y + 34);
+    ctx.fillText(linea, 128, y);
+    ctx.font = "500 13px system-ui, sans-serif";
+    ctx.fillStyle = "rgba(160,110,70,0.95)";
+    ctx.fillText(nombreCategoria(producto.categoria).toUpperCase(), 128, y + 22);
+  };
+
+  pintarBase();
   const textura = new THREE.CanvasTexture(lienzo);
   textura.anisotropy = 4;
+  textura.colorSpace = THREE.SRGBColorSpace;
+
+  // Packshot real (§8, fuente autorizada): se pinta al cargar.
+  const foto = new Image();
+  foto.onload = () => {
+    pintarBase();
+    ctx.save();
+    ctx.beginPath();
+    ctx.roundRect(4, 4, 248, 332, 28);
+    ctx.clip();
+    ctx.drawImage(foto, 18, 12, 220, 220);
+    ctx.restore();
+    textura.needsUpdate = true;
+  };
+  foto.src = producto.imagen;
+
   return textura;
 }
 

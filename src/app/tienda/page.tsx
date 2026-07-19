@@ -73,10 +73,7 @@ export default async function PaginaTienda(props: PageProps<"/tienda">) {
       <h1 className="font-display text-3xl sm:text-4xl">{t("tienda.titulo")}</h1>
       <p className="mt-3 max-w-prose text-tinta-suave">{t("copy.marca.trust")}.</p>
       {preciosPendientes && (
-        <p className="nota-todo mt-4">
-          TODO(guion §9.6): catálogo provisional — faltan referencias y precios
-          reales Trust; el checkout se habilita con la pasarela (§9.2).
-        </p>
+        <p className="nota-todo mt-4">TODO(guion §9.6): faltan precios del catálogo.</p>
       )}
 
       <section aria-label={t("tienda.filtros.grupo")} className="mt-8 flex flex-col gap-3">
@@ -175,10 +172,13 @@ export default async function PaginaTienda(props: PageProps<"/tienda">) {
                 href={`/producto/${p.id}`}
                 className="group block rounded-3xl border border-transparent p-2 transition-colors hover:border-tinta-suave/20"
               >
-                <ImagenProducto producto={p} clase="aspect-[3/4] w-full" />
+                <ImagenProducto producto={p} clase="aspect-square w-full" />
                 <p className="mt-3 text-sm leading-snug">{p.nombre}</p>
-                <p className="mt-0.5 text-xs text-tinta-suave">{p.linea}</p>
-                <p className="mt-1 text-xs text-tinta-suave">{textoPrecio(p.precio)}</p>
+                <p className="mt-0.5 text-xs text-tinta-suave">
+                  {p.linea}
+                  {p.tamano ? ` · ${p.tamano.split("/")[0].trim()}` : ""}
+                </p>
+                <p className="mt-1 text-sm">{textoPrecio(p.precio)}</p>
               </Link>
             </li>
           ))}

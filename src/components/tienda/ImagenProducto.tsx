@@ -1,28 +1,28 @@
-import { nombreCategoria } from "@/lib/formato";
+import Image from "next/image";
 import type { Producto } from "@/lib/catalogo";
 
-// TODO(guion §8): sustituir por packshots reales (foto fondo neutro ≥ 1200px)
-// con next/image en cuanto exista el inventario fotografiado.
+// Packshots reales de trussmiami.com (fuente autorizada, §8 resuelto):
+// WebP 800×800 sobre blanco en /public/productos.
 export default function ImagenProducto({
   producto,
   clase = "",
+  prioritaria = false,
 }: {
   producto: Producto;
   clase?: string;
+  prioritaria?: boolean;
 }) {
   return (
-    <div
-      aria-hidden
-      className={`grid place-items-center rounded-2xl bg-gradient-to-b from-fondo-1 to-fondo-0 ${clase}`}
-    >
-      <div className="text-center">
-        <span className="font-display text-4xl text-tinta-suave/60">
-          {producto.nombre.charAt(0)}
-        </span>
-        <p className="mt-1 text-[10px] uppercase tracking-widest text-tinta-suave/50">
-          {nombreCategoria(producto.categoria)}
-        </p>
-      </div>
+    <div className={`overflow-hidden rounded-2xl bg-white ${clase}`}>
+      <Image
+        src={producto.imagen}
+        alt={producto.nombre}
+        width={800}
+        height={800}
+        priority={prioritaria}
+        sizes="(max-width: 640px) 50vw, 33vw"
+        className="h-full w-full object-contain"
+      />
     </div>
   );
 }

@@ -39,7 +39,7 @@ export const es = {
   "tienda.titulo": "Tienda",
   "tienda.volver": "← Volver a la experiencia",
   "tienda.meta.descripcion":
-    "Productos capilares profesionales Trust: champús, acondicionadores, máscaras y leave-ins por etapa del cronograma capilar.",
+    "Productos capilares profesionales TRUSS: champús, acondicionadores, máscaras y leave-ins por etapa del cronograma capilar.",
   "tienda.filtros.grupo": "Filtros",
   "tienda.filtros.todo": "Todo",
   "tienda.filtros.categoria": "Categoría",
@@ -48,7 +48,7 @@ export const es = {
   "tienda.filtros.limpiar": "Quitar filtros",
   "tienda.sinResultados": "Ningún producto coincide con esos filtros. Prueba a quitar alguno.",
   "copy.marca.trust":
-    "Distribuidor autorizado Trust · Cosmética profesional brasileña", // §4 Cap. 3 — se reutiliza en Fase 3
+    "Distribuidor autorizado TRUSS · Cosmética profesional brasileña", // §4 Cap. 3 — se reutiliza en Fase 3
   "precio.porConfirmar": "Precio por confirmar",
   "etapa.hidratacion": "Hidratación",
   "etapa.nutricion": "Nutrición",
@@ -73,8 +73,18 @@ export const es = {
   "carrito.bundle": "Rutina del diagnóstico",
   "carrito.bundle.descuento": "Descuento por rutina completa",
   "carrito.preciosPendientes":
-    "Los precios se mostrarán al confirmar el catálogo Trust.",
+    "Los precios se mostrarán al confirmar el catálogo TRUSS.",
   "carrito.checkout": "Finalizar compra",
+  "carrito.checkout.cargando": "Abriendo el pago…",
+  "carrito.checkout.noConfigurado":
+    "El pago aún no está disponible. Vuelve a intentarlo en un rato.",
+  "carrito.checkout.revisa":
+    "No pudimos procesar el carrito. Revisa las cantidades e inténtalo de nuevo.",
+  "carrito.checkout.error":
+    "No pudimos abrir el pago. Revisa tu conexión y vuelve a intentarlo.",
+  "compra.exito.titulo": "Pedido confirmado",
+  "compra.exito.mensaje":
+    "Gracias por tu compra. Te llegará un correo de Stripe con el recibo y te avisaremos del envío.",
   "quiz.titulo": "Diagnóstico capilar",
   "quiz.paso": "Paso {actual} de {total}",
   "quiz.saltar": "Saltar a la tienda",

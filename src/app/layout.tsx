@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     template: "%s · {{MARCA}}",
   },
   description:
-    "Cosmética capilar profesional Trust, diagnóstico capilar y rutinas a tu medida. Muy pronto: peluquería, manicura y pedicura.",
+    "Cosmética capilar profesional TRUSS, diagnóstico capilar y rutinas a tu medida. Muy pronto: peluquería, manicura y pedicura.",
 };
 
 export const viewport: Viewport = {

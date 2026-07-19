@@ -1,9 +1,9 @@
 import productos from "@/lib/data/productos.json";
 
-// Esquema §5.2 del guion, ampliado con descripcion/modoDeUso para las fichas.
-// TODO(guion): cargar catálogo real Trust con precios de distribución (§9.6);
-// mientras precio === 0, la UI muestra "precio por confirmar" y el checkout
-// sigue deshabilitado (§9.2).
+// Esquema §5.2 del guion, ampliado con descripcion/modoDeUso/tamano.
+// §9.6 RESUELTO (2026-07-19): catálogo real TRUSS desde trussmiami.com
+// (fuente autorizada por Raul — imágenes incluidas), 54 productos Homecare
+// con precios de venta reales; el id es el handle de la tienda oficial.
 // Los helpers de presentación (nombres, precios) viven en src/lib/formato.ts
 // para que este módulo — que arrastra el JSON completo — solo lo importen
 // superficies que de verdad necesitan el catálogo.
@@ -14,6 +14,7 @@ export type Categoria = "champu" | "acondicionador" | "mascara" | "leave-in" | "
 export type Producto = {
   id: string;
   nombre: string;
+  tamano?: string | null;
   linea: string;
   categoria: Categoria;
   etapa: Etapa[];
