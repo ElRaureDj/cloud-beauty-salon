@@ -79,8 +79,16 @@ export async function POST(request: Request) {
           .join(", ")
       : "—";
 
+    // Algunos métodos (Klarna, débito bancario) completan la sesión pero el
+    // cobro queda "procesando": lo marcamos para no despachar antes de tiempo.
+    const pagado = sesion.payment_status === "paid";
+    const estadoPago = pagado
+      ? "Pagado ✓"
+      : "PENDIENTE — el pago aún se está procesando, no despaches todavía";
+
     const html =
       `<h2>Nuevo pedido</h2>` +
+      `<p><strong>Estado del pago:</strong> ${escaparHtml(estadoPago)}</p>` +
       `<p><strong>Cliente:</strong> ${escaparHtml(cliente?.name ?? "—")} ` +
       `(${escaparHtml(cliente?.email ?? "—")})</p>` +
       `<p><strong>Envío a:</strong> ${escaparHtml(dirTexto)}</p>` +
@@ -90,7 +98,7 @@ export async function POST(request: Request) {
 
     const resultado = await enviarCorreo({
       to: destino,
-      subject: `Nuevo pedido · ${dinero(sesion.amount_total, sesion.currency)}`,
+      subject: `${pagado ? "Nuevo pedido" : "Pedido (pago pendiente)"} · ${dinero(sesion.amount_total, sesion.currency)}`,
       html,
       replyTo: cliente?.email ?? undefined,
     });
