@@ -183,7 +183,11 @@ export async function POST(request: Request) {
     mode: "payment",
     locale: "es",
     line_items,
-    discounts,
+    // Stripe no admite `discounts` y `allow_promotion_codes` a la vez: si el
+    // carrito ya trae el descuento de la rutina del diagnóstico, no ofrecemos
+    // el campo de código; en cualquier otro caso, la clienta puede introducir
+    // un código promocional creado en el panel de Stripe.
+    ...(discounts ? { discounts } : { allow_promotion_codes: true }),
     shipping_address_collection: { allowed_countries: ["US"] },
     shipping_options,
     ...(impuestosActivos ? { automatic_tax: { enabled: true } } : {}),
