@@ -18,7 +18,7 @@ import { useExperiencia } from "@/stores/experiencia";
 // con material propio (MAT_HAIR con baseColorFactor → tinte en vivo v1.5),
 // 69.4k tris, texturas WebP 2K/1K, Draco. Escala normalizada en runtime.
 const RUTA_MODELO = "/modelos/businesslady.glb";
-const TAMANO_MODELO_BYTES = 1_910_252; // respaldo si falta content-length
+const TAMANO_MODELO_BYTES = 1_249_336; // respaldo si falta content-length
 
 const RETRASO_INVITACION_MS = 6000; // §4 Cap. 0: invitación a moverse tras 6 s
 
