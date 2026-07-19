@@ -16,10 +16,10 @@ const sans = Inter({
 });
 
 export const metadata: Metadata = {
-  // TODO(guion): reemplazar {{MARCA}} cuando haya nombre y dominio (§9.5).
+  // §9.5 RESUELTO: Cloud Beauty Salon (2026-07-19).
   title: {
-    default: "{{MARCA}} · Tu pelo, versión profesional",
-    template: "%s · {{MARCA}}",
+    default: "Cloud Beauty Salon · Tu pelo, versión profesional",
+    template: "%s · Cloud Beauty Salon",
   },
   description:
     "Cosmética capilar profesional TRUSS, diagnóstico capilar y rutinas a tu medida. Muy pronto: peluquería, manicura y pedicura.",

@@ -1,14 +1,23 @@
 import Stripe from "stripe";
 import { productoPorId } from "@/lib/catalogo";
 import { DESCUENTO_BUNDLE } from "@/lib/formato";
+import { t } from "@/lib/i18n/es";
 
 // §9.2 RESUELTO (2026-07-19): Stripe Checkout. Los precios Y el descuento se
 // calculan SIEMPRE contra el catálogo en servidor — el cliente solo manda ids
 // y cantidades, y el cupón del bundle queda acotado al valor real de sus
 // líneas. Se activa con STRIPE_SECRET_KEY en .env.local; sin clave responde
 // 503 y la UI lo explica sin romper nada.
+//
+// §9.3 RESUELTO (2026-07-19): envíos a todo EE. UU. — $8 tarifa plana, gratis
+// desde $75 (subtotal tras descuento). Impuestos con Stripe Tax; requiere
+// activarlo en el dashboard y poner STRIPE_TAX_AUTOMATICO=1 (si no, la
+// creación de sesión fallaría en cuentas sin Tax activado).
 
 const CUERPO_MAXIMO_BYTES = 20_000;
+
+const ENVIO_CENTAVOS = 800;
+const ENVIO_GRATIS_DESDE_CENTAVOS = 7500;
 
 // Goteo por IP (mismo criterio que /api/waitlist): cada intento crea objetos
 // en la cuenta Stripe y no debe ser martilleable.
@@ -93,24 +102,29 @@ export async function POST(request: Request) {
   const stripe = new Stripe(clave);
   // Base canónica desde entorno — nunca desde headers del cliente.
   const origen = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const impuestosActivos = process.env.STRIPE_TAX_AUTOMATICO === "1";
 
-  const line_items = datos.lineas.map((l) => {
-    const p = productoPorId(l.id)!;
-    return {
-      quantity: l.cantidad,
-      price_data: {
-        currency: "usd",
-        unit_amount: Math.round(p.precio * 100),
-        product_data: {
-          name: p.nombre + (p.tamano ? ` · ${p.tamano.split("/")[0].trim()}` : ""),
-          images: [`${origen}${p.imagen}`],
+  const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] =
+    datos.lineas.map((l) => {
+      const p = productoPorId(l.id)!;
+      return {
+        quantity: l.cantidad,
+        price_data: {
+          currency: "usd",
+          unit_amount: Math.round(p.precio * 100),
+          // Con Stripe Tax el impuesto se suma al precio (uso en EE. UU.).
+          ...(impuestosActivos ? { tax_behavior: "exclusive" as const } : {}),
+          product_data: {
+            name: p.nombre + (p.tamano ? ` · ${p.tamano.split("/")[0].trim()}` : ""),
+            images: [`${origen}${p.imagen}`],
+          },
         },
-      },
-    };
-  });
+      };
+    });
 
   // §5.3: descuento del bundle — 1 unidad por producto del bundle (ya
   // garantizado subconjunto único del carrito), acotado por construcción.
+  let descuentoCentavos = 0;
   let discounts: Stripe.Checkout.SessionCreateParams.Discount[] | undefined;
   if (datos.bundleIds.length > 0) {
     const baseBundle = datos.bundleIds.reduce(
@@ -131,14 +145,48 @@ export async function POST(request: Request) {
         cuponesPorImporte.set(centavos, cuponId);
       }
       discounts = [{ coupon: cuponId }];
+      descuentoCentavos = centavos;
     }
   }
+
+  // §9.3: el umbral de envío gratis se evalúa sobre lo que la clienta paga en
+  // productos (subtotal del catálogo menos el descuento del bundle).
+  const subtotalCentavos = datos.lineas.reduce(
+    (total, l) =>
+      total + Math.round(productoPorId(l.id)!.precio * 100) * l.cantidad,
+    0,
+  );
+  const envioGratis =
+    subtotalCentavos - descuentoCentavos >= ENVIO_GRATIS_DESDE_CENTAVOS;
+  const shipping_options: Stripe.Checkout.SessionCreateParams.ShippingOption[] = [
+    {
+      shipping_rate_data: {
+        display_name: envioGratis ? t("envio.gratis") : t("envio.estandar"),
+        type: "fixed_amount",
+        fixed_amount: {
+          amount: envioGratis ? 0 : ENVIO_CENTAVOS,
+          currency: "usd",
+        },
+        // txcd_92010001: código fiscal de Stripe para gastos de envío.
+        ...(impuestosActivos
+          ? { tax_behavior: "exclusive" as const, tax_code: "txcd_92010001" }
+          : {}),
+        delivery_estimate: {
+          minimum: { unit: "business_day", value: 3 },
+          maximum: { unit: "business_day", value: 7 },
+        },
+      },
+    },
+  ];
 
   const sesion = await stripe.checkout.sessions.create({
     mode: "payment",
     locale: "es",
     line_items,
     discounts,
+    shipping_address_collection: { allowed_countries: ["US"] },
+    shipping_options,
+    ...(impuestosActivos ? { automatic_tax: { enabled: true } } : {}),
     success_url: `${origen}/compra/exito?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${origen}/tienda`,
   });

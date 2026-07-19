@@ -5,7 +5,7 @@ export default function PaginaInicio() {
   return (
     <main>
       {/* Texto renderizado en servidor: la venta nunca depende del canvas (§2). */}
-      <h1 className="sr-only">{`{{MARCA}} — ${t("hero.tagline")}`}</h1>
+      <h1 className="sr-only">{`${t("marca.nombre")} — ${t("hero.tagline")}`}</h1>
       <Experiencia />
     </main>
   );

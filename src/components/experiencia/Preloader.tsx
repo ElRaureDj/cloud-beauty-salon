@@ -57,9 +57,8 @@ export default function Preloader({ listo }: { listo: boolean }) {
       aria-live="polite"
     >
       <div className="flex flex-col items-center gap-6">
-        {/* TODO(guion): logo real de {{MARCA}} (§8) */}
         <span className="font-display text-lg uppercase tracking-[0.3em]">
-          {"{{MARCA}}"}
+          {t("marca.nombre")}
         </span>
         <div className="h-0.5 w-44 overflow-hidden rounded-full bg-fondo-1">
           <div

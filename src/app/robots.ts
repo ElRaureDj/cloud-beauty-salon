@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 
-// TODO(guion §9.5): sustituir por el dominio real de {{MARCA}}.
-const BASE = "https://example.com";
+// §9.5: dominio real; en previews puede sobrescribirse con NEXT_PUBLIC_SITE_URL.
+const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://cloudbeautysalon.com";
 
 export default function robots(): MetadataRoute.Robots {
   return {

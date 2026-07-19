@@ -18,7 +18,7 @@ export default function FallbackEstatico() {
       <section className="degradado-marca grid min-h-[92svh] place-items-center px-6 text-center">
         <div>
           <p className="text-xs uppercase tracking-[0.3em] text-tinta-suave">
-            {"{{MARCA}}"}
+            {t("marca.nombre")}
           </p>
           <h2 className="mt-4 font-display text-4xl sm:text-5xl">{t("hero.tagline")}</h2>
         </div>
@@ -108,6 +108,9 @@ export default function FallbackEstatico() {
         <footer className="mt-16 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-tinta-suave">
           <Link href="/contacto" className="underline-offset-4 hover:underline">
             {t("footer.contacto")}
+          </Link>
+          <Link href="/legal/envios" className="underline-offset-4 hover:underline">
+            {t("footer.envios")}
           </Link>
           <Link href="/legal/privacidad" className="underline-offset-4 hover:underline">
             {t("footer.privacidad")}

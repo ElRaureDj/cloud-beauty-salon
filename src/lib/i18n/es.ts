@@ -1,6 +1,7 @@
 // Claves i18n desde el día 1 (GUION §7). Español primero; en Fase 3 esto se
 // conecta a next-intl (o similar) sin refactor: las claves son el contrato.
 export const es = {
+  "marca.nombre": "Cloud Beauty Salon", // §9.5 RESUELTO (2026-07-19)
   "hero.tagline": "Tu pelo, versión profesional.", // TODO(guion): validar tagline (§4 Cap. 0)
   "hero.desliza": "Desliza",
   "copy.pelo.intro": "Todo empieza por tu pelo.",
@@ -30,12 +31,14 @@ export const es = {
   "espera.validacion":
     "Necesitamos tu nombre y un WhatsApp o email para avisarte.",
   "footer.contacto": "Contacto",
+  "footer.envios": "Envíos",
   "footer.privacidad": "Privacidad",
   "footer.terminos": "Términos",
   "footer.volverArriba": "Volver arriba",
   "contacto.titulo": "Contacto",
   "legal.privacidad.titulo": "Política de privacidad",
   "legal.terminos.titulo": "Términos y condiciones",
+  "legal.envios.titulo": "Envíos y devoluciones",
   "tienda.titulo": "Tienda",
   "tienda.volver": "← Volver a la experiencia",
   "tienda.meta.descripcion":
@@ -82,6 +85,8 @@ export const es = {
     "No pudimos procesar el carrito. Revisa las cantidades e inténtalo de nuevo.",
   "carrito.checkout.error":
     "No pudimos abrir el pago. Revisa tu conexión y vuelve a intentarlo.",
+  "envio.estandar": "Envío estándar",
+  "envio.gratis": "Envío gratis",
   "compra.exito.titulo": "Pedido confirmado",
   "compra.exito.mensaje":
     "Gracias por tu compra. Te llegará un correo de Stripe con el recibo y te avisaremos del envío.",

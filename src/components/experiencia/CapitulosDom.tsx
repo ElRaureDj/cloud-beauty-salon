@@ -128,7 +128,7 @@ export default function CapitulosDom({ activo }: { activo: boolean }) {
       {/* Cap. 0 — tagline de portada */}
       <div ref={taglineRef} className="absolute inset-x-6 bottom-[22%] text-center">
         <p className="text-xs uppercase tracking-[0.3em] text-tinta-suave">
-          {"{{MARCA}}"}
+          {t("marca.nombre")}
         </p>
         <h2 className="mt-3 font-display text-3xl sm:text-5xl">{t("hero.tagline")}</h2>
       </div>
@@ -284,6 +284,12 @@ export default function CapitulosDom({ activo }: { activo: boolean }) {
       >
         <Link href="/contacto" className="pointer-events-auto underline-offset-4 hover:underline">
           {t("footer.contacto")}
+        </Link>
+        <Link
+          href="/legal/envios"
+          className="pointer-events-auto underline-offset-4 hover:underline"
+        >
+          {t("footer.envios")}
         </Link>
         <Link
           href="/legal/privacidad"

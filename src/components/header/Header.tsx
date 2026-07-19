@@ -56,8 +56,7 @@ export default function Header() {
           onClick={irAlInicio}
           className="font-display text-sm uppercase tracking-[0.25em]"
         >
-          {/* TODO(guion): logo real de {{MARCA}} (§8) */}
-          {"{{MARCA}}"}
+          {t("marca.nombre")}
         </Link>
         <nav className="flex items-center gap-5">
           <Link
