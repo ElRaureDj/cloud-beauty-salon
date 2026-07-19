@@ -51,7 +51,7 @@ function ChipFiltro({
 }
 
 // §6: /tienda renderiza en servidor, ligera e indexable; el canvas solo en "/".
-export default async function PaginaTienda(props: PageProps<"/tienda">) {
+export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">) {
   const params = await props.searchParams;
   const categoria = primero(params.categoria);
   const etapa = primero(params.etapa);

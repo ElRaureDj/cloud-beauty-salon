@@ -2,6 +2,8 @@
 // conecta a next-intl (o similar) sin refactor: las claves son el contrato.
 export const es = {
   "marca.nombre": "Cloud Beauty Salon", // §9.5 RESUELTO (2026-07-19)
+  "meta.descripcion":
+    "Cosmética capilar profesional TRUSS, diagnóstico capilar y rutinas a tu medida. Muy pronto: peluquería, manicura y pedicura.",
   "hero.tagline": "Tu pelo, versión profesional.", // TODO(guion): validar tagline (§4 Cap. 0)
   "hero.desliza": "Desliza",
   "copy.pelo.intro": "Todo empieza por tu pelo.",

@@ -4,17 +4,18 @@ import { notFound } from "next/navigation";
 import { CATALOGO, combinaCon, productoPorSlug } from "@/lib/catalogo";
 import { nombreCategoria, nombreEtapa, textoPrecio } from "@/lib/formato";
 import { t } from "@/lib/i18n/es";
+import { LOCALES } from "@/lib/i18n";
 import BotonAgregar from "@/components/tienda/BotonAgregar";
 import ImagenProducto from "@/components/tienda/ImagenProducto";
 
 // §6: fichas renderizadas en servidor e indexables; se prerenderiza todo el
-// catálogo en build.
+// catálogo en build, para cada idioma.
 export function generateStaticParams() {
-  return CATALOGO.map((p) => ({ slug: p.id }));
+  return LOCALES.flatMap((locale) => CATALOGO.map((p) => ({ locale, slug: p.id })));
 }
 
 export async function generateMetadata(
-  props: PageProps<"/producto/[slug]">,
+  props: PageProps<"/[locale]/producto/[slug]">,
 ): Promise<Metadata> {
   const { slug } = await props.params;
   const producto = productoPorSlug(slug);
@@ -25,7 +26,7 @@ export async function generateMetadata(
   };
 }
 
-export default async function PaginaProducto(props: PageProps<"/producto/[slug]">) {
+export default async function PaginaProducto(props: PageProps<"/[locale]/producto/[slug]">) {
   const { slug } = await props.params;
   const producto = productoPorSlug(slug);
   if (!producto) notFound();
