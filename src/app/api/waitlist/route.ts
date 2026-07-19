@@ -1,3 +1,5 @@
+import { enviarCorreo, escaparHtml } from "@/lib/email";
+
 // §5.4 — Captura de la lista de espera (peluquería / manicura / pedicura).
 // §9.4 RESUELTO (2026-07-19): en producción (Vercel serverless el disco es
 // efímero/solo-lectura) cada registro se envía por email vía Resend al buzón
@@ -59,54 +61,15 @@ function validar(cuerpo: unknown): Registro | null {
   };
 }
 
-// Escapa el contenido del registro antes de meterlo en el HTML del correo:
-// nombre y contacto son datos de usuario, nunca se inyectan crudos.
-function escaparHtml(valor: string): string {
-  return valor
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
-
-async function avisarPorEmail(registro: Registro): Promise<boolean> {
-  const clave = process.env.RESEND_API_KEY;
-  const destino = process.env.WAITLIST_TO;
-  // Remitente: un buzón del dominio verificado en Resend. Con dominio sin
-  // verificar aún, el sandbox de Resend permite onboarding@resend.dev.
-  const remitente = process.env.WAITLIST_FROM ?? "onboarding@resend.dev";
-  if (!clave || !destino) {
-    console.warn("waitlist 503: falta RESEND_API_KEY o WAITLIST_TO");
-    return false;
-  }
-
-  const asunto = `Nueva lista de espera · ${registro.intereses.join(", ")}`;
-  const html =
-    `<h2>Nueva persona en la lista de espera</h2>` +
-    `<p><strong>Nombre:</strong> ${escaparHtml(registro.nombre)}</p>` +
-    `<p><strong>Contacto:</strong> ${escaparHtml(registro.contacto)}</p>` +
-    `<p><strong>Interesada en:</strong> ${escaparHtml(registro.intereses.join(", "))}</p>`;
-
-  const respuesta = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${clave}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      from: `Cloud Beauty Salon <${remitente}>`,
-      to: [destino],
-      reply_to: registro.contacto.includes("@") ? registro.contacto : undefined,
-      subject: asunto,
-      html,
-    }),
-  });
-
-  if (!respuesta.ok) {
-    console.warn(`waitlist: Resend respondió ${respuesta.status}`);
-    return false;
-  }
-  return true;
+function correoDelRegistro(registro: Registro): { asunto: string; html: string } {
+  return {
+    asunto: `Nueva lista de espera · ${registro.intereses.join(", ")}`,
+    html:
+      `<h2>Nueva persona en la lista de espera</h2>` +
+      `<p><strong>Nombre:</strong> ${escaparHtml(registro.nombre)}</p>` +
+      `<p><strong>Contacto:</strong> ${escaparHtml(registro.contacto)}</p>` +
+      `<p><strong>Interesada en:</strong> ${escaparHtml(registro.intereses.join(", "))}</p>`,
+  };
 }
 
 export async function POST(request: Request) {
@@ -151,13 +114,14 @@ export async function POST(request: Request) {
     return Response.json({ ok: false, configurado: false }, { status: 503 });
   }
 
-  let enviado = false;
-  try {
-    enviado = await avisarPorEmail(registro);
-  } catch (error) {
-    console.warn("waitlist: error enviando el email", error);
-  }
-  if (!enviado) {
+  const { asunto, html } = correoDelRegistro(registro);
+  const resultado = await enviarCorreo({
+    to: destino,
+    subject: asunto,
+    html,
+    replyTo: registro.contacto.includes("@") ? registro.contacto : undefined,
+  });
+  if (resultado !== "enviado") {
     return Response.json({ ok: false }, { status: 502 });
   }
 
