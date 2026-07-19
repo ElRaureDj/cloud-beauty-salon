@@ -3,6 +3,7 @@ import { productoPorId } from "@/lib/catalogo";
 import { DESCUENTO_BUNDLE } from "@/lib/formato";
 import { defaultLocale, getT, isLocale, type Locale } from "@/lib/i18n";
 import { rutaLocalizada } from "@/lib/i18n/rutas";
+import { stockDeProductos } from "@/lib/stock";
 
 // §9.2 RESUELTO (2026-07-19): Stripe Checkout. Los precios Y el descuento se
 // calculan SIEMPRE contra el catálogo en servidor — el cliente solo manda ids
@@ -20,23 +21,25 @@ const CUERPO_MAXIMO_BYTES = 20_000;
 const ENVIO_CENTAVOS = 800;
 const ENVIO_GRATIS_DESDE_CENTAVOS = 7500;
 
-// Goteo por IP (mismo criterio que /api/waitlist): cada intento crea objetos
-// en la cuenta Stripe y no debe ser martilleable.
+// Goteo por IP: cada intento QUE CREA una sesión en Stripe no debe ser
+// martilleable. Se separa en comprobar (arriba, read-only) y registrar (solo
+// tras pasar el pre-check de stock): así un 409 por agotado no consume cupo.
 const INTENTOS_POR_HORA = 10;
 const intentosPorIp = new Map<string, number[]>();
 
-function superaGoteo(ip: string): boolean {
+function excedeGoteo(ip: string): boolean {
   const ahora = Date.now();
   const recientes = (intentosPorIp.get(ip) ?? []).filter(
     (marca) => ahora - marca < 60 * 60 * 1000,
   );
-  if (recientes.length >= INTENTOS_POR_HORA) {
-    intentosPorIp.set(ip, recientes);
-    return true;
-  }
-  recientes.push(ahora);
   intentosPorIp.set(ip, recientes);
-  return false;
+  return recientes.length >= INTENTOS_POR_HORA;
+}
+
+function registrarIntento(ip: string): void {
+  const recientes = intentosPorIp.get(ip) ?? [];
+  recientes.push(Date.now());
+  intentosPorIp.set(ip, recientes);
 }
 
 // Un cupón por importe, reutilizado entre sesiones: sin churn de objetos.
@@ -90,7 +93,7 @@ export async function POST(request: Request) {
 
   const ip =
     request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "local";
-  if (superaGoteo(ip)) {
+  if (excedeGoteo(ip)) {
     return Response.json({ ok: false }, { status: 429 });
   }
 
@@ -104,6 +107,28 @@ export async function POST(request: Request) {
   if (!datos) {
     return Response.json({ ok: false }, { status: 400 });
   }
+
+  // Pre-check de stock (bloque 3): con BD, rechaza si alguna línea supera las
+  // unidades disponibles. `stockDeProductos` solo devuelve ids con fila, así
+  // que productos sin fila o sin BD pasan (degradación). El descuento real y su
+  // idempotencia viven en el webhook; esto solo evita empezar a pagar algo
+  // agotado. Queda una ventana check→pago que el webhook clampa y avisa.
+  // Timeout de 1,5 s: si la BD cuelga (no cae — un cuelgue no lanza), degradamos
+  // a "sin stock conocido" y seguimos, en vez de tumbar el pago con un 504.
+  const disponibles = await Promise.race([
+    stockDeProductos(datos.lineas.map((l) => l.id)),
+    new Promise<Map<string, number>>((r) => setTimeout(() => r(new Map()), 1500)),
+  ]);
+  const agotados = datos.lineas
+    .filter((l) => disponibles.has(l.id) && l.cantidad > disponibles.get(l.id)!)
+    .map((l) => l.id);
+  if (agotados.length > 0) {
+    return Response.json({ ok: false, agotados }, { status: 409 });
+  }
+
+  // El intento pasó el pre-check y va a crear una sesión en Stripe: ahora sí
+  // cuenta para el goteo (un 409 por agotado no gasta cupo).
+  registrarIntento(ip);
 
   const stripe = new Stripe(clave);
   const { t } = getT(datos.locale);
@@ -124,6 +149,9 @@ export async function POST(request: Request) {
           product_data: {
             name: p.nombre + (p.tamano ? ` · ${p.tamano.split("/")[0].trim()}` : ""),
             images: [`${origen}${p.imagen}`],
+            // El id del catálogo viaja stampado para que el webhook sepa QUÉ se
+            // vendió y descuente stock (bloque 3), sin tabla intermedia.
+            metadata: { producto_id: l.id },
           },
         },
       };

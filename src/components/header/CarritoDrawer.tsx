@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useT, useRuta } from "@/lib/i18n/client";
 import { DESCUENTO_BUNDLE, textoPrecio } from "@/lib/formato";
@@ -37,8 +37,16 @@ export default function CarritoDrawer() {
   const descuento = conBundle ? baseBundle * DESCUENTO_BUNDLE : 0;
 
   const [pago, setPago] = useState<
-    "quieto" | "cargando" | "sin-config" | "revisa" | "error"
+    "quieto" | "cargando" | "sin-config" | "revisa" | "agotado" | "error"
   >("quieto");
+  const [agotados, setAgotados] = useState<string[]>([]);
+
+  // Si la clienta cambia el carrito, cualquier aviso previo (agotado/revisa/
+  // error) queda obsoleto: se limpia para no contradecir la instrucción dada.
+  useEffect(() => {
+    setPago((p) => (p === "cargando" ? "cargando" : "quieto"));
+    setAgotados([]);
+  }, [carrito]);
 
   const irAlPago = async () => {
     setPago("cargando");
@@ -59,6 +67,18 @@ export default function CarritoDrawer() {
       if (respuesta.status === 400) {
         // El servidor rechazó el carrito: que el error diga qué revisar (§7).
         setPago("revisa");
+        return;
+      }
+      if (respuesta.status === 409) {
+        // Stock insuficiente (bloque 3): nombrar los productos agotados.
+        const datos = (await respuesta.json().catch(() => ({}))) as {
+          agotados?: string[];
+        };
+        const ids = Array.isArray(datos.agotados) ? datos.agotados : [];
+        setAgotados(
+          carrito.filter((l) => ids.includes(l.id)).map((l) => l.nombre),
+        );
+        setPago("agotado");
         return;
       }
       const datos = (await respuesta.json()) as { ok?: boolean; url?: string };
@@ -174,6 +194,15 @@ export default function CarritoDrawer() {
             {pago === "revisa" && (
               <p className="mt-3 text-sm text-acento" role="alert">
                 {t("carrito.checkout.revisa")}
+              </p>
+            )}
+            {pago === "agotado" && (
+              <p className="mt-3 text-sm text-acento" role="alert">
+                {agotados.length > 0
+                  ? tf("carrito.checkout.agotado", {
+                      productos: agotados.join(", "),
+                    })
+                  : t("carrito.checkout.agotadoGenerico")}
               </p>
             )}
             {pago === "error" && (

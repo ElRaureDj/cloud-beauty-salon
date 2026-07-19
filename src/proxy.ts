@@ -8,6 +8,12 @@ import { NextResponse, type NextRequest } from "next/server";
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // El panel /admin vive FUERA de [locale] (herramienta interna, sin idioma):
+  // dejarlo pasar tal cual — reescribirlo a /es/admin lo rompería (no existe).
+  if (pathname === "/admin" || pathname.startsWith("/admin/")) {
+    return NextResponse.next();
+  }
+
   // Inglés: dejar pasar tal cual → [locale] = "en".
   if (pathname === "/en" || pathname.startsWith("/en/")) {
     return NextResponse.next();

@@ -45,3 +45,21 @@ export function textoPrecio(precio: number, { t }: Traductor): string {
 // §5.3: la línea de bundle lleva descuento si viene del quiz.
 // TODO(guion): validar el % de descuento del bundle (decisión de negocio).
 export const DESCUENTO_BUNDLE = 0.1;
+
+// Por debajo de este umbral se muestra "Últimas N" para crear urgencia honesta.
+export const UMBRAL_STOCK_BAJO = 5;
+
+// Presentación del estado de stock (bloque 3). `unidades` null = desconocido
+// (sin BD o producto sin fila) → no se muestra nada ni se bloquea la venta.
+export type EstadoStock = { agotado: boolean; texto: string | null };
+
+export function etiquetaStock(
+  unidades: number | null,
+  { t, tf }: Traductor,
+): EstadoStock {
+  if (unidades === null) return { agotado: false, texto: null };
+  if (unidades <= 0) return { agotado: true, texto: t("producto.agotado") };
+  if (unidades <= UMBRAL_STOCK_BAJO)
+    return { agotado: false, texto: tf("producto.ultimasUnidades", { n: unidades }) };
+  return { agotado: false, texto: null };
+}

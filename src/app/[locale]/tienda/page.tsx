@@ -4,12 +4,14 @@ import { CATALOGO, lineasDelCatalogo, type Etapa } from "@/lib/catalogo";
 import {
   CATEGORIAS,
   ETAPAS,
+  etiquetaStock,
   nombreCategoria,
   nombreEtapa,
   textoPrecio,
 } from "@/lib/formato";
 import { getT, resolverLocale } from "@/lib/i18n";
 import { alternatesDeRuta, rutaLocalizada } from "@/lib/i18n/rutas";
+import { stockDeProductos } from "@/lib/stock";
 import ImagenProducto from "@/components/tienda/ImagenProducto";
 
 export async function generateMetadata(
@@ -85,6 +87,9 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
 
   const hayFiltros = Boolean(categoria || etapa || linea);
   const preciosPendientes = CATALOGO.every((p) => p.precio === 0);
+  // Stock en vivo de los productos visibles (bloque 3). Sin BD → mapa vacío →
+  // sin badges. Server-side: la /tienda ya es dinámica (lee searchParams).
+  const stockMap = await stockDeProductos(productos.map((p) => p.id));
 
   return (
     <main className="mx-auto max-w-5xl px-6 pb-24 pt-28">
@@ -190,13 +195,18 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
         <p className="mt-14 text-tinta-suave">{t("tienda.sinResultados")}</p>
       ) : (
         <ul className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3">
-          {productos.map((p) => (
+          {productos.map((p) => {
+            const et = etiquetaStock(
+              stockMap.has(p.id) ? stockMap.get(p.id)! : null,
+              tr,
+            );
+            return (
             <li key={p.id}>
               <Link
                 href={r(`/producto/${p.id}`)}
                 className="group block rounded-3xl border border-transparent p-2 transition-colors hover:border-tinta-suave/20"
               >
-                <ImagenProducto producto={p} clase="aspect-square w-full" />
+                <ImagenProducto producto={p} clase="aspect-square w-full" estadoStock={et} />
                 <p className="mt-3 text-sm leading-snug">{p.nombre}</p>
                 <p className="mt-0.5 text-xs text-tinta-suave">
                   {p.linea}
@@ -205,7 +215,8 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
                 <p className="mt-1 text-sm">{textoPrecio(p.precio, tr)}</p>
               </Link>
             </li>
-          ))}
+            );
+          })}
         </ul>
       )}
 

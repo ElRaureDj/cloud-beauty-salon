@@ -5,7 +5,8 @@ import { CATALOGO, combinaCon, productoPorSlug } from "@/lib/catalogo";
 import { nombreCategoria, nombreEtapa, textoPrecio } from "@/lib/formato";
 import { getT, resolverLocale, LOCALES } from "@/lib/i18n";
 import { alternatesDeRuta, rutaLocalizada } from "@/lib/i18n/rutas";
-import BotonAgregar from "@/components/tienda/BotonAgregar";
+import PanelCompra from "@/components/tienda/PanelCompra";
+import Resenas from "@/components/tienda/Resenas";
 import ImagenProducto from "@/components/tienda/ImagenProducto";
 
 // §6: fichas renderizadas en servidor e indexables; se prerenderiza todo el
@@ -81,13 +82,15 @@ export default async function PaginaProducto(
           <p className="mt-5 leading-relaxed">{producto.descripcion}</p>
 
           <div className="mt-6">
-            <BotonAgregar producto={producto} />
+            <PanelCompra producto={producto} />
           </div>
 
           <h2 className="mt-8 font-display text-lg">{t("producto.modoDeUso")}</h2>
           <p className="mt-2 leading-relaxed text-tinta-suave">{producto.modoDeUso}</p>
         </div>
       </div>
+
+      <Resenas productoId={producto.id} />
 
       {relacionados.length > 0 && (
         <section className="mt-14">
