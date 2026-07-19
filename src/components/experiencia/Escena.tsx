@@ -13,11 +13,12 @@ import {
 } from "@/lib/escena/coreografia";
 import { useExperiencia } from "@/stores/experiencia";
 
-// Placeholder de desarrollo con licencia CC-BY (crédito en CREDITS.md).
-// El asset comprado (§8, GLB + Draco) lo sustituye cambiando solo esta ruta:
-// la escala y la posición se normalizan en tiempo de ejecución.
-const RUTA_MODELO = "/modelos/placeholder-cc-by.glb";
-const TAMANO_MODELO_BYTES = 2_168_608; // respaldo si falta content-length
+// Asset definitivo (§8): "Business Lady 02" de ida-faber (CGTrader, licencia
+// Royalty Free — ver CREDITS.md), compuesta en Blender: pose estática, melena
+// con material propio (MAT_HAIR con baseColorFactor → tinte en vivo v1.5),
+// 69.4k tris, texturas WebP 2K/1K, Draco. Escala normalizada en runtime.
+const RUTA_MODELO = "/modelos/businesslady.glb";
+const TAMANO_MODELO_BYTES = 1_910_252; // respaldo si falta content-length
 
 const RETRASO_INVITACION_MS = 6000; // §4 Cap. 0: invitación a moverse tras 6 s
 
