@@ -1,21 +1,71 @@
 "use client";
 
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { t } from "@/lib/i18n/es";
+import { usePathname, useSearchParams } from "next/navigation";
+import { useT, useRuta, useLocale } from "@/lib/i18n/client";
+import { LOCALES } from "@/lib/i18n";
+import { rutaEnOtroIdioma } from "@/lib/i18n/rutas";
 import { prefiereMenosMovimiento } from "@/lib/webgl";
 import { contarArticulos, useTienda } from "@/stores/carrito";
 import { useExperiencia } from "@/stores/experiencia";
 import CarritoDrawer from "./CarritoDrawer";
 
+// Selector de idioma (§9): conserva la subruta actual Y su query al cambiar —
+// p. ej. /tienda?categoria=mascara → /en/tienda?categoria=mascara. usePathname
+// no incluye la query; useSearchParams sí, pero obliga a un <Suspense> para no
+// forzar el render en cliente de las páginas estáticas (ver Header).
+function SelectorIdiomaVista({ sufijo }: { sufijo: string }) {
+  const pathname = usePathname();
+  const locale = useLocale();
+  const { t } = useT();
+  return (
+    <div
+      aria-label={t("header.idioma")}
+      className="flex items-center gap-1 text-xs uppercase tracking-wider"
+    >
+      {LOCALES.map((l, i) => (
+        <span key={l} className="flex items-center gap-1">
+          {i > 0 && <span aria-hidden className="text-tinta-suave/40">·</span>}
+          {l === locale ? (
+            <span aria-current="true" className="text-tinta">
+              {l}
+            </span>
+          ) : (
+            <Link
+              href={rutaEnOtroIdioma(l, pathname) + sufijo}
+              hrefLang={l}
+              aria-label={t(`header.idioma.${l}`)}
+              className="text-tinta-suave transition-colors hover:text-tinta"
+            >
+              {l}
+            </Link>
+          )}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function SelectorIdioma() {
+  const qs = useSearchParams().toString();
+  return <SelectorIdiomaVista sufijo={qs ? `?${qs}` : ""} />;
+}
+
 // Regla de oro (§1): desde cualquier punto del scroll, la tienda y el carrito
-// están a un toque. Header fijo: logo (→ inicio) · Tienda · carrito con contador.
+// están a un toque. Header fijo: logo (→ inicio) · Tienda · idioma · carrito.
 export default function Header() {
   const pathname = usePathname();
+  const { t } = useT();
+  const ruta = useRuta();
   const abrirOverlay = useExperiencia((s) => s.abrirOverlay);
   const cerrarOverlay = useExperiencia((s) => s.cerrarOverlay);
   const totalArticulos = useTienda(contarArticulos);
+
+  // Home del idioma actual: "/" en español, "/en" en inglés. usePathname()
+  // devuelve la ruta VISIBLE (el proxy reescribe sin cambiar la URL).
+  const inicio = ruta("/");
+  const enInicio = pathname === inicio;
 
   // Rehidrata carrito y respuestas desde localStorage tras montar (§2).
   useEffect(() => {
@@ -29,7 +79,7 @@ export default function Header() {
   }, [pathname, cerrarOverlay]);
 
   const irAlInicio = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (pathname !== "/") return; // navegación normal hacia "/"
+    if (!enInicio) return; // navegación normal hacia la home del idioma
     e.preventDefault();
     const lenis = useExperiencia.getState().lenis;
     if (lenis) lenis.scrollTo(0);
@@ -46,32 +96,41 @@ export default function Header() {
           WebGL y come presupuesto móvil (§2); ahí basta un degradado. */}
       <header
         className={`fixed inset-x-0 top-0 z-40 flex h-14 items-center justify-between px-4 sm:px-6 ${
-          pathname === "/"
+          enInicio
             ? "bg-gradient-to-b from-fondo-0/80 to-transparent"
             : "bg-fondo-0/40 backdrop-blur-md"
         }`}
       >
         <Link
-          href="/"
+          href={inicio}
           onClick={irAlInicio}
           className="font-display text-sm uppercase tracking-[0.25em]"
         >
           {t("marca.nombre")}
         </Link>
-        <nav className="flex items-center gap-5">
+        <nav className="flex items-center gap-4 sm:gap-5">
           <Link
-            href="/tienda"
+            href={ruta("/tienda")}
             className="text-sm text-tinta-suave transition-colors hover:text-tinta"
           >
             {t("header.tienda")}
           </Link>
+
+          {/* Fallback sin query mientras hidrata: evita deoptar a CSR las
+              páginas estáticas; en cliente se completa con los filtros. */}
+          <Suspense fallback={<SelectorIdiomaVista sufijo="" />}>
+            <SelectorIdioma />
+          </Suspense>
+
           <button
             type="button"
             onClick={() => abrirOverlay("carrito")}
             aria-label={
               totalArticulos > 0
                 ? `${t("header.carrito")}, ${totalArticulos} ${
-                    totalArticulos === 1 ? "artículo" : "artículos"
+                    totalArticulos === 1
+                      ? t("header.articulo")
+                      : t("header.articulos")
                   }`
                 : t("header.carrito")
             }

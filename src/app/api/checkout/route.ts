@@ -1,7 +1,8 @@
 import Stripe from "stripe";
 import { productoPorId } from "@/lib/catalogo";
 import { DESCUENTO_BUNDLE } from "@/lib/formato";
-import { t } from "@/lib/i18n/es";
+import { defaultLocale, getT, isLocale, type Locale } from "@/lib/i18n";
+import { rutaLocalizada } from "@/lib/i18n/rutas";
 
 // §9.2 RESUELTO (2026-07-19): Stripe Checkout. Los precios Y el descuento se
 // calculan SIEMPRE contra el catálogo en servidor — el cliente solo manda ids
@@ -43,9 +44,11 @@ const cuponesPorImporte = new Map<number, string>();
 
 type Linea = { id: string; cantidad: number };
 
-function validar(cuerpo: unknown): { lineas: Linea[]; bundleIds: string[] } | null {
+function validar(
+  cuerpo: unknown,
+): { lineas: Linea[]; bundleIds: string[]; locale: Locale } | null {
   if (typeof cuerpo !== "object" || cuerpo === null) return null;
-  const { lineas, bundleIds } = cuerpo as Record<string, unknown>;
+  const { lineas, bundleIds, locale } = cuerpo as Record<string, unknown>;
   if (!Array.isArray(lineas) || lineas.length === 0 || lineas.length > 50) return null;
   const limpias: Linea[] = [];
   const idsVistos = new Set<string>();
@@ -67,7 +70,10 @@ function validar(cuerpo: unknown): { lineas: Linea[]; bundleIds: string[] } | nu
       )
     : [];
   if (bundle.length > limpias.length) return null;
-  return { lineas: limpias, bundleIds: bundle };
+  // Idioma del checkout (§9 bilingüe): Stripe, la etiqueta de envío y las URLs
+  // de retorno siguen el idioma desde el que se pagó. Valor no fiable → español.
+  const loc: Locale = isLocale(locale) ? locale : defaultLocale;
+  return { lineas: limpias, bundleIds: bundle, locale: loc };
 }
 
 export async function POST(request: Request) {
@@ -100,6 +106,7 @@ export async function POST(request: Request) {
   }
 
   const stripe = new Stripe(clave);
+  const { t } = getT(datos.locale);
   // Base canónica desde entorno — nunca desde headers del cliente.
   const origen = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
   const impuestosActivos = process.env.STRIPE_TAX_AUTOMATICO === "1";
@@ -181,7 +188,7 @@ export async function POST(request: Request) {
 
   const sesion = await stripe.checkout.sessions.create({
     mode: "payment",
-    locale: "es",
+    locale: datos.locale,
     line_items,
     // Stripe no admite `discounts` y `allow_promotion_codes` a la vez: si el
     // carrito ya trae el descuento de la rutina del diagnóstico, no ofrecemos
@@ -191,8 +198,8 @@ export async function POST(request: Request) {
     shipping_address_collection: { allowed_countries: ["US"] },
     shipping_options,
     ...(impuestosActivos ? { automatic_tax: { enabled: true } } : {}),
-    success_url: `${origen}/compra/exito?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${origen}/tienda`,
+    success_url: `${origen}${rutaLocalizada(datos.locale, "/compra/exito")}?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${origen}${rutaLocalizada(datos.locale, "/tienda")}`,
   });
 
   return Response.json({ ok: true, url: sesion.url }, { status: 200 });

@@ -6,6 +6,7 @@ import { Component, useCallback, useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
+import { useRuta } from "@/lib/i18n/client";
 import { prefiereMenosMovimiento, soportaWebGL } from "@/lib/webgl";
 import { useExperiencia } from "@/stores/experiencia";
 import CapitulosDom from "./CapitulosDom";
@@ -52,14 +53,16 @@ export default function Experiencia() {
   const [escenaLista, setEscenaLista] = useState(false);
   const contenedorRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
+  const ruta = useRuta();
 
   const alPrimerFrame = useCallback(() => setEscenaLista(true), []);
 
   // La vitrina del cap. 3 vive dentro del canvas: el router no cruza el
-  // reconciliador de r3f, así que navega vía callback (§4 Cap. 3).
+  // reconciliador de r3f, así que navega vía callback (§4 Cap. 3). El destino
+  // se localiza (§9): desde /en la ficha se abre en /en/producto/…
   const alAbrirProducto = useCallback(
-    (id: string) => router.push(`/producto/${id}`),
-    [router],
+    (id: string) => router.push(ruta(`/producto/${id}`)),
+    [router, ruta],
   );
 
   // Decisión de modo (§2): sin WebGL o con prefers-reduced-motion → fallback.

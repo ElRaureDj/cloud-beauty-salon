@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { t } from "@/lib/i18n/es";
+import { useT } from "@/lib/i18n/client";
+import type { ClaveI18n } from "@/lib/i18n";
 import { useExperiencia, type Overlay } from "@/stores/experiencia";
 import ModalBase from "./ModalBase";
 
@@ -17,7 +18,7 @@ const ORIGENES: Partial<Record<Overlay, Interes>> = {
 
 type Interes = "peluqueria" | "manicura" | "pedicura";
 
-const INTERESES: Array<{ valor: Interes; clave: Parameters<typeof t>[0] }> = [
+const INTERESES: Array<{ valor: Interes; clave: ClaveI18n }> = [
   { valor: "peluqueria", clave: "cap2.peluqueria" },
   { valor: "manicura", clave: "cap4.manicura" },
   { valor: "pedicura", clave: "cap6.pedicura" },
@@ -26,6 +27,7 @@ const INTERESES: Array<{ valor: Interes; clave: Parameters<typeof t>[0] }> = [
 type Estado = "editando" | "enviando" | "exito" | "error" | "invalido";
 
 export default function ModalListaEspera() {
+  const { t } = useT();
   const overlay = useExperiencia((s) => s.overlay);
   const cerrar = useExperiencia((s) => s.cerrarOverlay);
   const origen = ORIGENES[overlay];
@@ -55,6 +57,7 @@ function FormularioEspera({
   origen: Interes;
   onCerrar: () => void;
 }) {
+  const { t } = useT();
   const [nombre, setNombre] = useState("");
   const [contacto, setContacto] = useState("");
   const [intereses, setIntereses] = useState<Interes[]>([origen]);

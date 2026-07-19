@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { t } from "@/lib/i18n/es";
+import { useT } from "@/lib/i18n/client";
 import { useExperiencia } from "@/stores/experiencia";
 
 // §4 Cap. 0: logo + barra ligada a la carga; mínimo 1,2 s en pantalla.
@@ -15,6 +15,7 @@ let yaSeMostro = false;
 type Fase = "visible" | "saliendo" | "fuera";
 
 export default function Preloader({ listo }: { listo: boolean }) {
+  const { t } = useT();
   const [fase, setFase] = useState<Fase>("visible");
   // §4 Cap. 0: la barra sigue la carga real del GLB (bytes descargados).
   const carga = useExperiencia((s) => s.cargaProgreso);

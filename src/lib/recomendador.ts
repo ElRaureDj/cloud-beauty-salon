@@ -1,6 +1,6 @@
 import { CATALOGO, type Etapa, type Producto } from "@/lib/catalogo";
 import { nombreEtapa } from "@/lib/formato";
-import { t, tf } from "@/lib/i18n/es";
+import type { Traductor } from "@/lib/i18n";
 import type { RespuestasQuiz } from "@/stores/carrito";
 
 // Recomendador de rutina (§5.2): mapea las respuestas del quiz al cronograma
@@ -38,7 +38,8 @@ function buscarEstricto(
 // Con empate de señales, la urgencia manda: reconstruir > nutrir > hidratar.
 const PRIORIDAD_EMPATE: Etapa[] = ["reconstruccion", "nutricion", "hidratacion"];
 
-export function recomendar(r: RespuestasQuiz): Recomendacion {
+export function recomendar(r: RespuestasQuiz, tr: Traductor): Recomendacion {
+  const { t, tf } = tr;
   const razones: string[] = [];
   const quimica = r.quimica ?? [];
   const objetivos = r.objetivos ?? [];
@@ -179,7 +180,9 @@ export function recomendar(r: RespuestasQuiz): Recomendacion {
 
   if (razones.length === 0) {
     razones.push(
-      tf("reco.razon.base", { etapa: nombreEtapa(etapaPrincipal).toLowerCase() }),
+      tf("reco.razon.base", {
+        etapa: nombreEtapa(etapaPrincipal, tr).toLowerCase(),
+      }),
     );
   }
 

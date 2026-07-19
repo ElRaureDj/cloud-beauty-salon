@@ -1,13 +1,27 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { t } from "@/lib/i18n/es";
+import { getT, resolverLocale } from "@/lib/i18n";
+import { rutaLocalizada } from "@/lib/i18n/rutas";
 import VaciarCarrito from "./VaciarCarrito";
 
-export const metadata: Metadata = { title: t("compra.exito.titulo") };
+export async function generateMetadata(
+  props: PageProps<"/[locale]/compra/exito">,
+): Promise<Metadata> {
+  const { locale } = await props.params;
+  const { t } = getT(resolverLocale(locale));
+  return { title: t("compra.exito.titulo") };
+}
 
 // Vuelta de Stripe Checkout (§9.2). El pago ya está confirmado por Stripe;
 // aquí solo celebramos y dejamos el carrito listo para la próxima.
-export default function PaginaCompraExito() {
+export default async function PaginaCompraExito(
+  props: PageProps<"/[locale]/compra/exito">,
+) {
+  const { locale } = await props.params;
+  const loc = resolverLocale(locale);
+  const { t } = getT(loc);
+  const r = (path: string) => rutaLocalizada(loc, path);
+
   return (
     <main className="grid min-h-svh place-items-center px-6 text-center">
       <VaciarCarrito />
@@ -20,10 +34,10 @@ export default function PaginaCompraExito() {
           {t("compra.exito.mensaje")}
         </p>
         <div className="mt-8 flex justify-center gap-3">
-          <Link href="/tienda" className="boton-primario">
+          <Link href={r("/tienda")} className="boton-primario">
             {t("carrito.irTienda")}
           </Link>
-          <Link href="/" className="boton-secundario">
+          <Link href={r("/")} className="boton-secundario">
             {t("tienda.volver")}
           </Link>
         </div>

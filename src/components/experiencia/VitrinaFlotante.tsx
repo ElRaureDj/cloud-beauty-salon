@@ -5,6 +5,8 @@ import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { CATALOGO, type Producto } from "@/lib/catalogo";
 import { nombreCategoria } from "@/lib/formato";
+import { useT } from "@/lib/i18n/client";
+import type { Traductor } from "@/lib/i18n";
 import { VITRINA } from "@/lib/escena/coreografia";
 import { useExperiencia } from "@/stores/experiencia";
 
@@ -32,7 +34,7 @@ const HUECOS = [
   { x: -0.05, y: -0.55, distancia: 1.75 },
 ];
 
-function texturaTarjeta(producto: Producto): THREE.CanvasTexture {
+function texturaTarjeta(producto: Producto, tr: Traductor): THREE.CanvasTexture {
   const lienzo = document.createElement("canvas");
   lienzo.width = 256;
   lienzo.height = 340;
@@ -67,7 +69,7 @@ function texturaTarjeta(producto: Producto): THREE.CanvasTexture {
     ctx.fillText(linea, 128, y);
     ctx.font = "500 13px system-ui, sans-serif";
     ctx.fillStyle = "rgba(160,110,70,0.95)";
-    ctx.fillText(nombreCategoria(producto.categoria).toUpperCase(), 128, y + 22);
+    ctx.fillText(nombreCategoria(producto.categoria, tr).toUpperCase(), 128, y + 22);
   };
 
   pintarBase();
@@ -102,6 +104,7 @@ export default function VitrinaFlotante({
   alAbrirProducto: (id: string) => void;
 }) {
   const grupoRef = useRef<THREE.Group | null>(null);
+  const tr = useT();
 
   const productos = useMemo(
     () =>
@@ -116,7 +119,7 @@ export default function VitrinaFlotante({
       productos.map(
         (p) =>
           new THREE.MeshBasicMaterial({
-            map: texturaTarjeta(p),
+            map: texturaTarjeta(p, tr),
             transparent: true,
             opacity: 0,
             side: THREE.DoubleSide,
@@ -126,7 +129,7 @@ export default function VitrinaFlotante({
             depthWrite: false,
           }),
       ),
-    [productos],
+    [productos, tr],
   );
 
   // El cursor y los recursos GPU no deben sobrevivir al canvas.

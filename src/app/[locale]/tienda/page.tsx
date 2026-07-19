@@ -8,13 +8,22 @@ import {
   nombreEtapa,
   textoPrecio,
 } from "@/lib/formato";
-import { t } from "@/lib/i18n/es";
+import { getT, resolverLocale } from "@/lib/i18n";
+import { alternatesDeRuta, rutaLocalizada } from "@/lib/i18n/rutas";
 import ImagenProducto from "@/components/tienda/ImagenProducto";
 
-export const metadata: Metadata = {
-  title: t("tienda.titulo"),
-  description: t("tienda.meta.descripcion"),
-};
+export async function generateMetadata(
+  props: PageProps<"/[locale]/tienda">,
+): Promise<Metadata> {
+  const { locale } = await props.params;
+  const loc = resolverLocale(locale);
+  const { t } = getT(loc);
+  return {
+    title: t("tienda.titulo"),
+    description: t("tienda.meta.descripcion"),
+    alternates: alternatesDeRuta(loc, "/tienda"),
+  };
+}
 
 type Filtros = { categoria?: string; etapa?: string; linea?: string };
 
@@ -27,17 +36,19 @@ function ChipFiltro({
   activo,
   etiqueta,
   query,
+  pathname,
 }: {
   activo: boolean;
   etiqueta: string;
   query: Filtros;
+  pathname: string;
 }) {
   const limpio = Object.fromEntries(
     Object.entries(query).filter(([, v]) => v !== undefined),
   ) as Record<string, string>;
   return (
     <Link
-      href={{ pathname: "/tienda", query: limpio }}
+      href={{ pathname, query: limpio }}
       aria-current={activo ? "true" : undefined}
       className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${
         activo
@@ -52,7 +63,14 @@ function ChipFiltro({
 
 // §6: /tienda renderiza en servidor, ligera e indexable; el canvas solo en "/".
 export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">) {
+  const { locale } = await props.params;
   const params = await props.searchParams;
+  const loc = resolverLocale(locale);
+  const tr = getT(loc);
+  const { t } = tr;
+  const r = (path: string) => rutaLocalizada(loc, path);
+  const rutaTienda = r("/tienda");
+
   const categoria = primero(params.categoria);
   const etapa = primero(params.etapa);
   const linea = primero(params.linea);
@@ -89,6 +107,7 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
             {t("tienda.filtros.categoria")}
           </span>
           <ChipFiltro
+            pathname={rutaTienda}
             etiqueta={t("tienda.filtros.todo")}
             activo={!categoria}
             query={{ ...filtros, categoria: undefined }}
@@ -96,7 +115,8 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
           {CATEGORIAS.map((c) => (
             <ChipFiltro
               key={c}
-              etiqueta={nombreCategoria(c)}
+              pathname={rutaTienda}
+              etiqueta={nombreCategoria(c, tr)}
               activo={categoria === c}
               query={{ ...filtros, categoria: c }}
             />
@@ -114,6 +134,7 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
             {t("tienda.filtros.etapa")}
           </span>
           <ChipFiltro
+            pathname={rutaTienda}
             etiqueta={t("tienda.filtros.todo")}
             activo={!etapa}
             query={{ ...filtros, etapa: undefined }}
@@ -121,7 +142,8 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
           {ETAPAS.map((e) => (
             <ChipFiltro
               key={e}
-              etiqueta={nombreEtapa(e)}
+              pathname={rutaTienda}
+              etiqueta={nombreEtapa(e, tr)}
               activo={etapa === e}
               query={{ ...filtros, etapa: e }}
             />
@@ -139,6 +161,7 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
             {t("tienda.filtros.linea")}
           </span>
           <ChipFiltro
+            pathname={rutaTienda}
             etiqueta={t("tienda.filtros.todo")}
             activo={!linea}
             query={{ ...filtros, linea: undefined }}
@@ -146,6 +169,7 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
           {lineasDelCatalogo().map((l) => (
             <ChipFiltro
               key={l}
+              pathname={rutaTienda}
               etiqueta={l}
               activo={linea === l}
               query={{ ...filtros, linea: l }}
@@ -154,7 +178,7 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
         </div>
         {hayFiltros && (
           <Link
-            href="/tienda"
+            href={rutaTienda}
             className="self-start text-sm text-acento underline-offset-4 hover:underline"
           >
             {t("tienda.filtros.limpiar")}
@@ -169,7 +193,7 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
           {productos.map((p) => (
             <li key={p.id}>
               <Link
-                href={`/producto/${p.id}`}
+                href={r(`/producto/${p.id}`)}
                 className="group block rounded-3xl border border-transparent p-2 transition-colors hover:border-tinta-suave/20"
               >
                 <ImagenProducto producto={p} clase="aspect-square w-full" />
@@ -178,7 +202,7 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
                   {p.linea}
                   {p.tamano ? ` · ${p.tamano.split("/")[0].trim()}` : ""}
                 </p>
-                <p className="mt-1 text-sm">{textoPrecio(p.precio)}</p>
+                <p className="mt-1 text-sm">{textoPrecio(p.precio, tr)}</p>
               </Link>
             </li>
           ))}
@@ -186,7 +210,7 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
       )}
 
       <Link
-        href="/"
+        href={r("/")}
         className="mt-14 inline-block text-acento underline-offset-4 hover:underline"
       >
         {t("tienda.volver")}

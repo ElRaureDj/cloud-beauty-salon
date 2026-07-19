@@ -1,9 +1,10 @@
 import type { Categoria, Etapa } from "@/lib/catalogo";
-import { t, type ClaveI18n } from "@/lib/i18n/es";
+import type { ClaveI18n, Traductor } from "@/lib/i18n";
 
 // Helpers de presentación SIN importar el catálogo JSON: este módulo puede
 // viajar en el bundle cliente compartido (Header/CarritoDrawer) sin arrastrar
-// los productos.
+// los productos. Reciben el traductor (§9 bilingüe) — no importan un idioma
+// fijo — para que el mismo helper sirva en /es y en /en.
 
 export const ETAPAS: Etapa[] = ["hidratacion", "nutricion", "reconstruccion"];
 
@@ -29,15 +30,15 @@ const CLAVE_CATEGORIA: Record<Categoria, ClaveI18n> = {
   booster: "categoria.booster",
 };
 
-export function nombreEtapa(etapa: Etapa): string {
+export function nombreEtapa(etapa: Etapa, { t }: Traductor): string {
   return t(CLAVE_ETAPA[etapa]);
 }
 
-export function nombreCategoria(categoria: Categoria): string {
+export function nombreCategoria(categoria: Categoria, { t }: Traductor): string {
   return t(CLAVE_CATEGORIA[categoria]);
 }
 
-export function textoPrecio(precio: number): string {
+export function textoPrecio(precio: number, { t }: Traductor): string {
   return precio > 0 ? `$${precio.toFixed(2)}` : t("precio.porConfirmar");
 }
 

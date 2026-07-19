@@ -1,5 +1,5 @@
 import type { RespuestasQuiz } from "@/stores/carrito";
-import type { ClaveI18n } from "@/lib/i18n/es";
+import type { ClaveI18n } from "@/lib/i18n";
 
 // Definición del quiz capilar (§5.1): 10 preguntas, una por pantalla.
 // Todo el copy vive en el diccionario i18n (§7): aquí solo claves y valores.

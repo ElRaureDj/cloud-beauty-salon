@@ -17,6 +17,13 @@ export function isLocale(valor: unknown): valor is Locale {
   );
 }
 
+// Normaliza el string crudo de `params.locale` a un Locale válido. El layout ya
+// hace notFound() para valores inválidos, así que en la práctica llega "es" o
+// "en"; el fallback a español es solo por seguridad de tipos en las páginas.
+export function resolverLocale(valor: string): Locale {
+  return isLocale(valor) ? valor : defaultLocale;
+}
+
 const diccionarios: Record<Locale, Record<ClaveI18n, string>> = { es, en };
 
 export type Traductor = {

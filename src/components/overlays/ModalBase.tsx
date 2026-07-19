@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef } from "react";
-import { t } from "@/lib/i18n/es";
+import { useT } from "@/lib/i18n/client";
 
 type Props = {
   abierto: boolean;
@@ -22,6 +22,7 @@ export default function ModalBase({
   lado = "centro",
   children,
 }: Props) {
+  const { t } = useT();
   const tituloId = useId();
   const dialogoRef = useRef<HTMLDialogElement | null>(null);
 

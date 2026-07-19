@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { t, tf } from "@/lib/i18n/es";
+import { useT, useRuta } from "@/lib/i18n/client";
 import { DESCUENTO_BUNDLE, textoPrecio } from "@/lib/formato";
 import {
   bundleActivo,
@@ -18,6 +18,9 @@ import ModalBase from "@/components/overlays/ModalBase";
 // §5.3 — Drawer lateral derecho. Persiste en localStorage. El checkout se
 // habilita al decidir la pasarela (§9.2): hasta entonces, botón deshabilitado.
 export default function CarritoDrawer() {
+  const tr = useT();
+  const { t, tf } = tr;
+  const ruta = useRuta();
   const abierto = useExperiencia((s) => s.overlay === "carrito");
   const cerrar = useExperiencia((s) => s.cerrarOverlay);
   const carrito = useTienda((s) => s.carrito);
@@ -46,6 +49,7 @@ export default function CarritoDrawer() {
         body: JSON.stringify({
           lineas: carrito.map((l) => ({ id: l.id, cantidad: l.cantidad })),
           bundleIds: conBundle ? useTienda.getState().bundleIds : [],
+          locale: tr.locale,
         }),
       });
       if (respuesta.status === 503) {
@@ -79,7 +83,7 @@ export default function CarritoDrawer() {
         <div className="flex h-full flex-col">
           {/* Estado vacío que invita a actuar (§7). */}
           <p className="text-tinta-suave">{t("carrito.vacio")}</p>
-          <Link href="/tienda" onClick={cerrar} className="boton-primario mt-6 w-full">
+          <Link href={ruta("/tienda")} onClick={cerrar} className="boton-primario mt-6 w-full">
             {t("carrito.irTienda")}
           </Link>
         </div>
@@ -99,14 +103,14 @@ export default function CarritoDrawer() {
               >
                 <div className="flex items-start justify-between gap-3">
                   <Link
-                    href={`/producto/${linea.id}`}
+                    href={ruta(`/producto/${linea.id}`)}
                     onClick={cerrar}
                     className="text-sm underline-offset-4 hover:underline"
                   >
                     {linea.nombre}
                   </Link>
                   <span className="whitespace-nowrap text-xs text-tinta-suave">
-                    {textoPrecio(linea.precio)}
+                    {textoPrecio(linea.precio, tr)}
                   </span>
                 </div>
                 <div className="mt-2 flex items-center justify-between">

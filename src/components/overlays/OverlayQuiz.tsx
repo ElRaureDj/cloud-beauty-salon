@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { DESCUENTO_BUNDLE, nombreEtapa, textoPrecio } from "@/lib/formato";
-import { t, tf } from "@/lib/i18n/es";
+import { useT, useRuta } from "@/lib/i18n/client";
 import { GRUPOS_PATRON, PASOS_QUIZ, SWATCHES_COLOR, type PasoQuiz } from "@/lib/quiz";
 import { recomendar, totalPaquete } from "@/lib/recomendador";
 import { useExperiencia } from "@/stores/experiencia";
@@ -41,6 +41,7 @@ function Swatches({
   seleccionado?: string;
   onElegir: (hex: string) => void;
 }) {
+  const { t } = useT();
   return (
     <div role="group" aria-labelledby={idLeyenda}>
       <p id={idLeyenda} className="mb-2 text-sm text-tinta-suave">
@@ -69,6 +70,9 @@ function Swatches({
 }
 
 export default function OverlayQuiz() {
+  const tr = useT();
+  const { t, tf } = tr;
+  const ruta = useRuta();
   const abierto = useExperiencia((s) => s.overlay === "quiz");
   const cerrar = useExperiencia((s) => s.cerrarOverlay);
   const abrirOverlay = useExperiencia((s) => s.abrirOverlay);
@@ -112,8 +116,8 @@ export default function OverlayQuiz() {
   const respuestas =
     vista === "resultado" && respuestasGuardadas ? respuestasGuardadas : borrador;
   const recomendacion = useMemo(
-    () => (vista === "resultado" ? recomendar(respuestas) : null),
-    [vista, respuestas],
+    () => (vista === "resultado" ? recomendar(respuestas, tr) : null),
+    [vista, respuestas, tr],
   );
 
   const pasoActual: PasoQuiz | undefined = PASOS_QUIZ[paso];
@@ -345,7 +349,7 @@ export default function OverlayQuiz() {
               <span />
             )}
             <Link
-              href="/tienda"
+              href={ruta("/tienda")}
               onClick={cerrar}
               className="underline-offset-4 hover:underline"
             >
@@ -359,7 +363,7 @@ export default function OverlayQuiz() {
         <div>
           <p className="text-sm text-tinta-suave">{t("quiz.resultado.etapa")}</p>
           <p ref={tituloRef} tabIndex={-1} className="font-display text-3xl text-acento outline-none">
-            {nombreEtapa(recomendacion.etapaPrincipal)}
+            {nombreEtapa(recomendacion.etapaPrincipal, tr)}
           </p>
 
           <ul className="mt-4 flex flex-col gap-2 text-sm text-tinta-suave">
@@ -384,7 +388,7 @@ export default function OverlayQuiz() {
                   <p className="text-xs text-tinta-suave">{p.linea}</p>
                 </div>
                 <span className="whitespace-nowrap text-xs text-tinta-suave">
-                  {textoPrecio(p.precio)}
+                  {textoPrecio(p.precio, tr)}
                 </span>
               </li>
             ))}
@@ -419,7 +423,7 @@ export default function OverlayQuiz() {
               {t("quiz.resultado.repetir")}
             </button>
             <Link
-              href="/tienda"
+              href={ruta("/tienda")}
               onClick={cerrar}
               className="underline-offset-4 hover:underline"
             >

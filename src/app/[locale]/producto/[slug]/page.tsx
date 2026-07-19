@@ -3,8 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CATALOGO, combinaCon, productoPorSlug } from "@/lib/catalogo";
 import { nombreCategoria, nombreEtapa, textoPrecio } from "@/lib/formato";
-import { t } from "@/lib/i18n/es";
-import { LOCALES } from "@/lib/i18n";
+import { getT, resolverLocale, LOCALES } from "@/lib/i18n";
+import { alternatesDeRuta, rutaLocalizada } from "@/lib/i18n/rutas";
 import BotonAgregar from "@/components/tienda/BotonAgregar";
 import ImagenProducto from "@/components/tienda/ImagenProducto";
 
@@ -17,29 +17,39 @@ export function generateStaticParams() {
 export async function generateMetadata(
   props: PageProps<"/[locale]/producto/[slug]">,
 ): Promise<Metadata> {
-  const { slug } = await props.params;
+  const { locale, slug } = await props.params;
   const producto = productoPorSlug(slug);
   if (!producto) return {};
+  // Nombre y descripción vienen del catálogo TRUSS (universales); el título de
+  // pestaña añade la marca vía el template del layout.
   return {
     title: producto.nombre,
     description: producto.descripcion,
+    alternates: alternatesDeRuta(resolverLocale(locale), `/producto/${slug}`),
   };
 }
 
-export default async function PaginaProducto(props: PageProps<"/[locale]/producto/[slug]">) {
-  const { slug } = await props.params;
+export default async function PaginaProducto(
+  props: PageProps<"/[locale]/producto/[slug]">,
+) {
+  const { locale, slug } = await props.params;
   const producto = productoPorSlug(slug);
   if (!producto) notFound();
+
+  const loc = resolverLocale(locale);
+  const tr = getT(loc);
+  const { t } = tr;
+  const r = (path: string) => rutaLocalizada(loc, path);
 
   const relacionados = combinaCon(producto);
 
   return (
     <main className="mx-auto max-w-4xl px-6 pb-24 pt-28">
       <nav className="text-sm text-tinta-suave">
-        <Link href="/tienda" className="underline-offset-4 hover:underline">
+        <Link href={r("/tienda")} className="underline-offset-4 hover:underline">
           {t("tienda.titulo")}
         </Link>{" "}
-        / {nombreCategoria(producto.categoria)}
+        / {nombreCategoria(producto.categoria, tr)}
       </nav>
 
       <div className="mt-6 grid gap-8 sm:grid-cols-2">
@@ -55,7 +65,7 @@ export default async function PaginaProducto(props: PageProps<"/[locale]/product
               {producto.tamano}
             </p>
           )}
-          <p className="mt-2 text-lg">{textoPrecio(producto.precio)}</p>
+          <p className="mt-2 text-lg">{textoPrecio(producto.precio, tr)}</p>
 
           <div className="mt-3 flex flex-wrap gap-2">
             {producto.etapa.map((e) => (
@@ -63,7 +73,7 @@ export default async function PaginaProducto(props: PageProps<"/[locale]/product
                 key={e}
                 className="rounded-full bg-fondo-1 px-3 py-1 text-xs text-tinta-suave"
               >
-                {nombreEtapa(e)}
+                {nombreEtapa(e, tr)}
               </span>
             ))}
           </div>
@@ -86,13 +96,13 @@ export default async function PaginaProducto(props: PageProps<"/[locale]/product
             {relacionados.map((p) => (
               <li key={p.id}>
                 <Link
-                  href={`/producto/${p.id}`}
+                  href={r(`/producto/${p.id}`)}
                   className="group block rounded-3xl border border-transparent p-2 transition-colors hover:border-tinta-suave/20"
                 >
                   <ImagenProducto producto={p} clase="aspect-square w-full" />
                   <p className="mt-2 text-sm leading-snug">{p.nombre}</p>
                   <p className="mt-0.5 text-xs text-tinta-suave">
-                    {textoPrecio(p.precio)}
+                    {textoPrecio(p.precio, tr)}
                   </p>
                 </Link>
               </li>
@@ -102,7 +112,7 @@ export default async function PaginaProducto(props: PageProps<"/[locale]/product
       )}
 
       <Link
-        href="/tienda"
+        href={r("/tienda")}
         className="mt-12 inline-block text-acento underline-offset-4 hover:underline"
       >
         {t("producto.volverTienda")}

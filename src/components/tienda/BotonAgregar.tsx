@@ -1,6 +1,6 @@
 "use client";
 
-import { t } from "@/lib/i18n/es";
+import { useT } from "@/lib/i18n/client";
 import type { Producto } from "@/lib/catalogo";
 import { useTienda } from "@/stores/carrito";
 import { useExperiencia } from "@/stores/experiencia";
@@ -8,6 +8,7 @@ import { useExperiencia } from "@/stores/experiencia";
 // §3: los botones dicen exactamente lo que hacen. Si el producto ya está en
 // el carrito, el botón pasa a "Ver el carrito" y NO agrega otra unidad.
 export default function BotonAgregar({ producto }: { producto: Producto }) {
+  const { t } = useT();
   const agregar = useTienda((s) => s.agregar);
   const enCarrito = useTienda((s) => s.carrito.some((l) => l.id === producto.id));
   const abrirOverlay = useExperiencia((s) => s.abrirOverlay);

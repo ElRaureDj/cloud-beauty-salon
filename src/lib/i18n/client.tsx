@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useMemo, type ReactNode } from "react";
 import { defaultLocale, getT, type Locale, type Traductor } from ".";
+import { rutaLocalizada } from "./rutas";
 
 // Idioma actual para los componentes cliente. El layout de cada idioma envuelve
 // el árbol con <LocaleProvider locale={...}>; los componentes obtienen su
@@ -27,4 +28,15 @@ export function useLocale(): Locale {
 export function useT(): Traductor {
   const locale = useLocale();
   return useMemo(() => getT(locale), [locale]);
+}
+
+// Href localizado en cliente: r("/tienda") → "/tienda" (es) o "/en/tienda" (en).
+// Mantiene los <Link href={r("...")}> conscientes del idioma sin acoplar cada
+// componente al valor del locale.
+export function useRuta(): (path: string) => string {
+  const locale = useLocale();
+  return useMemo(
+    () => (path: string) => rutaLocalizada(locale, path),
+    [locale],
+  );
 }

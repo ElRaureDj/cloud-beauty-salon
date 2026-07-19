@@ -1,5 +1,8 @@
-// Claves i18n desde el día 1 (GUION §7). Español primero; en Fase 3 esto se
-// conecta a next-intl (o similar) sin refactor: las claves son el contrato.
+// Diccionario español (GUION §7), idioma por defecto y fuente del tipo de
+// claves. El inglés vive en ./en.ts; el sistema consciente del idioma está en
+// ./index.ts (getT) y ./client.tsx (useT). Las claves son el contrato: en.ts
+// está tipado como Record<ClaveI18n, string>, así que falta/sobra de una clave
+// rompe la compilación.
 export const es = {
   "marca.nombre": "Cloud Beauty Salon", // §9.5 RESUELTO (2026-07-19)
   "meta.descripcion":
@@ -14,6 +17,11 @@ export const es = {
   "cap2.hacerDiagnostico": "Hacer mi diagnóstico",
   "header.tienda": "Tienda",
   "header.carrito": "Abrir el carrito",
+  "header.idioma": "Idioma",
+  "header.idioma.es": "Ver en español",
+  "header.idioma.en": "Ver en inglés",
+  "header.articulo": "artículo",
+  "header.articulos": "artículos",
   "cap4.manicura": "Manicura",
   "cap4.abrimosPronto": "Abrimos pronto",
   "cap4.avisame": "Avísame y llévate un beneficio de apertura",
@@ -206,17 +214,7 @@ export const es = {
 
 export type ClaveI18n = keyof typeof es;
 
-export function t(clave: ClaveI18n): string {
-  return es[clave];
-}
-
-// Interpolación simple para claves con {parametros}.
-export function tf(
-  clave: ClaveI18n,
-  vars: Record<string, string | number>,
-): string {
-  return Object.entries(vars).reduce(
-    (texto, [k, v]) => texto.replaceAll(`{${k}}`, String(v)),
-    es[clave] as string,
-  );
-}
+// El acceso a las traducciones ya NO pasa por aquí: usa getT(locale) (servidor)
+// o useT() (cliente) desde "@/lib/i18n" — así el texto sigue el idioma activo.
+// Este módulo solo aporta el diccionario español y el tipo ClaveI18n (contrato
+// de claves; en.ts debe cubrirlas todas).

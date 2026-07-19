@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { IconoCandado } from "@/components/iconos";
-import { t } from "@/lib/i18n/es";
+import { useT, useRuta } from "@/lib/i18n/client";
 import { useExperiencia } from "@/stores/experiencia";
 
 // §2: sin WebGL, con prefers-reduced-motion o si el primer frame tarda > 4 s,
@@ -11,6 +11,8 @@ import { useExperiencia } from "@/stores/experiencia";
 // del modelo generados desde la propia escena (§8).
 export default function FallbackEstatico() {
   const abrirOverlay = useExperiencia((s) => s.abrirOverlay);
+  const { t } = useT();
+  const ruta = useRuta();
 
   return (
     <div className="pt-14">
@@ -39,7 +41,7 @@ export default function FallbackEstatico() {
           >
             {t("cap2.hacerDiagnostico")}
           </button>
-          <Link href="/tienda" className="boton-secundario">
+          <Link href={ruta("/tienda")} className="boton-secundario">
             {t("cap2.verTienda")}
           </Link>
           <button
@@ -101,21 +103,21 @@ export default function FallbackEstatico() {
           >
             {t("cap2.hacerDiagnostico")}
           </button>
-          <Link href="/tienda" className="boton-secundario">
+          <Link href={ruta("/tienda")} className="boton-secundario">
             {t("cap7.irTienda")}
           </Link>
         </div>
         <footer className="mt-16 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-tinta-suave">
-          <Link href="/contacto" className="underline-offset-4 hover:underline">
+          <Link href={ruta("/contacto")} className="underline-offset-4 hover:underline">
             {t("footer.contacto")}
           </Link>
-          <Link href="/legal/envios" className="underline-offset-4 hover:underline">
+          <Link href={ruta("/legal/envios")} className="underline-offset-4 hover:underline">
             {t("footer.envios")}
           </Link>
-          <Link href="/legal/privacidad" className="underline-offset-4 hover:underline">
+          <Link href={ruta("/legal/privacidad")} className="underline-offset-4 hover:underline">
             {t("footer.privacidad")}
           </Link>
-          <Link href="/legal/terminos" className="underline-offset-4 hover:underline">
+          <Link href={ruta("/legal/terminos")} className="underline-offset-4 hover:underline">
             {t("footer.terminos")}
           </Link>
         </footer>

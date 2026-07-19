@@ -5,7 +5,7 @@ import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { IconoCandado } from "@/components/iconos";
-import { t } from "@/lib/i18n/es";
+import { useT, useRuta } from "@/lib/i18n/client";
 import { useExperiencia } from "@/stores/experiencia";
 
 if (typeof window !== "undefined") {
@@ -16,6 +16,8 @@ if (typeof window !== "undefined") {
 // lleva el id del capítulo del guion — los porcentajes son contrato (§4).
 export default function CapitulosDom({ activo }: { activo: boolean }) {
   const abrirOverlay = useExperiencia((s) => s.abrirOverlay);
+  const { t } = useT();
+  const ruta = useRuta();
 
   const taglineRef = useRef<HTMLDivElement | null>(null);
   const indicadorRef = useRef<HTMLDivElement | null>(null);
@@ -186,7 +188,7 @@ export default function CapitulosDom({ activo }: { activo: boolean }) {
         ref={ctaTiendaRef}
         className="invisible absolute inset-x-0 bottom-10 flex justify-center opacity-0"
       >
-        <Link href="/tienda" className="boton-secundario pointer-events-auto">
+        <Link href={ruta("/tienda")} className="boton-secundario pointer-events-auto">
           {t("cap2.verTienda")}
         </Link>
       </div>
@@ -268,7 +270,7 @@ export default function CapitulosDom({ activo }: { activo: boolean }) {
           >
             {t("cap2.hacerDiagnostico")}
           </button>
-          <Link href="/tienda" className="boton-secundario pointer-events-auto">
+          <Link href={ruta("/tienda")} className="boton-secundario pointer-events-auto">
             {t("cap7.irTienda")}
           </Link>
         </div>
@@ -282,23 +284,23 @@ export default function CapitulosDom({ activo }: { activo: boolean }) {
         ref={pieRef}
         className="invisible absolute inset-x-0 bottom-0 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 px-6 py-4 text-sm text-tinta-suave opacity-0"
       >
-        <Link href="/contacto" className="pointer-events-auto underline-offset-4 hover:underline">
+        <Link href={ruta("/contacto")} className="pointer-events-auto underline-offset-4 hover:underline">
           {t("footer.contacto")}
         </Link>
         <Link
-          href="/legal/envios"
+          href={ruta("/legal/envios")}
           className="pointer-events-auto underline-offset-4 hover:underline"
         >
           {t("footer.envios")}
         </Link>
         <Link
-          href="/legal/privacidad"
+          href={ruta("/legal/privacidad")}
           className="pointer-events-auto underline-offset-4 hover:underline"
         >
           {t("footer.privacidad")}
         </Link>
         <Link
-          href="/legal/terminos"
+          href={ruta("/legal/terminos")}
           className="pointer-events-auto underline-offset-4 hover:underline"
         >
           {t("footer.terminos")}
