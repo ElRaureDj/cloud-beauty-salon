@@ -101,7 +101,7 @@ export default function PaginaPrivacidad() {
 
         <p className="nota-todo">
           Borrador operativo — TODO(guion): revisar con un asesor legal antes
-          del lanzamiento y fijar el correo de contacto definitivo (§9.5).
+          del lanzamiento.
         </p>
       </div>
 

@@ -36,6 +36,7 @@ export const es = {
   "footer.terminos": "Términos",
   "footer.volverArriba": "Volver arriba",
   "contacto.titulo": "Contacto",
+  "contacto.email": "admin@cloudbeautysalon.com", // §9.5 RESUELTO (2026-07-19)
   "legal.privacidad.titulo": "Política de privacidad",
   "legal.terminos.titulo": "Términos y condiciones",
   "legal.envios.titulo": "Envíos y devoluciones",

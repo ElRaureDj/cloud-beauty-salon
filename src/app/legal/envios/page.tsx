@@ -95,7 +95,7 @@ export default function PaginaEnvios() {
 
         <p className="nota-todo">
           Borrador operativo — TODO(guion): revisar con un asesor legal antes
-          del lanzamiento y añadir el canal de contacto definitivo (§9.5).
+          del lanzamiento.
         </p>
       </div>
 
