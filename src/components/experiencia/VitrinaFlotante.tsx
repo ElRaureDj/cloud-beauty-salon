@@ -166,6 +166,7 @@ const PLANO_ANCHO = 0.24; // ancho del planeGeometry
 const FRAC_ANCHO = 0.34; // fracción del semiancho de pantalla por tarjeta
 const ESCALA_MAX = 0.6; // techo en pantallas anchas (no crecen sin límite)
 const OPACIDAD_MAX = 0.72; // translúcidas
+const HOVER_ESCALA = 1.2; // agrandado al pasar el cursor
 
 export default function VitrinaFlotante({
   alAbrirProducto,
@@ -173,6 +174,10 @@ export default function VitrinaFlotante({
   alAbrirProducto: (id: string) => void;
 }) {
   const grupoRef = useRef<THREE.Group | null>(null);
+  // Hover: índice de la tarjeta bajo el cursor y escala actual de cada una
+  // (para animar suavemente el agrandado con lerp). −1 = ninguna.
+  const hoverRef = useRef<number>(-1);
+  const escalaActual = useRef<number[]>([]);
   const tr = useT();
 
   const productos = useMemo(
@@ -222,7 +227,10 @@ export default function VitrinaFlotante({
     const { progreso } = useExperiencia.getState();
     const dentro = progreso > VITRINA.inicio - 0.005 && progreso < VITRINA.fin + 0.005;
     grupo.visible = dentro;
-    if (!dentro) return;
+    if (!dentro) {
+      hoverRef.current = -1; // no arrastrar un hover viejo al reentrar
+      return;
+    }
 
     const local = (progreso - VITRINA.inicio) / (VITRINA.fin - VITRINA.inicio);
     const alfa = Math.min(1, Math.min(local, 1 - local) * 8);
@@ -245,14 +253,23 @@ export default function VitrinaFlotante({
         .addScaledVector(DERECHA, (hueco.x + deriva) * semiancho)
         .addScaledVector(ARRIBA, (hueco.y + vaiven) * semialto);
       hijo.quaternion.copy(camara.quaternion); // billboard
-      // Tamaño relativo al hueco, con techo en pantallas anchas.
-      const escala = Math.min(ESCALA_MAX, (semiancho * FRAC_ANCHO) / PLANO_ANCHO);
+      // Tamaño relativo al hueco, con techo en pantallas anchas. Al pasar el
+      // cursor, la tarjeta se agranda (lerp) y pasa al frente.
+      const hover = hoverRef.current === i;
+      const base = Math.min(ESCALA_MAX, (semiancho * FRAC_ANCHO) / PLANO_ANCHO);
+      const objetivo = base * (hover ? HOVER_ESCALA : 1);
+      const previa = escalaActual.current[i] ?? objetivo;
+      const escala = previa + (objetivo - previa) * 0.18;
+      escalaActual.current[i] = escala;
       hijo.scale.setScalar(escala);
-      // Orden de pintado estable: de lejos a cerca.
-      hijo.renderOrder = Math.round(100 - hueco.distancia * 10);
-      // Translúcidas, y las más lejanas más difusas (profundidad).
+      // Orden de pintado: de lejos a cerca; la que tiene hover, por encima de todo.
+      hijo.renderOrder = hover ? 300 : Math.round(100 - hueco.distancia * 10);
+      // Translúcidas, y las más lejanas más difusas (profundidad); la de hover se
+      // opaca del todo para destacar.
       const difuminado = THREE.MathUtils.clamp(1.2 - hueco.distancia * 0.2, 0.55, 1);
-      materiales[i].opacity = alfa * OPACIDAD_MAX * difuminado;
+      materiales[i].opacity = hover
+        ? alfa * Math.min(1, OPACIDAD_MAX + 0.22)
+        : alfa * OPACIDAD_MAX * difuminado;
     });
   });
 
@@ -270,9 +287,11 @@ export default function VitrinaFlotante({
           }}
           onPointerOver={() => {
             if (!vitrinaActiva()) return;
+            hoverRef.current = i;
             document.body.style.cursor = "pointer";
           }}
           onPointerOut={() => {
+            if (hoverRef.current === i) hoverRef.current = -1;
             document.body.style.cursor = "";
           }}
         >

@@ -29,14 +29,25 @@ export async function stockDeProducto(id: string): Promise<number | null> {
 }
 
 // Fija las unidades de un producto (panel admin). Upsert: sirve también para
-// productos aún no sembrados. Nunca negativo.
-export async function fijarStock(id: string, unidades: number): Promise<void> {
-  if (!sql) return;
+// productos aún no sembrados. Nunca negativo. Devuelve `repuesto` = true si el
+// stock pasó de 0 (o inexistente) a positivo → el llamador avisa a quien esperaba
+// (mejora F2). Dos sentencias (leer antes, escribir): el panel es de un solo
+// usuario, la carrera es irrelevante.
+export async function fijarStock(
+  id: string,
+  unidades: number,
+): Promise<{ repuesto: boolean }> {
+  if (!sql) return { repuesto: false };
   const n = Math.max(0, Math.trunc(unidades));
+  const prev = (await sql`
+    select unidades from stock where producto_id = ${id}
+  `) as { unidades: number }[];
+  const antes = prev.length ? Number(prev[0].unidades) : 0;
   await sql`
     insert into stock (producto_id, unidades, actualizado_en)
     values (${id}, ${n}, now())
     on conflict (producto_id)
       do update set unidades = excluded.unidades, actualizado_en = now()
   `;
+  return { repuesto: antes <= 0 && n > 0 };
 }

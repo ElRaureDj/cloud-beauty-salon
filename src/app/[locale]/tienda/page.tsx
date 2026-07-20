@@ -14,6 +14,7 @@ import { alternatesDeRuta, rutaLocalizada } from "@/lib/i18n/rutas";
 import { stockDeProductos } from "@/lib/stock";
 import { resumenPorProducto } from "@/lib/resenas";
 import ImagenProducto from "@/components/tienda/ImagenProducto";
+import BotonFavorito from "@/components/tienda/BotonFavorito";
 
 export async function generateMetadata(
   props: PageProps<"/[locale]/tienda">,
@@ -217,7 +218,18 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
 
   return (
     <main className="mx-auto max-w-5xl px-6 pb-24 pt-28">
-      <h1 className="font-display text-3xl sm:text-4xl">{t("tienda.titulo")}</h1>
+      <div className="flex items-start justify-between gap-4">
+        <h1 className="font-display text-3xl sm:text-4xl">{t("tienda.titulo")}</h1>
+        <Link
+          href={r("/favoritos")}
+          className="mt-2 inline-flex shrink-0 items-center gap-1.5 text-sm text-tinta-suave underline-offset-4 hover:text-tinta"
+        >
+          <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden>
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+          </svg>
+          {t("favoritos.enlace")}
+        </Link>
+      </div>
       <p className="mt-3 max-w-prose text-tinta-suave">{t("copy.marca.trust")}.</p>
       {preciosPendientes && (
         <p className="nota-todo mt-4">TODO(guion §9.6): faltan precios del catálogo.</p>
@@ -303,7 +315,7 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
             );
             const res = resenasMap.get(p.id);
             return (
-              <li key={p.id}>
+              <li key={p.id} className="relative">
                 <Link
                   href={r(`/producto/${p.id}`)}
                   className="group block rounded-3xl border border-transparent p-2 transition-colors hover:border-tinta-suave/20"
@@ -317,6 +329,10 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
                   <p className="mt-1 text-sm">{textoPrecio(p.precio, tr)}</p>
                   {res && <EstrellasResumen media={res.media} total={res.total} tr={tr} />}
                 </Link>
+                <BotonFavorito
+                  id={p.id}
+                  className="absolute right-3 top-3 h-9 w-9 bg-fondo-0/70 backdrop-blur-sm"
+                />
               </li>
             );
           })}

@@ -5,6 +5,7 @@ import type { Producto } from "@/lib/catalogo";
 import { etiquetaStock } from "@/lib/formato";
 import { useT } from "@/lib/i18n/client";
 import BotonAgregar from "./BotonAgregar";
+import AvisoStock from "./AvisoStock";
 
 // Disponibilidad en vivo de una ficha (bloque 3). La ficha es estática (SSG) por
 // SEO; este panel pide el stock al montar (GET /api/producto/estado) y resuelve
@@ -55,6 +56,8 @@ export default function PanelCompra({ producto }: { producto: Producto }) {
         <p className="mb-2 text-sm text-acento">{et.texto}</p>
       )}
       <BotonAgregar producto={producto} agotado={et.agotado} />
+      {/* Agotado → ofrecer aviso de reposición (F2). */}
+      {et.agotado && <AvisoStock productoId={producto.id} />}
     </div>
   );
 }

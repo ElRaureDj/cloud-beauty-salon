@@ -1,6 +1,10 @@
 import Stripe from "stripe";
 import { productoPorId } from "@/lib/catalogo";
-import { DESCUENTO_BUNDLE } from "@/lib/formato";
+import {
+  DESCUENTO_BUNDLE,
+  ENVIO_CENTAVOS,
+  ENVIO_GRATIS_DESDE_CENTAVOS,
+} from "@/lib/formato";
 import { defaultLocale, getT, isLocale, type Locale } from "@/lib/i18n";
 import { rutaLocalizada } from "@/lib/i18n/rutas";
 import { stockDeProductos } from "@/lib/stock";
@@ -17,9 +21,6 @@ import { stockDeProductos } from "@/lib/stock";
 // creación de sesión fallaría en cuentas sin Tax activado).
 
 const CUERPO_MAXIMO_BYTES = 20_000;
-
-const ENVIO_CENTAVOS = 800;
-const ENVIO_GRATIS_DESDE_CENTAVOS = 7500;
 
 // Goteo por IP: cada intento QUE CREA una sesión en Stripe no debe ser
 // martilleable. Se separa en comprobar (arriba, read-only) y registrar (solo

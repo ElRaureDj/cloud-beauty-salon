@@ -8,6 +8,7 @@ import { LOCALES } from "@/lib/i18n";
 import { rutaEnOtroIdioma } from "@/lib/i18n/rutas";
 import { prefiereMenosMovimiento } from "@/lib/webgl";
 import { contarArticulos, useTienda } from "@/stores/carrito";
+import { useFavoritos } from "@/stores/favoritos";
 import { useExperiencia } from "@/stores/experiencia";
 import CarritoDrawer from "./CarritoDrawer";
 
@@ -67,9 +68,10 @@ export default function Header() {
   const inicio = ruta("/");
   const enInicio = pathname === inicio;
 
-  // Rehidrata carrito y respuestas desde localStorage tras montar (§2).
+  // Rehidrata carrito, respuestas y favoritos desde localStorage tras montar (§2).
   useEffect(() => {
     void useTienda.persist.rehydrate();
+    void useFavoritos.persist.rehydrate();
   }, []);
 
   // El estado de overlay vive en memoria y sobrevive a las navegaciones

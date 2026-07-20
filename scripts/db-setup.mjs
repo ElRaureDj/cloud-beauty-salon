@@ -68,6 +68,16 @@ await sql`alter table pedidos add column if not exists payment_intent text`;
 await sql`alter table pedidos add column if not exists reembolsado boolean not null default false`;
 await sql`create index if not exists pedidos_recientes on pedidos (creada_en desc)`;
 await sql`create index if not exists pedidos_por_pi on pedidos (payment_intent)`;
+await sql`create table if not exists avisos_stock (
+  id          bigserial primary key,
+  producto_id text not null,
+  email       text not null,
+  locale      text not null default 'es',
+  avisado     boolean not null default false,
+  creada_en   timestamptz not null default now(),
+  unique (producto_id, email)
+)`;
+await sql`create index if not exists avisos_pendientes on avisos_stock (producto_id, avisado)`;
 await sql`create table if not exists newsletter (
   email          text primary key,
   token          text not null,

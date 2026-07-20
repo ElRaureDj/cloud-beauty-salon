@@ -3,7 +3,11 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useT, useRuta } from "@/lib/i18n/client";
-import { DESCUENTO_BUNDLE, textoPrecio } from "@/lib/formato";
+import {
+  DESCUENTO_BUNDLE,
+  ENVIO_GRATIS_DESDE_CENTAVOS,
+  textoPrecio,
+} from "@/lib/formato";
 import {
   bundleActivo,
   CANTIDAD_MAXIMA,
@@ -35,6 +39,14 @@ export default function CarritoDrawer() {
   // El descuento aplica solo a la línea de bundle (1 unidad por producto §5.3),
   // nunca a productos ajenos ni a unidades extra.
   const descuento = conBundle ? baseBundle * DESCUENTO_BUNDLE : 0;
+
+  // Barra "envío gratis": progreso hacia el umbral con el total tras descuento
+  // (mismo cálculo que el checkout). Solo con precios reales en el carrito.
+  const totalTrasDescuento = subtotal - descuento;
+  const umbralEnvio = ENVIO_GRATIS_DESDE_CENTAVOS / 100;
+  const envioGratis = totalTrasDescuento >= umbralEnvio;
+  const faltaEnvio = Math.max(0, umbralEnvio - totalTrasDescuento);
+  const progresoEnvio = Math.min(1, totalTrasDescuento / umbralEnvio);
 
   const [pago, setPago] = useState<
     "quieto" | "cargando" | "sin-config" | "revisa" | "agotado" | "error"
@@ -167,6 +179,23 @@ export default function CarritoDrawer() {
           </ul>
 
           <div className="mt-4 border-t border-tinta-suave/20 pt-4">
+            {!preciosPendientes && subtotal > 0 && (
+              <div className="mb-4">
+                <p className="text-xs text-tinta-suave">
+                  {envioGratis
+                    ? `✓ ${t("carrito.envioGratis.logrado")}`
+                    : tf("carrito.envioGratis.falta", {
+                        monto: `$${faltaEnvio.toFixed(2)}`,
+                      })}
+                </p>
+                <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-tinta-suave/15">
+                  <div
+                    className="h-full rounded-full bg-acento transition-[width] duration-500"
+                    style={{ width: `${progresoEnvio * 100}%` }}
+                  />
+                </div>
+              </div>
+            )}
             {preciosPendientes ? (
               <p className="nota-todo w-full text-center">
                 {t("carrito.preciosPendientes")}

@@ -5,7 +5,11 @@ import { CATALOGO, combinaCon, productoPorSlug } from "@/lib/catalogo";
 import { nombreCategoria, nombreEtapa, textoPrecio } from "@/lib/formato";
 import { getT, resolverLocale, LOCALES } from "@/lib/i18n";
 import { alternatesDeRuta, rutaLocalizada } from "@/lib/i18n/rutas";
+import { resumenPorProducto } from "@/lib/resenas";
+import { stockDeProducto } from "@/lib/stock";
 import PanelCompra from "@/components/tienda/PanelCompra";
+import AnadirRutina from "@/components/tienda/AnadirRutina";
+import BotonFavorito from "@/components/tienda/BotonFavorito";
 import Resenas from "@/components/tienda/Resenas";
 import ImagenProducto from "@/components/tienda/ImagenProducto";
 
@@ -14,6 +18,11 @@ import ImagenProducto from "@/components/tienda/ImagenProducto";
 export function generateStaticParams() {
   return LOCALES.flatMap((locale) => CATALOGO.map((p) => ({ locale, slug: p.id })));
 }
+
+// ISR (mejora F3): la ficha sigue prerenderizada, pero se revalida cada hora
+// para refrescar el rating y el stock del JSON-LD (datos estructurados). Sin BD
+// el prerender funciona igual (rating/stock ausentes → JSON-LD sin esos campos).
+export const revalidate = 3600;
 
 export async function generateMetadata(
   props: PageProps<"/[locale]/producto/[slug]">,
@@ -66,8 +75,56 @@ export default async function PaginaProducto(
 
   const relacionados = combinaCon(producto);
 
+  // Datos estructurados (F3): Product + Offer + AggregateRating para resultados
+  // enriquecidos en Google (estrellas). Rating/stock son best-effort (sin BD se
+  // omiten). Se leen aquí porque la página es ISR (revalidate arriba).
+  const [resumen, stock] = await Promise.all([
+    resumenPorProducto([producto.id]),
+    stockDeProducto(producto.id),
+  ]);
+  const rating = resumen.get(producto.id);
+  const sitio = process.env.NEXT_PUBLIC_SITE_URL ?? "";
+  const jsonLd: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: producto.nombre,
+    description: producto.descripcion,
+    image: `${sitio}${producto.imagen}`,
+    brand: { "@type": "Brand", name: "TRUSS" },
+    ...(producto.precio > 0
+      ? {
+          offers: {
+            "@type": "Offer",
+            price: producto.precio.toFixed(2),
+            priceCurrency: "USD",
+            availability:
+              stock === 0
+                ? "https://schema.org/OutOfStock"
+                : "https://schema.org/InStock",
+            url: `${sitio}${r(`/producto/${slug}`)}`,
+          },
+        }
+      : {}),
+    ...(rating && rating.total > 0
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: rating.media.toFixed(1),
+            reviewCount: rating.total,
+          },
+        }
+      : {}),
+  };
+
   return (
     <main className="mx-auto max-w-4xl px-6 pb-24 pt-28">
+      {/* JSON-LD (F3): "<" escapado para no cerrar el <script> con datos. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
+        }}
+      />
       <nav className="text-sm text-tinta-suave">
         <Link href={r("/tienda")} className="underline-offset-4 hover:underline">
           {t("tienda.titulo")}
@@ -82,7 +139,13 @@ export default async function PaginaProducto(
           <p className="text-xs uppercase tracking-widest text-tinta-suave">
             {producto.linea}
           </p>
-          <h1 className="mt-1 font-display text-3xl">{producto.nombre}</h1>
+          <div className="mt-1 flex items-start justify-between gap-3">
+            <h1 className="font-display text-3xl">{producto.nombre}</h1>
+            <BotonFavorito
+              id={producto.id}
+              className="mt-1 h-10 w-10 shrink-0 border border-tinta-suave/30"
+            />
+          </div>
           {producto.tamano && (
             <p className="mt-1 text-xs uppercase tracking-wide text-tinta-suave">
               {producto.tamano}
@@ -116,7 +179,10 @@ export default async function PaginaProducto(
 
       {relacionados.length > 0 && (
         <section className="mt-14">
-          <h2 className="font-display text-xl">{t("producto.combinaCon")}</h2>
+          <h2 className="font-display text-xl">{t("producto.completaRutina")}</h2>
+          <p className="mt-1 text-sm text-tinta-suave">
+            {t("producto.completaRutina.intro")}
+          </p>
           <ul className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
             {relacionados.map((p) => (
               <li key={p.id}>
@@ -133,6 +199,14 @@ export default async function PaginaProducto(
               </li>
             ))}
           </ul>
+          <AnadirRutina
+            items={[producto, ...relacionados].map((p) => ({
+              id: p.id,
+              nombre: p.nombre,
+              precio: p.precio,
+              imagen: p.imagen,
+            }))}
+          />
         </section>
       )}
 

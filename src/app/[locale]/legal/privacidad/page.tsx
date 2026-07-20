@@ -81,6 +81,12 @@ function PrivacidadES({ r }: { r: Ruta }) {
               incluido en cada correo.
             </li>
             <li>
+              <strong>Avisos de stock.</strong> Si pides que te avisemos cuando
+              un producto agotado vuelva a estar disponible, guardamos tu email
+              solo para enviarte ese aviso; se envía una vez y luego dejamos de
+              usarlo para ese fin.
+            </li>
+            <li>
               <strong>Cookies y analítica.</strong> Esta web no usa cookies de
               rastreo ni publicidad. Medimos las visitas y el rendimiento de
               carga con la analítica de Vercel (Web Analytics y Speed Insights),
@@ -193,6 +199,12 @@ function PrivacidadEN({ r }: { r: Ruta }) {
               and you're only subscribed once you tap it) to keep you posted on
               news and offers. You can unsubscribe at any time using the link
               included in every email.
+            </li>
+            <li>
+              <strong>Back-in-stock alerts.</strong> If you ask us to notify you
+              when a sold-out product is available again, we store your email
+              only to send that alert; it's sent once and then we stop using it
+              for that purpose.
             </li>
             <li>
               <strong>Cookies and analytics.</strong> This website uses no

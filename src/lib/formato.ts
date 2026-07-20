@@ -46,6 +46,12 @@ export function textoPrecio(precio: number, { t }: Traductor): string {
 // TODO(guion): validar el % de descuento del bundle (decisión de negocio).
 export const DESCUENTO_BUNDLE = 0.1;
 
+// Envío (§9.3). Fuente ÚNICA compartida por el checkout (servidor), la barra de
+// "envío gratis" del carrito (cliente) y /legal/envios: deben ir siempre a la
+// par. Céntimos para no arrastrar decimales.
+export const ENVIO_CENTAVOS = 800;
+export const ENVIO_GRATIS_DESDE_CENTAVOS = 7500;
+
 // Por debajo de este umbral se muestra "Últimas N" para crear urgencia honesta.
 export const UMBRAL_STOCK_BAJO = 5;
 
