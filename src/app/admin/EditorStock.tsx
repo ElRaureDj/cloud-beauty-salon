@@ -5,9 +5,15 @@ import { useState } from "react";
 type Fila = { id: string; nombre: string; linea: string; unidades: number };
 
 // Editor de stock del panel (bloque 3). Números editables por producto; guarda
-// todos los cambios de una vez contra /api/admin/stock.
+// SOLO las filas modificadas (diff contra la línea base). Enviar filas no
+// tocadas pisaría con un valor obsoleto ventas ocurridas desde que se abrió el
+// panel (lost update) y dispararía avisos de reposición falsos (F2): fijarStock
+// hace un set absoluto. La base avanza tras cada guardado correcto.
 export default function EditorStock({ inicial }: { inicial: Fila[] }) {
   const [filas, setFilas] = useState(inicial);
+  const [base, setBase] = useState<Record<string, number>>(() =>
+    Object.fromEntries(inicial.map((f) => [f.id, f.unidades])),
+  );
   const [estado, setEstado] = useState<"quieto" | "guardando" | "ok" | "error">(
     "quieto",
   );
@@ -18,15 +24,27 @@ export default function EditorStock({ inicial }: { inicial: Fila[] }) {
     );
 
   const guardar = async () => {
+    const cambios = filas
+      .filter((f) => f.unidades !== base[f.id])
+      .map((f) => ({ id: f.id, unidades: f.unidades }));
+    if (cambios.length === 0) {
+      setEstado("ok"); // nada que guardar
+      return;
+    }
     setEstado("guardando");
     try {
-      const cambios = filas.map((f) => ({ id: f.id, unidades: f.unidades }));
       const r = await fetch("/api/admin/stock", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ cambios }),
       });
-      setEstado(r.ok ? "ok" : "error");
+      if (r.ok) {
+        // La base avanza a lo guardado: el próximo guardado vuelve a diffear.
+        setBase(Object.fromEntries(filas.map((f) => [f.id, f.unidades])));
+        setEstado("ok");
+      } else {
+        setEstado("error");
+      }
     } catch {
       setEstado("error");
     }

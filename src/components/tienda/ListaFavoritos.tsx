@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useT, useRuta } from "@/lib/i18n/client";
@@ -27,16 +27,24 @@ export default function ListaFavoritos({
   const { t } = useT();
   const ruta = useRuta();
   const ids = useFavoritos((s) => s.ids);
+  const [hidratado, setHidratado] = useState(false);
 
   // Rehidrata por si se llega directo a /favoritos (el Header también lo hace).
+  // Hasta rehidratar, `ids` está vacío (skipHydration): no pintamos el estado
+  // "no tienes favoritos" para no mostrar un mensaje falso a quien SÍ tiene.
   useEffect(() => {
     void useFavoritos.persist.rehydrate();
+    setHidratado(true);
   }, []);
 
   const porId = new Map(catalogo.map((p) => [p.id, p]));
   const items = ids
     .map((id) => porId.get(id))
     .filter((p): p is ItemFavorito => Boolean(p));
+
+  if (!hidratado) {
+    return <div className="mt-8 min-h-40" aria-hidden />;
+  }
 
   if (items.length === 0) {
     return (

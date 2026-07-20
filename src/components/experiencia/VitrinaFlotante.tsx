@@ -229,6 +229,9 @@ export default function VitrinaFlotante({
     grupo.visible = dentro;
     if (!dentro) {
       hoverRef.current = -1; // no arrastrar un hover viejo al reentrar
+      // Al salir de rango por scroll sin mover el ratón, onPointerOut no dispara:
+      // restablecemos el cursor a mano para no dejarlo en "pointer".
+      if (document.body.style.cursor) document.body.style.cursor = "";
       return;
     }
 
