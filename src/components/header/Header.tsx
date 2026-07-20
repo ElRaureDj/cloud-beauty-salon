@@ -9,6 +9,7 @@ import { rutaEnOtroIdioma } from "@/lib/i18n/rutas";
 import { prefiereMenosMovimiento } from "@/lib/webgl";
 import { contarArticulos, useTienda } from "@/stores/carrito";
 import { useFavoritos } from "@/stores/favoritos";
+import { useVistos } from "@/stores/vistos";
 import { useExperiencia } from "@/stores/experiencia";
 import CarritoDrawer from "./CarritoDrawer";
 
@@ -72,6 +73,7 @@ export default function Header() {
   useEffect(() => {
     void useTienda.persist.rehydrate();
     void useFavoritos.persist.rehydrate();
+    void useVistos.persist.rehydrate();
   }, []);
 
   // El estado de overlay vive en memoria y sobrevive a las navegaciones

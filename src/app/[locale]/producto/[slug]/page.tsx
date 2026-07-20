@@ -12,6 +12,8 @@ import AnadirRutina from "@/components/tienda/AnadirRutina";
 import BotonFavorito from "@/components/tienda/BotonFavorito";
 import Resenas from "@/components/tienda/Resenas";
 import ImagenProducto from "@/components/tienda/ImagenProducto";
+import RegistrarVisto from "@/components/tienda/RegistrarVisto";
+import VistosRecientes from "@/components/tienda/VistosRecientes";
 
 // §6: fichas renderizadas en servidor e indexables; se prerenderiza todo el
 // catálogo en build, para cada idioma.
@@ -126,6 +128,7 @@ export default async function PaginaProducto(
           __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
         }}
       />
+      <RegistrarVisto id={producto.id} />
       <nav className="text-sm text-tinta-suave">
         <Link href={r("/tienda")} className="underline-offset-4 hover:underline">
           {t("tienda.titulo")}
@@ -210,6 +213,16 @@ export default async function PaginaProducto(
           />
         </section>
       )}
+
+      <VistosRecientes
+        excluir={producto.id}
+        catalogo={CATALOGO.map((p) => ({
+          id: p.id,
+          nombre: p.nombre,
+          precio: p.precio,
+          imagen: p.imagen,
+        }))}
+      />
 
       <Link
         href={r("/tienda")}

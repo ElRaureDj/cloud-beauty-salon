@@ -133,6 +133,51 @@ export async function marcarEnviado(
   await sql`update pedidos set enviado = ${enviado} where session_id = ${sessionId}`;
 }
 
+// Consulta pública de un pedido (mejora H3): requiere session_id EXACTO Y que el
+// email coincida (segundo factor, anti-enumeración). Devuelve solo lo que la
+// clienta necesita saber (estado + líneas + total), nunca la dirección de otros.
+export type PedidoPublico = {
+  fecha: string;
+  pagado: boolean;
+  reembolsado: boolean;
+  enviado: boolean;
+  total: number | null;
+  moneda: string | null;
+  lineas: LineaPedido[];
+};
+
+export async function consultarPedido(
+  sessionId: string,
+  email: string,
+): Promise<PedidoPublico | null> {
+  if (!sql || !sessionId || !email) return null;
+  const filas = (await sql`
+    select creada_en, pagado, reembolsado, enviado, total, moneda, lineas
+    from pedidos
+    where session_id = ${sessionId} and lower(email) = lower(${email})
+    limit 1
+  `) as {
+    creada_en: string | Date;
+    pagado: boolean;
+    reembolsado: boolean;
+    enviado: boolean;
+    total: number | null;
+    moneda: string | null;
+    lineas: LineaPedido[] | null;
+  }[];
+  if (!filas.length) return null;
+  const f = filas[0];
+  return {
+    fecha: new Date(f.creada_en).toISOString(),
+    pagado: f.pagado,
+    reembolsado: f.reembolsado,
+    enviado: f.enviado,
+    total: f.total,
+    moneda: f.moneda,
+    lineas: f.lineas ?? [],
+  };
+}
+
 export type VentaDia = { dia: string; total: number; pedidos: number };
 
 // Ventas por día (pagadas, sin reembolsos) de los últimos N días, para el

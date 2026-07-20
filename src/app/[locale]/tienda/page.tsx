@@ -15,6 +15,8 @@ import { stockDeProductos } from "@/lib/stock";
 import { resumenPorProducto } from "@/lib/resenas";
 import ImagenProducto from "@/components/tienda/ImagenProducto";
 import BotonFavorito from "@/components/tienda/BotonFavorito";
+import BotonAgregarRapido from "@/components/tienda/BotonAgregarRapido";
+import VistosRecientes from "@/components/tienda/VistosRecientes";
 
 export async function generateMetadata(
   props: PageProps<"/[locale]/tienda">,
@@ -222,6 +224,12 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
         <h1 className="font-display text-3xl sm:text-4xl">{t("tienda.titulo")}</h1>
         <div className="mt-2 flex shrink-0 items-center gap-4 text-sm">
           <Link
+            href={r("/cronograma")}
+            className="text-tinta-suave underline-offset-4 hover:text-tinta"
+          >
+            {t("cronograma.enlace")}
+          </Link>
+          <Link
             href={r("/kits")}
             className="text-tinta-suave underline-offset-4 hover:text-tinta"
           >
@@ -341,11 +349,28 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
                   id={p.id}
                   className="absolute right-3 top-3 h-9 w-9 bg-fondo-0/70 backdrop-blur-sm"
                 />
+                <BotonAgregarRapido
+                  id={p.id}
+                  nombre={p.nombre}
+                  precio={p.precio}
+                  imagen={p.imagen}
+                  agotado={et.agotado}
+                  className="absolute bottom-3 right-3 h-9 w-9"
+                />
               </li>
             );
           })}
         </ul>
       )}
+
+      <VistosRecientes
+        catalogo={CATALOGO.map((p) => ({
+          id: p.id,
+          nombre: p.nombre,
+          precio: p.precio,
+          imagen: p.imagen,
+        }))}
+      />
 
       <Link
         href={r("/")}

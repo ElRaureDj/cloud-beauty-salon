@@ -18,9 +18,12 @@ export default async function PaginaCompraExito(
   props: PageProps<"/[locale]/compra/exito">,
 ) {
   const { locale } = await props.params;
+  const busqueda = await props.searchParams;
   const loc = resolverLocale(locale);
   const { t } = getT(loc);
   const r = (path: string) => rutaLocalizada(loc, path);
+  const sessionId =
+    typeof busqueda.session_id === "string" ? busqueda.session_id : "";
 
   return (
     <main className="grid min-h-svh place-items-center px-6 text-center">
@@ -33,6 +36,20 @@ export default async function PaginaCompraExito(
         <p className="mx-auto mt-3 max-w-sm text-tinta-suave">
           {t("compra.exito.mensaje")}
         </p>
+        {sessionId && (
+          <div className="mx-auto mt-6 max-w-sm">
+            <p className="text-xs text-tinta-suave">{t("compra.exito.numero")}</p>
+            <p className="mt-1 break-all rounded-lg border border-tinta-suave/20 px-3 py-2 font-mono text-xs">
+              {sessionId}
+            </p>
+            <Link
+              href={r(`/pedido?n=${encodeURIComponent(sessionId)}`)}
+              className="mt-3 inline-block text-sm text-acento underline-offset-4 hover:underline"
+            >
+              {t("compra.exito.verPedido")}
+            </Link>
+          </div>
+        )}
         <div className="mt-8 flex justify-center gap-3">
           <Link href={r("/tienda")} className="boton-primario">
             {t("carrito.irTienda")}

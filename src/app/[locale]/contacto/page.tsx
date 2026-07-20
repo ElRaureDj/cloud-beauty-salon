@@ -80,6 +80,9 @@ function ContactoES({ r }: { r: Ruta }) {
             <Link href={r("/kits")} className="text-acento underline-offset-4 hover:underline">
               Kits
             </Link>
+            <Link href={r("/pedido")} className="text-acento underline-offset-4 hover:underline">
+              Consultar mi pedido
+            </Link>
           </p>
         </section>
 
@@ -154,6 +157,9 @@ function ContactoEN({ r }: { r: Ruta }) {
             </Link>
             <Link href={r("/kits")} className="text-acento underline-offset-4 hover:underline">
               Kits
+            </Link>
+            <Link href={r("/pedido")} className="text-acento underline-offset-4 hover:underline">
+              Track my order
             </Link>
           </p>
         </section>
