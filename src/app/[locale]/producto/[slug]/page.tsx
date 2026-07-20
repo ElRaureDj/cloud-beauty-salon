@@ -83,7 +83,8 @@ export default async function PaginaProducto(
     stockDeProducto(producto.id),
   ]);
   const rating = resumen.get(producto.id);
-  const sitio = process.env.NEXT_PUBLIC_SITE_URL ?? "";
+  const sitio =
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://cloudbeautysalon.com";
   const jsonLd: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "Product",

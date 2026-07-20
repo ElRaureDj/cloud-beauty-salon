@@ -28,7 +28,9 @@ const ENVIO = (ENVIO_CENTAVOS / 100).toFixed(0);
 const GRATIS = (ENVIO_GRATIS_DESDE_CENTAVOS / 100).toFixed(0);
 
 // Preguntas frecuentes bilingües. La misma fuente alimenta la lista visible y el
-// JSON-LD (FAQPage) para resultados enriquecidos en Google. Respuestas en texto
+// JSON-LD (FAQPage). Desde 2023 Google reserva el rich result de FAQ a webs de
+// gobierno/salud, así que un comercio no verá el fragmento; aun así el markup es
+// válido y lo aprovechan otros buscadores y asistentes. Respuestas en texto
 // plano (sin enlaces) para que el schema sea válido.
 const PREGUNTAS: { q: Record<Locale, string>; a: Record<Locale, string> }[] = [
   {

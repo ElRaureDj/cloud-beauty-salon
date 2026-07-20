@@ -3,8 +3,14 @@ import { pedidosRecientes } from "@/lib/pedidos";
 
 // Export CSV de pedidos para el panel (mejora G3). GET protegido por la cookie
 // de sesión; el navegador la envía con el enlace de descarga.
+//
+// Datos del cliente (nombre/email/dirección) vienen de Stripe y son texto libre.
+// Además de comillas RFC-4180, neutralizamos la INYECCIÓN DE FÓRMULAS: un valor
+// que empieza por = + - @ (o tab/CR) lo ejecutaría Excel/Sheets al abrir el CSV;
+// se antepone un apóstrofo para que se trate como texto.
 function campo(valor: unknown): string {
-  const s = valor == null ? "" : String(valor);
+  let s = valor == null ? "" : String(valor);
+  if (/^[=+\-@\t\r]/.test(s)) s = `'${s}`;
   return `"${s.replace(/"/g, '""')}"`;
 }
 

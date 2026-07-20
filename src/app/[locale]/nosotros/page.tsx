@@ -28,12 +28,16 @@ export default async function PaginaNosotros(
   const { locale } = await props.params;
   const loc = resolverLocale(locale);
   const r: Ruta = (path) => rutaLocalizada(loc, path);
-  const sitio = process.env.NEXT_PUBLIC_SITE_URL ?? "";
+  // Mismo fallback que sitemap/robots: URL absoluta aunque falte la env.
+  const sitio =
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://cloudbeautysalon.com";
 
-  // JSON-LD de la tienda (SEO local): solo datos verdaderos y conocidos.
+  // JSON-LD de la tienda (SEO): "OnlineStore" (no "Store"), porque hoy no hay
+  // local físico —lo dice la propia copia— y Store implicaría dirección. Solo
+  // datos verdaderos y conocidos.
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "Store",
+    "@type": "OnlineStore",
     name: "Cloud Beauty Salon",
     url: `${sitio}${r("/")}`,
     image: `${sitio}/es/opengraph-image`,

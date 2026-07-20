@@ -136,8 +136,9 @@ export async function marcarEnviado(
 export type VentaDia = { dia: string; total: number; pedidos: number };
 
 // Ventas por día (pagadas, sin reembolsos) de los últimos N días, para el
-// gráfico del panel (mejora G3). Los días sin ventas no aparecen; el panel
-// rellena el rango completo.
+// gráfico del panel (mejora G3). El rango va de (hoy − (N−1)) a hoy = N fechas
+// de calendario (UTC), exactamente las que dibuja el panel; los días sin ventas
+// no aparecen y el panel los rellena a cero.
 export async function ventasPorDia(dias = 30): Promise<VentaDia[]> {
   if (!sql) return [];
   const filas = (await sql`
@@ -146,7 +147,7 @@ export async function ventasPorDia(dias = 30): Promise<VentaDia[]> {
            count(*)::int as pedidos
     from pedidos
     where pagado and not reembolsado
-      and creada_en >= (now() - make_interval(days => ${dias}))
+      and creada_en >= (current_date - make_interval(days => ${dias - 1}))
     group by 1
     order by 1
   `) as { dia: string; total: number; pedidos: number }[];

@@ -31,8 +31,10 @@ export default async function PaginaAdmin() {
   }));
 
   // Alerta de bajo stock (mejora G3): agotados y "pocas unidades" (≤ umbral).
+  // Solo productos CON fila en stock: uno sin fila es "desconocido", no agotado
+  // (coincide con etiquetaStock, que trata null como sin dato).
   const bajoStock = inicial
-    .filter((f) => f.unidades <= UMBRAL_STOCK_BAJO)
+    .filter((f) => stock.has(f.id) && f.unidades <= UMBRAL_STOCK_BAJO)
     .sort((a, b) => a.unidades - b.unidades);
 
   return (
