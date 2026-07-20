@@ -10,10 +10,11 @@ import type { Traductor } from "@/lib/i18n";
 import { VITRINA } from "@/lib/escena/coreografia";
 import { useExperiencia } from "@/stores/experiencia";
 
-// [3D] Cap. 3 — vitrina flotante (§4): 4–6 productos acompañan el descenso;
-// cada uno clicable → /producto/[slug]. Las tarjetas se colocan DENTRO del
-// frustum de la cámara (consciente del aspecto: §2 mobile-first) para que el
-// escaparate exista igual en 390×844 que en escritorio.
+// [3D] Cap. 3 — vitrina flotante (§4): un puñado de productos acompaña el
+// descenso; cada uno clicable → /producto/[slug]. Las tarjetas se colocan DENTRO
+// del frustum de la cámara (consciente del aspecto: §2 mobile-first) para que el
+// escaparate exista igual en 390×844 que en escritorio. Pequeñas y translúcidas
+// (con desvanecido por profundidad) para no tapar a la modelo.
 // TODO(guion §8): sustituir por packshots reales cuando existan.
 const IDS_VITRINA = [
   "ultra-hydration-shampoo",
@@ -21,71 +22,132 @@ const IDS_VITRINA = [
   "color-shield-shampoo-300ml-10-1-fl-oz",
   "shock-repair-1-box-with-4-units",
   "hair-protector",
+  "deluxe-prime-reconstructive-oil-30ml-1-0-fl-oz",
+  "miracle-mask",
+  "frizz-zero",
 ];
 
 // Huecos en pantalla (fracciones del semiancho/semialto del frustum) con
-// profundidad propia: cada tarjeta vive a SU distancia de la cámara — la
-// cercana se ve mayor y claramente delante (parallax legible al scrollear).
+// profundidad propia: cada tarjeta vive a SU distancia de la cámara — la cercana
+// se ve mayor, más nítida y más opaca; la lejana, pequeña y difusa (parallax +
+// profundidad legibles al scrollear). Repartidos por el borde para no tapar a la
+// modelo (centro de la pantalla).
 const HUECOS = [
-  { x: -0.62, y: 0.34, distancia: 1.0 },
-  { x: 0.62, y: 0.18, distancia: 1.35 },
-  { x: -0.58, y: -0.12, distancia: 1.55 },
-  { x: 0.58, y: -0.34, distancia: 1.1 },
-  { x: -0.05, y: -0.55, distancia: 1.75 },
+  { x: -0.6, y: 0.42, distancia: 1.05 },
+  { x: 0.6, y: 0.3, distancia: 1.3 },
+  { x: -0.66, y: 0.0, distancia: 1.55 },
+  { x: 0.64, y: -0.1, distancia: 1.45 },
+  { x: -0.5, y: -0.4, distancia: 1.2 },
+  { x: 0.52, y: -0.44, distancia: 1.35 },
+  { x: -0.14, y: 0.54, distancia: 1.8 },
+  { x: 0.18, y: -0.56, distancia: 1.9 },
 ];
+
+// Lienzo de la tarjeta (ratio = plano 0.24×0.32 = 0.75). Alta resolución para
+// texto e imagen nítidos; margen para pintar una sombra suave (da profundidad).
+const LIENZO_W = 300;
+const LIENZO_H = 400;
 
 function texturaTarjeta(producto: Producto, tr: Traductor): THREE.CanvasTexture {
   const lienzo = document.createElement("canvas");
-  lienzo.width = 256;
-  lienzo.height = 340;
+  lienzo.width = LIENZO_W;
+  lienzo.height = LIENZO_H;
   const ctx = lienzo.getContext("2d")!;
 
+  // Geometría de la tarjeta dentro del lienzo (deja aire alrededor para la sombra).
+  const cx = 18;
+  const cy = 16;
+  const cw = LIENZO_W - 36;
+  const ch = LIENZO_H - 40;
+  const radio = 30;
+
   const pintarBase = () => {
-    ctx.clearRect(0, 0, 256, 340);
+    ctx.clearRect(0, 0, LIENZO_W, LIENZO_H);
+
+    // Sombra suave detrás de la tarjeta.
+    ctx.save();
+    ctx.shadowColor = "rgba(18,12,15,0.30)";
+    ctx.shadowBlur = 26;
+    ctx.shadowOffsetY = 12;
     ctx.beginPath();
-    ctx.roundRect(4, 4, 248, 332, 28);
+    ctx.roundRect(cx, cy, cw, ch, radio);
     ctx.fillStyle = "#ffffff";
     ctx.fill();
-    ctx.strokeStyle = "rgba(201,186,179,0.5)";
+    ctx.restore();
+
+    // Fondo en degradado crema (más premium y agradable en translúcido).
+    const grad = ctx.createLinearGradient(0, cy, 0, cy + ch);
+    grad.addColorStop(0, "#ffffff");
+    grad.addColorStop(1, "#f3ebe4");
+    ctx.beginPath();
+    ctx.roundRect(cx, cy, cw, ch, radio);
+    ctx.fillStyle = grad;
+    ctx.fill();
+    ctx.strokeStyle = "rgba(201,186,179,0.55)";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Filete de acento bajo la imagen.
+    const medioX = LIENZO_W / 2;
+    ctx.beginPath();
+    ctx.moveTo(medioX - 22, 266);
+    ctx.lineTo(medioX + 22, 266);
+    ctx.strokeStyle = "rgba(217,154,99,0.9)";
     ctx.lineWidth = 2;
     ctx.stroke();
-    // Etiqueta inferior con nombre y categoría
+
+    // Nombre (hasta 2 líneas, centrado) y categoría.
     ctx.textAlign = "center";
-    ctx.font = "600 17px system-ui, sans-serif";
+    ctx.font = "600 18px system-ui, sans-serif";
     ctx.fillStyle = "#2b1d24";
     const palabras = producto.nombre.split(" ");
+    const lineas: string[] = [];
     let linea = "";
-    let y = 288;
     for (const palabra of palabras) {
       const prueba = linea ? `${linea} ${palabra}` : palabra;
-      if (ctx.measureText(prueba).width > 220 && linea) {
-        ctx.fillText(linea, 128, y);
+      if (ctx.measureText(prueba).width > cw - 40 && linea) {
+        lineas.push(linea);
         linea = palabra;
-        y += 20;
       } else {
         linea = prueba;
       }
     }
-    ctx.fillText(linea, 128, y);
+    if (linea) lineas.push(linea);
+    const visibles = lineas.slice(0, 2);
+    if (lineas.length > 2) {
+      visibles[1] = `${visibles[1].replace(/…$/, "")}…`;
+    }
+    let y = visibles.length === 1 ? 302 : 296;
+    for (const l of visibles) {
+      ctx.fillText(l, medioX, y);
+      y += 22;
+    }
     ctx.font = "500 13px system-ui, sans-serif";
     ctx.fillStyle = "rgba(160,110,70,0.95)";
-    ctx.fillText(nombreCategoria(producto.categoria, tr).toUpperCase(), 128, y + 22);
+    ctx.fillText(
+      nombreCategoria(producto.categoria, tr).toUpperCase(),
+      medioX,
+      y + 6,
+    );
   };
 
   pintarBase();
   const textura = new THREE.CanvasTexture(lienzo);
-  textura.anisotropy = 4;
+  textura.anisotropy = 8;
   textura.colorSpace = THREE.SRGBColorSpace;
 
-  // Packshot real (§8, fuente autorizada): se pinta al cargar.
+  // Packshot real (§8, fuente autorizada): se pinta al cargar, centrado.
   const foto = new Image();
   foto.onload = () => {
     pintarBase();
+    const lado = 196;
+    const ix = (LIENZO_W - lado) / 2;
+    const iy = 44;
     ctx.save();
     ctx.beginPath();
-    ctx.roundRect(4, 4, 248, 332, 28);
+    ctx.roundRect(cx, cy, cw, ch, radio);
     ctx.clip();
-    ctx.drawImage(foto, 18, 12, 220, 220);
+    ctx.drawImage(foto, ix, iy, lado, lado);
     ctx.restore();
     textura.needsUpdate = true;
   };
@@ -97,6 +159,13 @@ function texturaTarjeta(producto: Producto, tr: Traductor): THREE.CanvasTexture 
 const ADELANTE = new THREE.Vector3();
 const DERECHA = new THREE.Vector3();
 const ARRIBA = new THREE.Vector3();
+
+// Tamaño y opacidad de las tarjetas (ajustables). Más pequeñas y translúcidas
+// que la primera versión, para acompañar sin robar protagonismo a la modelo.
+const PLANO_ANCHO = 0.24; // ancho del planeGeometry
+const FRAC_ANCHO = 0.34; // fracción del semiancho de pantalla por tarjeta
+const ESCALA_MAX = 0.6; // techo en pantallas anchas (no crecen sin límite)
+const OPACIDAD_MAX = 0.72; // translúcidas
 
 export default function VitrinaFlotante({
   alAbrirProducto,
@@ -176,12 +245,14 @@ export default function VitrinaFlotante({
         .addScaledVector(DERECHA, (hueco.x + deriva) * semiancho)
         .addScaledVector(ARRIBA, (hueco.y + vaiven) * semialto);
       hijo.quaternion.copy(camara.quaternion); // billboard
-      // La tarjeta cabe en su hueco a cualquier aspecto.
-      const escala = Math.min(1, (semiancho * 0.55) / 0.24);
+      // Tamaño relativo al hueco, con techo en pantallas anchas.
+      const escala = Math.min(ESCALA_MAX, (semiancho * FRAC_ANCHO) / PLANO_ANCHO);
       hijo.scale.setScalar(escala);
       // Orden de pintado estable: de lejos a cerca.
       hijo.renderOrder = Math.round(100 - hueco.distancia * 10);
-      materiales[i].opacity = alfa;
+      // Translúcidas, y las más lejanas más difusas (profundidad).
+      const difuminado = THREE.MathUtils.clamp(1.2 - hueco.distancia * 0.2, 0.55, 1);
+      materiales[i].opacity = alfa * OPACIDAD_MAX * difuminado;
     });
   });
 
