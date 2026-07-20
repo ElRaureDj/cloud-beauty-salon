@@ -9,6 +9,8 @@ export type ResenaPublica = {
   rating: number;
   texto: string;
   fecha: string; // ISO
+  verificada: boolean; // compra verificada (mejora I2)
+  foto: string | null; // URL de la foto adjunta, si la hay
 };
 
 export type ResumenResenas = {
@@ -49,7 +51,7 @@ export async function resenasDeProducto(id: string): Promise<ResumenResenas> {
   if (!sql) return VACIO;
   try {
     const filas = (await sql`
-      select id, autor, rating, texto, creada_en
+      select id, autor, rating, texto, verificada, foto_url, creada_en
       from resenas
       where producto_id = ${id} and aprobada
       order by creada_en desc
@@ -59,6 +61,8 @@ export async function resenasDeProducto(id: string): Promise<ResumenResenas> {
       autor: string;
       rating: number;
       texto: string;
+      verificada: boolean;
+      foto_url: string | null;
       creada_en: string | Date;
     }[];
     const items: ResenaPublica[] = filas.map((f) => ({
@@ -66,6 +70,8 @@ export async function resenasDeProducto(id: string): Promise<ResumenResenas> {
       autor: f.autor,
       rating: Number(f.rating),
       texto: f.texto,
+      verificada: Boolean(f.verificada),
+      foto: f.foto_url ?? null,
       fecha: new Date(f.creada_en).toISOString(),
     }));
     const total = items.length;
@@ -86,11 +92,14 @@ export async function crearResena(r: {
   autor: string;
   rating: number;
   texto: string;
+  verificada?: boolean;
+  foto_url?: string | null;
 }): Promise<number | null> {
   if (!sql) return null;
   const filas = (await sql`
-    insert into resenas (producto_id, autor, rating, texto, aprobada)
-    values (${r.producto_id}, ${r.autor}, ${r.rating}, ${r.texto}, false)
+    insert into resenas (producto_id, autor, rating, texto, aprobada, verificada, foto_url)
+    values (${r.producto_id}, ${r.autor}, ${r.rating}, ${r.texto}, false,
+            ${r.verificada ?? false}, ${r.foto_url ?? null})
     returning id
   `) as { id: number }[];
   return filas.length ? Number(filas[0].id) : null;
@@ -103,7 +112,7 @@ export type ResenaAdmin = ResenaPublica & { producto_id: string };
 export async function resenasPendientes(): Promise<ResenaAdmin[]> {
   if (!sql) return [];
   const filas = (await sql`
-    select id, producto_id, autor, rating, texto, creada_en
+    select id, producto_id, autor, rating, texto, verificada, foto_url, creada_en
     from resenas
     where not aprobada
     order by creada_en desc
@@ -114,6 +123,8 @@ export async function resenasPendientes(): Promise<ResenaAdmin[]> {
     autor: string;
     rating: number;
     texto: string;
+    verificada: boolean;
+    foto_url: string | null;
     creada_en: string | Date;
   }[];
   return filas.map((f) => ({
@@ -122,6 +133,8 @@ export async function resenasPendientes(): Promise<ResenaAdmin[]> {
     autor: f.autor,
     rating: Number(f.rating),
     texto: f.texto,
+    verificada: Boolean(f.verificada),
+    foto: f.foto_url ?? null,
     fecha: new Date(f.creada_en).toISOString(),
   }));
 }

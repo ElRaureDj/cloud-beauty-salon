@@ -2,6 +2,12 @@ import Stripe from "stripe";
 import { enviarCorreo, escaparHtml } from "@/lib/email";
 import { sql } from "@/lib/db";
 import { direccionTexto, guardarPedido, marcarReembolsado } from "@/lib/pedidos";
+import {
+  fijarCodigoRegalo,
+  generarCodigoRegalo,
+  reclamarRegalo,
+} from "@/lib/regalo";
+import { getT, resolverLocale } from "@/lib/i18n";
 
 // Webhook de Stripe. Dos trabajos:
 //  1) Descontar stock del pedido pagado (bloque 3) — idempotente por sesión,
@@ -139,6 +145,78 @@ async function avisarPedido(opts: {
   }
 }
 
+// Emite y envía una tarjeta regalo (mejora I1). Idempotente por sesión: solo la
+// primera reclamación crea el código en Stripe y manda los correos.
+async function manejarRegalo(
+  stripe: Stripe,
+  sesion: Stripe.Checkout.Session,
+  destinoAdmin: string | undefined,
+): Promise<void> {
+  const m = sesion.metadata ?? {};
+  const importe = Number(m.importe_centavos ?? sesion.amount_total ?? 0);
+  const destinatario = (m.destinatario ?? "").trim();
+  const comprador = (m.comprador ?? sesion.customer_details?.email ?? "").trim();
+  const mensaje = m.mensaje ?? "";
+  const loc = resolverLocale(m.locale ?? "es");
+  const { t, tf } = getT(loc);
+  if (!destinatario || importe <= 0) {
+    console.warn("webhook regalo: metadata incompleta", sesion.id);
+    return;
+  }
+
+  const primera = await reclamarRegalo({
+    session_id: sesion.id,
+    importe_centavos: importe,
+    destinatario,
+    comprador,
+    mensaje,
+  });
+  if (!primera) return; // ya emitido (reintento o segundo evento)
+
+  const code = generarCodigoRegalo();
+  const cupon = await stripe.coupons.create({
+    amount_off: importe,
+    currency: sesion.currency ?? "usd",
+    duration: "once",
+    name: `Tarjeta regalo ${code}`,
+    max_redemptions: 1,
+  });
+  await stripe.promotionCodes.create({
+    promotion: { type: "coupon", coupon: cupon.id },
+    code,
+    max_redemptions: 1,
+  });
+  await fijarCodigoRegalo(sesion.id, code);
+
+  const importeTxt = dinero(importe, sesion.currency);
+  const htmlDest =
+    `<h2>${escaparHtml(t("marca.nombre"))}</h2>` +
+    `<p>${escaparHtml(tf("regalo.email.intro", { importe: importeTxt }))}</p>` +
+    (mensaje ? `<p style="font-style:italic">“${escaparHtml(mensaje)}”</p>` : "") +
+    `<p style="margin:24px 0"><span style="display:inline-block;background:#221306;color:#d99a63;padding:14px 26px;border-radius:12px;font-size:22px;font-weight:700;letter-spacing:3px;font-family:monospace">${escaparHtml(code)}</span></p>` +
+    `<p>${escaparHtml(t("regalo.email.instru"))}</p>`;
+  await enviarCorreo({
+    to: destinatario,
+    subject: t("regalo.email.asunto"),
+    html: htmlDest,
+  }).catch((e) => console.warn("regalo: email destinatario no enviado", e));
+
+  if (comprador) {
+    await enviarCorreo({
+      to: comprador,
+      subject: t("regalo.email.compradorAsunto"),
+      html: `<p>${escaparHtml(tf("regalo.email.comprador", { importe: importeTxt, destinatario }))}</p>`,
+    }).catch(() => {});
+  }
+  if (destinoAdmin) {
+    await enviarCorreo({
+      to: destinoAdmin,
+      subject: `Tarjeta regalo · ${importeTxt}`,
+      html: `<p>Regalo de ${importeTxt} para ${escaparHtml(destinatario)} (código ${escaparHtml(code)}), comprado por ${escaparHtml(comprador)}.</p>`,
+    }).catch(() => {});
+  }
+}
+
 export async function POST(request: Request) {
   const clave = process.env.STRIPE_SECRET_KEY;
   const secreto = process.env.STRIPE_WEBHOOK_SECRET;
@@ -207,6 +285,20 @@ export async function POST(request: Request) {
       (sesion.payment_status === "paid" ||
         sesion.payment_status === "no_payment_required"));
   const fallido = evento.type === "checkout.session.async_payment_failed";
+
+  // Tarjeta regalo (mejora I1): flujo aparte — ni stock ni pedido; emite el
+  // código y lo envía. Idempotente por sesión.
+  if (sesion.metadata?.tipo === "regalo") {
+    if (pagado) {
+      try {
+        await manejarRegalo(stripe, sesion, destino);
+      } catch (error) {
+        console.error("webhook: emisión de regalo falló, pido reintento", error);
+        return Response.json({ ok: false }, { status: 500 });
+      }
+    }
+    return Response.json({ received: true }, { status: 200 });
+  }
 
   // Line items expandidos: una sola lectura sirve para descontar y para el email.
   let lineItems: Stripe.LineItem[] = [];

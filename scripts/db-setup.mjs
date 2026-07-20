@@ -46,8 +46,13 @@ await sql`create table if not exists resenas (
   autor       text not null,
   texto       text not null,
   aprobada    boolean not null default false,
+  verificada  boolean not null default false,
+  foto_url    text,
   creada_en   timestamptz not null default now()
 )`;
+// Migración suave (reseñas con foto + compra verificada, mejora I2).
+await sql`alter table resenas add column if not exists verificada boolean not null default false`;
+await sql`alter table resenas add column if not exists foto_url text`;
 await sql`create index if not exists resenas_lectura on resenas (producto_id, aprobada, creada_en desc)`;
 await sql`create table if not exists pedidos (
   session_id     text primary key,
@@ -78,6 +83,17 @@ await sql`create table if not exists avisos_stock (
   unique (producto_id, email)
 )`;
 await sql`create index if not exists avisos_pendientes on avisos_stock (producto_id, avisado)`;
+await sql`create table if not exists tarjetas_regalo (
+  id               bigserial primary key,
+  session_id       text unique not null,
+  code             text,
+  importe_centavos integer not null,
+  moneda           text not null default 'usd',
+  destinatario     text,
+  comprador        text,
+  mensaje          text,
+  creada_en        timestamptz not null default now()
+)`;
 await sql`create table if not exists newsletter (
   email          text primary key,
   token          text not null,

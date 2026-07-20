@@ -87,6 +87,16 @@ function PrivacidadES({ r }: { r: Ruta }) {
               usarlo para ese fin.
             </li>
             <li>
+              <strong>Reseñas.</strong> Tu nombre y tu reseña (y la foto que
+              adjuntes) se publican tras aprobarlas. Si das un email, lo usamos
+              solo para comprobar que compraste el producto (compra verificada);
+              no se publica.
+            </li>
+            <li>
+              <strong>Tarjeta regalo.</strong> Guardamos el email de quien la
+              regala y de quien la recibe para enviar el código y la confirmación.
+            </li>
+            <li>
               <strong>Cookies y analítica.</strong> Esta web no usa cookies de
               rastreo ni publicidad. Medimos las visitas y el rendimiento de
               carga con la analítica de Vercel (Web Analytics y Speed Insights),
@@ -205,6 +215,16 @@ function PrivacidadEN({ r }: { r: Ruta }) {
               when a sold-out product is available again, we store your email
               only to send that alert; it's sent once and then we stop using it
               for that purpose.
+            </li>
+            <li>
+              <strong>Reviews.</strong> Your name and review (and any photo you
+              attach) are published after we approve them. If you give an email,
+              we use it only to check that you bought the product (verified
+              purchase); it isn&apos;t published.
+            </li>
+            <li>
+              <strong>Gift cards.</strong> We store the giver&apos;s and
+              recipient&apos;s email to send the code and confirmation.
             </li>
             <li>
               <strong>Cookies and analytics.</strong> This website uses no

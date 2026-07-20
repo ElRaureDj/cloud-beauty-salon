@@ -1,6 +1,7 @@
 import { productoPorId } from "@/lib/catalogo";
 import { sql } from "@/lib/db";
 import { crearResena } from "@/lib/resenas";
+import { compraVerificada } from "@/lib/pedidos";
 import { enviarCorreo, escaparHtml } from "@/lib/email";
 
 // Envío de reseñas (bloque 3). Mismo endurecimiento que /api/waitlist: tope de
@@ -53,11 +54,43 @@ type Entrada = {
   autor: string;
   rating: number;
   texto: string;
+  email: string | null; // solo para "compra verificada"; no se publica
+  foto_url: string | null;
 };
+
+function emailValido(valor: string): boolean {
+  if (valor.length > 254) return false;
+  for (const ch of valor) {
+    const c = ch.charCodeAt(0);
+    if (c < 0x21 || c === 0x7f) return false;
+  }
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(valor);
+}
+
+// La foto debe ser una URL de Vercel Blob (la subió nuestro endpoint): evita que
+// se inyecte una URL arbitraria de un tercero como si fuera de una reseña.
+function fotoValida(url: unknown): string | null {
+  if (typeof url !== "string" || url.length === 0 || url.length > 600) return null;
+  try {
+    const u = new URL(url);
+    if (
+      u.protocol === "https:" &&
+      u.hostname.endsWith(".public.blob.vercel-storage.com")
+    ) {
+      return url;
+    }
+  } catch {
+    // no es URL
+  }
+  return null;
+}
 
 function validar(cuerpo: unknown): Entrada | null {
   if (typeof cuerpo !== "object" || cuerpo === null) return null;
-  const { producto, autor, rating, texto } = cuerpo as Record<string, unknown>;
+  const { producto, autor, rating, texto, email, foto } = cuerpo as Record<
+    string,
+    unknown
+  >;
   if (typeof producto !== "string" || !productoPorId(producto)) return null;
   if (typeof autor !== "string" || limpiarLinea(autor, 60).length < 2) return null;
   if (
@@ -69,11 +102,15 @@ function validar(cuerpo: unknown): Entrada | null {
     return null;
   }
   if (typeof texto !== "string" || limpiarTexto(texto, 1000).length < 3) return null;
+  const emailLimpio =
+    typeof email === "string" ? email.trim().toLowerCase() : "";
   return {
     producto_id: producto,
     autor: limpiarLinea(autor, 60),
     rating,
     texto: limpiarTexto(texto, 1000),
+    email: emailValido(emailLimpio) ? emailLimpio : null,
+    foto_url: fotoValida(foto),
   };
 }
 
@@ -114,9 +151,16 @@ export async function POST(request: Request) {
     return Response.json({ ok: false, configurado: false }, { status: 503 });
   }
 
+  // Compra verificada (mejora I2): si dio email y ese email compró este producto
+  // en un pedido pagado, se marca. Best-effort: un fallo no bloquea la reseña.
+  let verificada = false;
+  if (entrada.email) {
+    verificada = await compraVerificada(entrada.email, entrada.producto_id);
+  }
+
   let id: number | null;
   try {
-    id = await crearResena(entrada);
+    id = await crearResena({ ...entrada, verificada });
   } catch (error) {
     console.error("resenas: insert falló", error);
     return Response.json({ ok: false }, { status: 500 });

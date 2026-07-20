@@ -6,6 +6,7 @@ import { sql } from "@/lib/db";
 // pedidos hay, cuánto se ha vendido, marcar lo enviado). Solo servidor.
 
 export type LineaPedido = {
+  id?: string | null; // id del catálogo (para "compra verificada", mejora I2)
   nombre: string;
   cantidad: number;
   importe: number | null; // centavos, total de la línea
@@ -53,11 +54,19 @@ export async function guardarPedido(opts: {
   if (!sql) return;
   const { sesion, lineItems, pagado } = opts;
   const cliente = sesion.customer_details;
-  const lineas: LineaPedido[] = lineItems.map((li) => ({
-    nombre: li.description ?? "Producto",
-    cantidad: li.quantity ?? 1,
-    importe: li.amount_total ?? null,
-  }));
+  const lineas: LineaPedido[] = lineItems.map((li) => {
+    const prod = li.price?.product;
+    const id =
+      prod && typeof prod === "object" && !("deleted" in prod && prod.deleted)
+        ? ((prod as Stripe.Product).metadata?.producto_id ?? null)
+        : null;
+    return {
+      id,
+      nombre: li.description ?? "Producto",
+      cantidad: li.quantity ?? 1,
+      importe: li.amount_total ?? null,
+    };
+  });
   // payment_intent (sin expandir es un id string) enlaza el pedido con el evento
   // charge.refunded para poder marcar reembolsos.
   const pi =
@@ -91,6 +100,28 @@ export async function guardarPedido(opts: {
 export async function marcarReembolsado(paymentIntent: string): Promise<void> {
   if (!sql || !paymentIntent) return;
   await sql`update pedidos set reembolsado = true where payment_intent = ${paymentIntent}`;
+}
+
+// "Compra verificada" (mejora I2): ¿este email compró este producto en un pedido
+// pagado y no reembolsado? Coincide por id de producto guardado en las líneas.
+export async function compraVerificada(
+  email: string,
+  producto_id: string,
+): Promise<boolean> {
+  if (!sql || !email || !producto_id) return false;
+  try {
+    const filas = (await sql`
+      select 1 from pedidos
+      where pagado and not reembolsado
+        and lower(email) = lower(${email})
+        and lineas @> ${JSON.stringify([{ id: producto_id }])}::jsonb
+      limit 1
+    `) as unknown[];
+    return filas.length > 0;
+  } catch (e) {
+    console.error("compraVerificada falló:", e);
+    return false;
+  }
 }
 
 export async function pedidosRecientes(limite = 200): Promise<Pedido[]> {

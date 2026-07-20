@@ -9,6 +9,8 @@ type Pendiente = {
   rating: number;
   texto: string;
   fecha: string;
+  verificada: boolean;
+  foto: string | null;
 };
 
 // Moderación de reseñas del panel (bloque 3): aprobar (se publica) o eliminar.
@@ -53,12 +55,19 @@ export default function ModeracionResenas({
           <div className="flex items-center justify-between gap-3">
             <span className="text-sm font-medium">
               {r.autor} · {r.rating}★
+              {r.verificada && <span className="ml-2 text-xs text-acento">✓ verificada</span>}
             </span>
             <span className="text-xs text-tinta-suave">{r.producto_id}</span>
           </div>
           <p className="mt-2 whitespace-pre-line text-sm text-tinta-suave">
             {r.texto}
           </p>
+          {r.foto && (
+            <a href={r.foto} target="_blank" rel="noopener noreferrer">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={r.foto} alt="" className="mt-2 h-24 w-24 rounded-lg object-cover" />
+            </a>
+          )}
           <div className="mt-3 flex gap-4">
             <button
               type="button"

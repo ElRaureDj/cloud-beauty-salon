@@ -83,6 +83,9 @@ function ContactoES({ r }: { r: Ruta }) {
             <Link href={r("/pedido")} className="text-acento underline-offset-4 hover:underline">
               Consultar mi pedido
             </Link>
+            <Link href={r("/regalo")} className="text-acento underline-offset-4 hover:underline">
+              Tarjeta regalo
+            </Link>
           </p>
         </section>
 
@@ -160,6 +163,9 @@ function ContactoEN({ r }: { r: Ruta }) {
             </Link>
             <Link href={r("/pedido")} className="text-acento underline-offset-4 hover:underline">
               Track my order
+            </Link>
+            <Link href={r("/regalo")} className="text-acento underline-offset-4 hover:underline">
+              Gift card
             </Link>
           </p>
         </section>

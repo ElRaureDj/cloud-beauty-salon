@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useT, useRuta } from "@/lib/i18n/client";
 import {
@@ -188,6 +189,8 @@ export default function CarritoDrawer() {
             ))}
           </ul>
 
+          <Sugerencias ids={carrito.map((l) => l.id)} />
+
           <div className="mt-4 border-t border-tinta-suave/20 pt-4">
             {!preciosPendientes && subtotal > 0 && (
               <div className="mb-4">
@@ -263,5 +266,87 @@ export default function CarritoDrawer() {
         </div>
       )}
     </ModalBase>
+  );
+}
+
+type ItemSugerido = { id: string; nombre: string; precio: number; imagen: string };
+
+// Cross-sell del carrito (mejora I3): complementarios a lo que ya hay dentro.
+// Pide sugerencias al endpoint cuando cambian los ids del carrito; al añadir uno
+// entra al carrito y desaparece de la lista (re-fetch).
+function Sugerencias({ ids }: { ids: string[] }) {
+  const { t } = useT();
+  const agregar = useTienda((s) => s.agregar);
+  const [items, setItems] = useState<ItemSugerido[]>([]);
+  const clave = ids.join(",");
+
+  useEffect(() => {
+    if (ids.length === 0) {
+      setItems([]);
+      return;
+    }
+    let vivo = true;
+    fetch("/api/carrito/sugerencias", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ids }),
+    })
+      .then((r) => (r.ok ? r.json() : { sugerencias: [] }))
+      .then((d: { sugerencias?: ItemSugerido[] }) => {
+        if (vivo) setItems(d.sugerencias ?? []);
+      })
+      .catch(() => {
+        if (vivo) setItems([]);
+      });
+    return () => {
+      vivo = false;
+    };
+    // Se re-pide cuando cambia la composición del carrito.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [clave]);
+
+  if (items.length === 0) return null;
+
+  return (
+    <div className="mt-4 border-t border-tinta-suave/15 pt-4">
+      <p className="text-xs uppercase tracking-widest text-tinta-suave">
+        {t("carrito.sugerencias")}
+      </p>
+      <ul className="mt-2 flex flex-col gap-2">
+        {items.map((s) => (
+          <li key={s.id} className="flex items-center gap-3">
+            <span className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-white">
+              <Image
+                src={s.imagen}
+                alt=""
+                width={80}
+                height={80}
+                sizes="40px"
+                className="h-full w-full object-contain"
+              />
+            </span>
+            <span className="min-w-0 flex-1 truncate text-sm">{s.nombre}</span>
+            <span className="whitespace-nowrap text-xs text-tinta-suave">
+              ${s.precio.toFixed(2)}
+            </span>
+            <button
+              type="button"
+              aria-label={`${t("producto.agregar")}: ${s.nombre}`}
+              onClick={() =>
+                agregar({
+                  id: s.id,
+                  nombre: s.nombre,
+                  precio: s.precio,
+                  imagen: s.imagen,
+                })
+              }
+              className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-tinta-suave/30 transition-colors hover:border-acento hover:text-acento"
+            >
+              +
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
