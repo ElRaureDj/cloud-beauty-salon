@@ -7,6 +7,7 @@ import { getT, resolverLocale, LOCALES } from "@/lib/i18n";
 import { alternatesDeRuta, rutaLocalizada } from "@/lib/i18n/rutas";
 import { resumenPorProducto } from "@/lib/resenas";
 import { stockDeProducto } from "@/lib/stock";
+import { descripcionProducto, modoDeUsoProducto } from "@/lib/producto-i18n";
 import PanelCompra from "@/components/tienda/PanelCompra";
 import AnadirRutina from "@/components/tienda/AnadirRutina";
 import BotonFavorito from "@/components/tienda/BotonFavorito";
@@ -32,13 +33,13 @@ export async function generateMetadata(
   const { locale, slug } = await props.params;
   const producto = productoPorSlug(slug);
   if (!producto) return {};
-  // Nombre y descripción vienen del catálogo TRUSS (universales); el título de
-  // pestaña añade la marca vía el template del layout.
+  // El nombre TRUSS es universal; la descripción se traduce según el idioma.
   const loc = resolverLocale(locale);
   const marca = getT(loc).t("marca.nombre");
+  const desc = descripcionProducto(producto, loc);
   return {
     title: producto.nombre,
-    description: producto.descripcion,
+    description: desc,
     alternates: alternatesDeRuta(loc, `/producto/${slug}`),
     // Al compartir una ficha, la tarjeta usa el packshot real del producto
     // (§ bloque 4). openGraph/twitter no se fusionan con el layout: los repetimos.
@@ -46,7 +47,7 @@ export async function generateMetadata(
       type: "website",
       siteName: marca,
       title: producto.nombre,
-      description: producto.descripcion,
+      description: desc,
       locale: loc === "en" ? "en_US" : "es_ES",
       images: [
         { url: producto.imagen, width: 800, height: 800, alt: producto.nombre },
@@ -57,7 +58,7 @@ export async function generateMetadata(
       // "summary_large_image" X lo recortaría a ~1.91:1 y amputaría el producto.
       card: "summary",
       title: producto.nombre,
-      description: producto.descripcion,
+      description: desc,
       images: [producto.imagen],
     },
   };
@@ -91,7 +92,7 @@ export default async function PaginaProducto(
     "@context": "https://schema.org",
     "@type": "Product",
     name: producto.nombre,
-    description: producto.descripcion,
+    description: descripcionProducto(producto, loc),
     image: `${sitio}${producto.imagen}`,
     brand: { "@type": "Brand", name: "TRUSS" },
     ...(producto.precio > 0
@@ -168,14 +169,18 @@ export default async function PaginaProducto(
             ))}
           </div>
 
-          <p className="mt-5 leading-relaxed">{producto.descripcion}</p>
+          <p className="mt-5 leading-relaxed">
+            {descripcionProducto(producto, loc)}
+          </p>
 
           <div className="mt-6">
             <PanelCompra producto={producto} />
           </div>
 
           <h2 className="mt-8 font-display text-lg">{t("producto.modoDeUso")}</h2>
-          <p className="mt-2 leading-relaxed text-tinta-suave">{producto.modoDeUso}</p>
+          <p className="mt-2 leading-relaxed text-tinta-suave">
+            {modoDeUsoProducto(producto, loc)}
+          </p>
         </div>
       </div>
 
