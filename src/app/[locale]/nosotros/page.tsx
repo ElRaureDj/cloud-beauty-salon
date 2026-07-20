@@ -73,6 +73,7 @@ function NosotrosES({ r }: { r: Ruta }) {
         <section>
           <h2 className="font-display text-xl">Distribuidor autorizado TRUSS</h2>
           <p className="mt-2 text-tinta-suave">
+            TRUSS es una marca brasileña presente en más de 35 países desde 2001.
             Todos nuestros productos son originales, de línea profesional, con
             activos que reparan, hidratan y protegen la fibra. Nada de imitaciones.
           </p>
@@ -122,7 +123,8 @@ function NosotrosEN({ r }: { r: Ruta }) {
         <section>
           <h2 className="font-display text-xl">Authorized TRUSS distributor</h2>
           <p className="mt-2 text-tinta-suave">
-            Every product is genuine, professional-line, with actives that
+            TRUSS is a Brazilian brand present in more than 35 countries since
+            2001. Every product is genuine, professional-line, with actives that
             repair, hydrate and protect the hair fiber. No imitations.
           </p>
         </section>
