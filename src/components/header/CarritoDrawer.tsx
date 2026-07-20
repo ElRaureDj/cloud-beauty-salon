@@ -31,6 +31,7 @@ export default function CarritoDrawer() {
   const quitar = useTienda((s) => s.quitar);
   const setCantidad = useTienda((s) => s.setCantidad);
   const conBundle = useTienda(bundleActivo);
+  const bundleIds = useTienda((s) => s.bundleIds);
   const subtotal = useTienda(subtotalCarrito);
   const baseBundle = useTienda(valorBundle);
   const articulos = useTienda(contarArticulos);
@@ -39,6 +40,10 @@ export default function CarritoDrawer() {
   // El descuento aplica solo a la línea de bundle (1 unidad por producto §5.3),
   // nunca a productos ajenos ni a unidades extra.
   const descuento = conBundle ? baseBundle * DESCUENTO_BUNDLE : 0;
+  const pctBundle = Math.round(DESCUENTO_BUNDLE * 100);
+  // Un producto lleva el descuento de rutina si está marcado como bundle (los
+  // ids del bundle que están en el carrito; ver store cart-aware).
+  const enRutina = (id: string) => bundleIds.includes(id);
 
   // Barra "envío gratis": progreso hacia el umbral con el total tras descuento
   // (mismo cálculo que el checkout). Solo con precios reales en el carrito.
@@ -145,6 +150,11 @@ export default function CarritoDrawer() {
                     {textoPrecio(linea.precio, tr)}
                   </span>
                 </div>
+                {enRutina(linea.id) && (
+                  <p className="mt-1 text-xs text-acento">
+                    ✦ {tf("carrito.linea.enRutina", { pct: pctBundle })}
+                  </p>
+                )}
                 <div className="mt-2 flex items-center justify-between">
                   <div className="flex items-center gap-1">
                     <button

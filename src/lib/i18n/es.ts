@@ -181,6 +181,7 @@ export const es = {
   "carrito.quitar": "Quitar",
   "carrito.linea.restar": "Restar una unidad de {nombre}",
   "carrito.linea.sumar": "Sumar una unidad de {nombre}",
+  "carrito.linea.enRutina": "En tu rutina · −{pct}%",
   "carrito.subtotal": "Subtotal",
   "carrito.bundle": "Rutina del diagnóstico",
   "carrito.bundle.descuento": "Descuento por rutina completa",

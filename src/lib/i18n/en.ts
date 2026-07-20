@@ -182,6 +182,7 @@ export const en: Record<ClaveI18n, string> = {
   "carrito.quitar": "Remove",
   "carrito.linea.restar": "Remove one unit of {nombre}",
   "carrito.linea.sumar": "Add one unit of {nombre}",
+  "carrito.linea.enRutina": "In your routine · −{pct}%",
   "carrito.subtotal": "Subtotal",
   "carrito.bundle": "Diagnosis routine",
   "carrito.bundle.descuento": "Full-routine discount",
