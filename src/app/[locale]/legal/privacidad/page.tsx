@@ -74,9 +74,18 @@ function PrivacidadES({ r }: { r: Ruta }) {
               solo enviamos los productos y las cantidades del pedido.
             </li>
             <li>
-              <strong>Cookies y analítica.</strong> Hoy esta web no usa cookies
-              de rastreo ni analítica de terceros. Si eso cambia, esta política
-              se actualizará antes.
+              <strong>Boletín.</strong> Si te apuntas al boletín guardamos tu
+              email, previa doble confirmación (te enviamos un enlace y solo
+              quedas suscrita al pulsarlo), para avisarte de novedades y
+              ofertas. Puedes darte de baja en cualquier momento con el enlace
+              incluido en cada correo.
+            </li>
+            <li>
+              <strong>Cookies y analítica.</strong> Esta web no usa cookies de
+              rastreo ni publicidad. Medimos las visitas y el rendimiento de
+              carga con la analítica de Vercel (Web Analytics y Speed Insights),
+              que trabaja de forma agregada y anónima, sin cookies ni
+              identificadores personales.
             </li>
           </ul>
         </section>
@@ -86,8 +95,9 @@ function PrivacidadES({ r }: { r: Ruta }) {
           <p className="mt-3">
             Los datos de la lista de espera se conservan hasta que abra el
             servicio correspondiente o hasta que nos pidas salir de la lista,
-            lo que ocurra primero. Los datos de pedidos se conservan el tiempo
-            exigido por las obligaciones fiscales y de garantía.
+            lo que ocurra primero. Los del boletín, hasta que te des de baja.
+            Los datos de pedidos se conservan el tiempo exigido por las
+            obligaciones fiscales y de garantía.
           </p>
         </section>
 
@@ -95,9 +105,10 @@ function PrivacidadES({ r }: { r: Ruta }) {
           <h2 className="font-display text-xl">Con quién los compartimos</h2>
           <p className="mt-3">
             Solo con los proveedores imprescindibles para operar: Stripe
-            (pagos e impuestos), Resend (envío del correo de la lista de
-            espera) y el transportista que entregue tu pedido. No vendemos ni
-            cedemos tus datos a terceros con fines publicitarios.
+            (pagos e impuestos), Resend (correos de la lista de espera y del
+            boletín), Vercel (alojamiento de la web y analítica agregada) y el
+            transportista que entregue tu pedido. No vendemos ni cedemos tus
+            datos a terceros con fines publicitarios.
           </p>
         </section>
 
@@ -177,9 +188,18 @@ function PrivacidadEN({ r }: { r: Ruta }) {
               in the order.
             </li>
             <li>
-              <strong>Cookies and analytics.</strong> Today this website uses no
-              tracking cookies or third-party analytics. If that changes, this
-              policy will be updated beforehand.
+              <strong>Newsletter.</strong> If you sign up for our newsletter we
+              store your email after a double confirmation (we send you a link,
+              and you're only subscribed once you tap it) to keep you posted on
+              news and offers. You can unsubscribe at any time using the link
+              included in every email.
+            </li>
+            <li>
+              <strong>Cookies and analytics.</strong> This website uses no
+              tracking or advertising cookies. We measure visits and page load
+              performance with Vercel Analytics (Web Analytics and Speed
+              Insights), which works in an aggregated, anonymous way, without
+              cookies or personal identifiers.
             </li>
           </ul>
         </section>
@@ -188,8 +208,9 @@ function PrivacidadEN({ r }: { r: Ruta }) {
           <h2 className="font-display text-xl">How long we keep it</h2>
           <p className="mt-3">
             Waitlist data is kept until the corresponding service opens or until
-            you ask to leave the list, whichever comes first. Order data is kept
-            for as long as tax and warranty obligations require.
+            you ask to leave the list, whichever comes first. Newsletter data is
+            kept until you unsubscribe. Order data is kept for as long as tax
+            and warranty obligations require.
           </p>
         </section>
 
@@ -197,9 +218,10 @@ function PrivacidadEN({ r }: { r: Ruta }) {
           <h2 className="font-display text-xl">Who we share it with</h2>
           <p className="mt-3">
             Only with the providers that are essential to operate: Stripe
-            (payments and taxes), Resend (sending the waitlist email) and the
-            carrier that delivers your order. We do not sell or hand over your
-            data to third parties for advertising purposes.
+            (payments and taxes), Resend (waitlist and newsletter emails),
+            Vercel (website hosting and aggregated analytics) and the carrier
+            that delivers your order. We do not sell or hand over your data to
+            third parties for advertising purposes.
           </p>
         </section>
 

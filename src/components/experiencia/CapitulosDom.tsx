@@ -5,6 +5,7 @@ import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { IconoCandado } from "@/components/iconos";
+import FormularioNewsletter from "@/components/marketing/FormularioNewsletter";
 import { useT, useRuta } from "@/lib/i18n/client";
 import { useExperiencia } from "@/stores/experiencia";
 
@@ -274,9 +275,11 @@ export default function CapitulosDom({ activo }: { activo: boolean }) {
             {t("cap7.irTienda")}
           </Link>
         </div>
-        <p className="nota-todo pointer-events-auto">
-          TODO(guion §9.5): newsletter, WhatsApp y redes al tener marca y dominio.
-        </p>
+        {/* Newsletter real (bloque 4); redes/WhatsApp quedan pendientes de
+            canales definitivos (§9.5). */}
+        <div className="pointer-events-auto flex w-full justify-center">
+          <FormularioNewsletter />
+        </div>
       </div>
 
       {/* Cap. 7 — pie: contacto, legales y volver arriba (§4) */}

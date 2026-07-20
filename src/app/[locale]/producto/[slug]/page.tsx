@@ -23,10 +23,32 @@ export async function generateMetadata(
   if (!producto) return {};
   // Nombre y descripción vienen del catálogo TRUSS (universales); el título de
   // pestaña añade la marca vía el template del layout.
+  const loc = resolverLocale(locale);
+  const marca = getT(loc).t("marca.nombre");
   return {
     title: producto.nombre,
     description: producto.descripcion,
-    alternates: alternatesDeRuta(resolverLocale(locale), `/producto/${slug}`),
+    alternates: alternatesDeRuta(loc, `/producto/${slug}`),
+    // Al compartir una ficha, la tarjeta usa el packshot real del producto
+    // (§ bloque 4). openGraph/twitter no se fusionan con el layout: los repetimos.
+    openGraph: {
+      type: "website",
+      siteName: marca,
+      title: producto.nombre,
+      description: producto.descripcion,
+      locale: loc === "en" ? "en_US" : "es_ES",
+      images: [
+        { url: producto.imagen, width: 800, height: 800, alt: producto.nombre },
+      ],
+    },
+    twitter: {
+      // El packshot es cuadrado (800×800): "summary" lo muestra íntegro; con
+      // "summary_large_image" X lo recortaría a ~1.91:1 y amputaría el producto.
+      card: "summary",
+      title: producto.nombre,
+      description: producto.descripcion,
+      images: [producto.imagen],
+    },
   };
 }
 

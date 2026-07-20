@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { IconoCandado } from "@/components/iconos";
+import FormularioNewsletter from "@/components/marketing/FormularioNewsletter";
 import { useT, useRuta } from "@/lib/i18n/client";
 import { useExperiencia } from "@/stores/experiencia";
 
@@ -106,6 +107,10 @@ export default function FallbackEstatico() {
           <Link href={ruta("/tienda")} className="boton-secundario">
             {t("cap7.irTienda")}
           </Link>
+        </div>
+        {/* Newsletter (bloque 4): captación con doble opt-in. */}
+        <div className="mt-12 flex justify-center">
+          <FormularioNewsletter />
         </div>
         <footer className="mt-16 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-tinta-suave">
           <Link href={ruta("/contacto")} className="underline-offset-4 hover:underline">

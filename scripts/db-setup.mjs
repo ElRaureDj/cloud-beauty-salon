@@ -49,6 +49,18 @@ await sql`create table if not exists resenas (
   creada_en   timestamptz not null default now()
 )`;
 await sql`create index if not exists resenas_lectura on resenas (producto_id, aprobada, creada_en desc)`;
+await sql`create table if not exists newsletter (
+  email          text primary key,
+  token          text not null,
+  locale         text not null default 'es',
+  confirmado     boolean not null default false,
+  creada_en      timestamptz not null default now(),
+  confirmado_en  timestamptz,
+  ultimo_envio   timestamptz
+)`;
+// Migración suave para tablas creadas antes de añadir la columna.
+await sql`alter table newsletter add column if not exists ultimo_envio timestamptz`;
+await sql`create index if not exists newsletter_token on newsletter (token)`;
 
 console.log(`Sembrando stock de ${productos.length} productos (on conflict do nothing)…`);
 const ids = productos.map((p) => p.id);

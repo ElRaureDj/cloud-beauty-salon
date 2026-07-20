@@ -14,6 +14,13 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // Imágenes de metadatos generadas por Next (og, twitter, icon): viven bajo
+  // [locale] y se sirven por su ruta real (/es/opengraph-image). NO redirigir
+  // /es/* aquí o los scrapers sociales reciben un 307 en vez de la imagen.
+  if (/\/(opengraph-image|twitter-image|icon|apple-icon)(\/|$)/.test(pathname)) {
+    return NextResponse.next();
+  }
+
   // Inglés: dejar pasar tal cual → [locale] = "en".
   if (pathname === "/en" || pathname.startsWith("/en/")) {
     return NextResponse.next();

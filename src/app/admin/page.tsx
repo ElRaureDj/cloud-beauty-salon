@@ -33,12 +33,20 @@ export default async function PaginaAdmin() {
     <main className="mx-auto max-w-2xl px-6 py-12">
       <header className="flex items-center justify-between gap-4">
         <h1 className="font-display text-2xl">Stock</h1>
-        <Link
-          href="/admin/resenas"
-          className="text-sm text-acento underline-offset-4 hover:underline"
-        >
-          Reseñas →
-        </Link>
+        <nav className="flex gap-4">
+          <Link
+            href="/admin/resenas"
+            className="text-sm text-acento underline-offset-4 hover:underline"
+          >
+            Reseñas →
+          </Link>
+          <Link
+            href="/admin/newsletter"
+            className="text-sm text-acento underline-offset-4 hover:underline"
+          >
+            Newsletter →
+          </Link>
+        </nav>
       </header>
       <EditorStock inicial={inicial} />
     </main>

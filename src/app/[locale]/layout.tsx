@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Inter } from "next/font/google";
 import { notFound } from "next/navigation";
+import Analitica from "@/components/marketing/Analitica";
 import "../globals.css";
 import Header from "@/components/header/Header";
 import { getT, isLocale, LOCALES } from "@/lib/i18n";
@@ -33,12 +34,28 @@ export async function generateMetadata(
   const marca = t("marca.nombre");
   // Título limpio: marca + tagline sin el punto final.
   const tagline = t("hero.tagline").replace(/\.$/, "");
+  const titulo = `${marca} · ${tagline}`;
+  const descripcion = t("meta.descripcion");
   return {
     metadataBase: new URL(
       process.env.NEXT_PUBLIC_SITE_URL ?? "https://cloudbeautysalon.com",
     ),
-    title: { default: `${marca} · ${tagline}`, template: `%s · ${marca}` },
-    description: t("meta.descripcion"),
+    title: { default: titulo, template: `%s · ${marca}` },
+    description: descripcion,
+    // Tarjetas al compartir (§ bloque 4). La imagen la aporta opengraph-image.tsx
+    // por marca; las fichas de producto la sobrescriben con su packshot.
+    openGraph: {
+      type: "website",
+      siteName: marca,
+      title: titulo,
+      description: descripcion,
+      locale: locale === "en" ? "en_US" : "es_ES",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: titulo,
+      description: descripcion,
+    },
   };
 }
 
@@ -60,6 +77,10 @@ export default async function RootLayout(props: LayoutProps<"/[locale]">) {
           <Header />
           {props.children}
         </LocaleProvider>
+        {/* Analítica de 1er nivel de Vercel (§ bloque 4): visitas y velocidad
+            reales SIN cookies de rastreo (no requiere banner de consentimiento).
+            Con beforeSend que redacta los tokens del boletín (ver Analitica). */}
+        <Analitica />
       </body>
     </html>
   );
