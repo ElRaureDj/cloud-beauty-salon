@@ -61,6 +61,16 @@ export const es = {
   "tienda.filtros.linea": "Línea",
   "tienda.filtros.limpiar": "Quitar filtros",
   "tienda.sinResultados": "Ningún producto coincide con esos filtros. Prueba a quitar alguno.",
+  "tienda.buscar": "Buscar productos",
+  "tienda.buscar.enviar": "Buscar",
+  "tienda.orden": "Ordenar",
+  "tienda.orden.relevancia": "Relevancia",
+  "tienda.orden.precioAsc": "Precio ↑",
+  "tienda.orden.precioDesc": "Precio ↓",
+  "tienda.orden.valorados": "Mejor valorados",
+  "tienda.soloDisponibles": "Solo disponibles",
+  "tienda.resenas.una": "reseña",
+  "tienda.resenas.varias": "reseñas",
   "copy.marca.trust":
     "Distribuidor autorizado TRUSS · Cosmética profesional brasileña", // §4 Cap. 3 — se reutiliza en Fase 3
   "precio.porConfirmar": "Precio por confirmar",
@@ -120,6 +130,11 @@ export const es = {
     "No se pudo completar ahora. Inténtalo de nuevo en unos minutos.",
   "news.legalPre": "Al apuntarte aceptas la ",
   "news.legalEnlace": "política de privacidad",
+  "news.bienvenida.asunto": "Tu regalo de bienvenida en Cloud Beauty Salon",
+  "news.bienvenida.intro":
+    "¡Gracias por suscribirte! Aquí tienes tu código de descuento para tu primera compra:",
+  "news.bienvenida.instru":
+    "Escribe este código en el carrito, en “¿Tienes un código de descuento?”, antes de pagar.",
   "carrito.titulo": "Tu carrito",
   "carrito.vacio": "Tu carrito está listo para su primer producto.",
   "carrito.irTienda": "Ir a la tienda",

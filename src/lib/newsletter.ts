@@ -58,16 +58,50 @@ export async function existeToken(token: string): Promise<boolean> {
   return filas.length > 0;
 }
 
-export async function confirmarNewsletter(token: string): Promise<boolean> {
-  if (!sql || !token) return false;
-  const filas = (await sql`
+// Confirma la suscripción (idempotente). Devuelve null si el token no existe
+// (enlace no válido) → la página muestra "enlace no válido"; si existe, el
+// email/locale. El envío del cupón de bienvenida NO se decide aquí: se reclama
+// aparte con reclamarCupon() para poder reintentar si el correo falla.
+export async function confirmarNewsletter(
+  token: string,
+): Promise<{ email: string; locale: string } | null> {
+  if (!sql || !token) return null;
+  await sql`
     update newsletter
-      set confirmado = true,
-          confirmado_en = coalesce(confirmado_en, now())
+      set confirmado = true, confirmado_en = coalesce(confirmado_en, now())
     where token = ${token}
-    returning email
-  `) as { email: string }[];
-  return filas.length > 0;
+  `;
+  const filas = (await sql`
+    select email, locale from newsletter where token = ${token} limit 1
+  `) as { email: string; locale: string }[];
+  return filas.length
+    ? { email: filas[0].email, locale: filas[0].locale }
+    : null;
+}
+
+// Reclama de forma ATÓMICA el envío del cupón de bienvenida: pone
+// cupon_enviado=true y devuelve email/locale SOLO si esta llamada ganó la
+// reclamación (fila confirmada y aún sin cupón). Dos confirmaciones concurrentes
+// → una sola gana → un solo cupón. Si el correo falla, liberarCupon() revierte
+// para que un reintento (re-clic del enlace) pueda recuperarlo: "exactamente una
+// vez" cuando se logra entregar, nunca dos.
+export async function reclamarCupon(
+  token: string,
+): Promise<{ email: string; locale: string } | null> {
+  if (!sql || !token) return null;
+  const filas = (await sql`
+    update newsletter set cupon_enviado = true
+    where token = ${token} and confirmado and not cupon_enviado
+    returning email, locale
+  `) as { email: string; locale: string }[];
+  return filas.length
+    ? { email: filas[0].email, locale: filas[0].locale }
+    : null;
+}
+
+export async function liberarCupon(token: string): Promise<void> {
+  if (!sql || !token) return;
+  await sql`update newsletter set cupon_enviado = false where token = ${token}`;
 }
 
 // Borra la suscripción. Devuelve true también si el token ya no existe: para

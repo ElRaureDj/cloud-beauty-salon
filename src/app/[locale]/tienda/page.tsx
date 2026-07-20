@@ -9,9 +9,10 @@ import {
   nombreEtapa,
   textoPrecio,
 } from "@/lib/formato";
-import { getT, resolverLocale } from "@/lib/i18n";
+import { getT, resolverLocale, type Traductor } from "@/lib/i18n";
 import { alternatesDeRuta, rutaLocalizada } from "@/lib/i18n/rutas";
 import { stockDeProductos } from "@/lib/stock";
+import { resumenPorProducto } from "@/lib/resenas";
 import ImagenProducto from "@/components/tienda/ImagenProducto";
 
 export async function generateMetadata(
@@ -27,30 +28,45 @@ export async function generateMetadata(
   };
 }
 
-type Filtros = { categoria?: string; etapa?: string; linea?: string };
+const ORDENES = ["relevancia", "precioAsc", "precioDesc", "valorados"] as const;
+type Orden = (typeof ORDENES)[number];
+
+// Estado de la vista que se PRESERVA al cambiar cualquier control (chips,
+// buscador, orden): todo vive en la URL → cero JS, indexable, compartible (§6).
+type Estado = {
+  categoria?: string;
+  etapa?: string;
+  linea?: string;
+  q?: string;
+  orden?: string;
+  disponibles?: string;
+};
 
 function primero(v: string | string[] | undefined): string | undefined {
   return Array.isArray(v) ? v[0] : v;
 }
 
-// Chips de filtro como enlaces: cero JS, indexable y con URL compartible (§6).
-function ChipFiltro({
+function limpiarEstado(e: Estado): Record<string, string> {
+  return Object.fromEntries(
+    Object.entries(e).filter(([, v]) => v !== undefined && v !== ""),
+  ) as Record<string, string>;
+}
+
+// Chip-enlace genérico (filtro u orden): navega preservando el resto del estado.
+function Chip({
   activo,
   etiqueta,
-  query,
+  estado,
   pathname,
 }: {
   activo: boolean;
   etiqueta: string;
-  query: Filtros;
+  estado: Estado;
   pathname: string;
 }) {
-  const limpio = Object.fromEntries(
-    Object.entries(query).filter(([, v]) => v !== undefined),
-  ) as Record<string, string>;
   return (
     <Link
-      href={{ pathname, query: limpio }}
+      href={{ pathname, query: limpiarEstado(estado) }}
       aria-current={activo ? "true" : undefined}
       className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${
         activo
@@ -60,6 +76,56 @@ function ChipFiltro({
     >
       {etiqueta}
     </Link>
+  );
+}
+
+function FilaFiltro({
+  id,
+  etiqueta,
+  children,
+}: {
+  id: string;
+  etiqueta: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div role="group" aria-labelledby={id} className="flex flex-wrap items-center gap-2">
+      <span
+        id={id}
+        className="w-24 shrink-0 text-xs uppercase tracking-widest text-tinta-suave"
+      >
+        {etiqueta}
+      </span>
+      {children}
+    </div>
+  );
+}
+
+// Media + nº de reseñas bajo el precio (prueba social). Solo si hay reseñas.
+function EstrellasResumen({
+  media,
+  total,
+  tr,
+}: {
+  media: number;
+  total: number;
+  tr: Traductor;
+}) {
+  const llenas = Math.round(media);
+  return (
+    <p className="mt-0.5 flex items-center gap-1 text-xs text-tinta-suave">
+      <span aria-hidden className="tracking-tight">
+        {Array.from({ length: 5 }, (_, i) => (
+          <span key={i} className={i < llenas ? "text-acento" : "text-tinta-suave/30"}>
+            ★
+          </span>
+        ))}
+      </span>
+      <span>
+        {media.toFixed(1)} · {total}{" "}
+        {total === 1 ? tr.t("tienda.resenas.una") : tr.t("tienda.resenas.varias")}
+      </span>
+    </p>
   );
 }
 
@@ -76,20 +142,78 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
   const categoria = primero(params.categoria);
   const etapa = primero(params.etapa);
   const linea = primero(params.linea);
-  const filtros: Filtros = { categoria, etapa, linea };
+  const q = primero(params.q)?.trim();
+  const ordenRaw = primero(params.orden);
+  const orden: Orden = (ORDENES as readonly string[]).includes(ordenRaw ?? "")
+    ? (ordenRaw as Orden)
+    : "relevancia";
+  const disponibles = primero(params.disponibles) === "1";
 
-  const productos = CATALOGO.filter(
+  // Estado base (para preservar en cada control). El orden por defecto y
+  // disponibles=off no se escriben en la URL (más limpia).
+  const base: Estado = {
+    categoria,
+    etapa,
+    linea,
+    q,
+    orden: orden === "relevancia" ? undefined : orden,
+    disponibles: disponibles ? "1" : undefined,
+  };
+
+  // 1) Filtro base: chips + búsqueda por texto (nombre o línea).
+  const qLower = q?.toLowerCase();
+  let productos = CATALOGO.filter(
     (p) =>
       (!categoria || p.categoria === categoria) &&
       (!etapa || p.etapa.includes(etapa as Etapa)) &&
-      (!linea || p.linea === linea),
+      (!linea || p.linea === linea) &&
+      (!qLower ||
+        p.nombre.toLowerCase().includes(qLower) ||
+        p.linea.toLowerCase().includes(qLower)),
   );
 
-  const hayFiltros = Boolean(categoria || etapa || linea);
-  const preciosPendientes = CATALOGO.every((p) => p.precio === 0);
-  // Stock en vivo de los productos visibles (bloque 3). Sin BD → mapa vacío →
-  // sin badges. Server-side: la /tienda ya es dinámica (lee searchParams).
+  // 2) Stock y reseñas de los candidatos (una query cada uno).
   const stockMap = await stockDeProductos(productos.map((p) => p.id));
+
+  // 3) "Solo disponibles": oculta stock 0 (si no hay BD, stockMap vacío → no filtra).
+  if (disponibles) {
+    productos = productos.filter((p) => (stockMap.get(p.id) ?? 1) > 0);
+  }
+
+  const resenasMap = await resumenPorProducto(productos.map((p) => p.id));
+
+  // 4) Orden. Precios "por confirmar" (0) al final en precioAsc.
+  const conPrecio = (p: { precio: number }) => (p.precio > 0 ? p.precio : Infinity);
+  if (orden === "precioAsc")
+    productos = [...productos].sort((a, b) => conPrecio(a) - conPrecio(b));
+  else if (orden === "precioDesc")
+    productos = [...productos].sort((a, b) => b.precio - a.precio);
+  else if (orden === "valorados") {
+    // Puntuación bayesiana para "mejor valorados": una sola reseña extrema no
+    // domina la lista y los productos sin reseñas van al final. C = media global
+    // (previo), M = su peso (nº de reseñas "virtuales" que atraen hacia C
+    // mientras haya pocas reales). Así 1×5★ no supera a 200×4.8, y 1×1★ no
+    // encabeza por delante de los no valorados.
+    const vals = [...resenasMap.values()];
+    const nTotal = vals.reduce((s, r) => s + r.total, 0);
+    const mediaGlobal =
+      nTotal > 0 ? vals.reduce((s, r) => s + r.media * r.total, 0) / nTotal : 0;
+    const M = 5;
+    const score = (id: string) => {
+      const r = resenasMap.get(id);
+      return r && r.total > 0
+        ? (r.total * r.media + M * mediaGlobal) / (r.total + M)
+        : -1; // sin reseñas → al final
+    };
+    productos = [...productos].sort(
+      (a, b) =>
+        score(b.id) - score(a.id) ||
+        (resenasMap.get(b.id)?.total ?? 0) - (resenasMap.get(a.id)?.total ?? 0),
+    );
+  }
+
+  const hayFiltros = Boolean(categoria || etapa || linea || q || disponibles || orden !== "relevancia");
+  const preciosPendientes = CATALOGO.every((p) => p.precio === 0);
 
   return (
     <main className="mx-auto max-w-5xl px-6 pb-24 pt-28">
@@ -99,88 +223,65 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
         <p className="nota-todo mt-4">TODO(guion §9.6): faltan precios del catálogo.</p>
       )}
 
-      <section aria-label={t("tienda.filtros.grupo")} className="mt-8 flex flex-col gap-3">
-        <div
-          role="group"
-          aria-labelledby="filtro-categoria"
-          className="flex flex-wrap items-center gap-2"
-        >
-          <span
-            id="filtro-categoria"
-            className="w-24 shrink-0 text-xs uppercase tracking-widest text-tinta-suave"
-          >
-            {t("tienda.filtros.categoria")}
-          </span>
-          <ChipFiltro
-            pathname={rutaTienda}
-            etiqueta={t("tienda.filtros.todo")}
-            activo={!categoria}
-            query={{ ...filtros, categoria: undefined }}
-          />
+      {/* Buscador: form GET (cero JS). Preserva el resto del estado como hidden. */}
+      <form action={rutaTienda} method="get" role="search" className="mt-8 flex gap-2">
+        {categoria && <input type="hidden" name="categoria" value={categoria} />}
+        {etapa && <input type="hidden" name="etapa" value={etapa} />}
+        {linea && <input type="hidden" name="linea" value={linea} />}
+        {orden !== "relevancia" && <input type="hidden" name="orden" value={orden} />}
+        {disponibles && <input type="hidden" name="disponibles" value="1" />}
+        <label className="sr-only" htmlFor="tienda-q">
+          {t("tienda.buscar")}
+        </label>
+        <input
+          id="tienda-q"
+          type="search"
+          name="q"
+          defaultValue={q ?? ""}
+          placeholder={t("tienda.buscar")}
+          className="min-w-0 flex-1 rounded-full border border-tinta-suave/30 bg-transparent px-4 py-2 text-base outline-none focus:border-acento sm:text-sm"
+        />
+        <button type="submit" className="boton-primario shrink-0 px-4 py-2 text-sm">
+          {t("tienda.buscar.enviar")}
+        </button>
+      </form>
+
+      <section aria-label={t("tienda.filtros.grupo")} className="mt-4 flex flex-col gap-3">
+        <FilaFiltro id="filtro-categoria" etiqueta={t("tienda.filtros.categoria")}>
+          <Chip pathname={rutaTienda} etiqueta={t("tienda.filtros.todo")} activo={!categoria} estado={{ ...base, categoria: undefined }} />
           {CATEGORIAS.map((c) => (
-            <ChipFiltro
-              key={c}
-              pathname={rutaTienda}
-              etiqueta={nombreCategoria(c, tr)}
-              activo={categoria === c}
-              query={{ ...filtros, categoria: c }}
-            />
+            <Chip key={c} pathname={rutaTienda} etiqueta={nombreCategoria(c, tr)} activo={categoria === c} estado={{ ...base, categoria: c }} />
           ))}
-        </div>
-        <div
-          role="group"
-          aria-labelledby="filtro-etapa"
-          className="flex flex-wrap items-center gap-2"
-        >
-          <span
-            id="filtro-etapa"
-            className="w-24 shrink-0 text-xs uppercase tracking-widest text-tinta-suave"
-          >
-            {t("tienda.filtros.etapa")}
-          </span>
-          <ChipFiltro
-            pathname={rutaTienda}
-            etiqueta={t("tienda.filtros.todo")}
-            activo={!etapa}
-            query={{ ...filtros, etapa: undefined }}
-          />
+        </FilaFiltro>
+        <FilaFiltro id="filtro-etapa" etiqueta={t("tienda.filtros.etapa")}>
+          <Chip pathname={rutaTienda} etiqueta={t("tienda.filtros.todo")} activo={!etapa} estado={{ ...base, etapa: undefined }} />
           {ETAPAS.map((e) => (
-            <ChipFiltro
-              key={e}
-              pathname={rutaTienda}
-              etiqueta={nombreEtapa(e, tr)}
-              activo={etapa === e}
-              query={{ ...filtros, etapa: e }}
-            />
+            <Chip key={e} pathname={rutaTienda} etiqueta={nombreEtapa(e, tr)} activo={etapa === e} estado={{ ...base, etapa: e }} />
           ))}
-        </div>
-        <div
-          role="group"
-          aria-labelledby="filtro-linea"
-          className="flex flex-wrap items-center gap-2"
-        >
-          <span
-            id="filtro-linea"
-            className="w-24 shrink-0 text-xs uppercase tracking-widest text-tinta-suave"
-          >
-            {t("tienda.filtros.linea")}
-          </span>
-          <ChipFiltro
-            pathname={rutaTienda}
-            etiqueta={t("tienda.filtros.todo")}
-            activo={!linea}
-            query={{ ...filtros, linea: undefined }}
-          />
+        </FilaFiltro>
+        <FilaFiltro id="filtro-linea" etiqueta={t("tienda.filtros.linea")}>
+          <Chip pathname={rutaTienda} etiqueta={t("tienda.filtros.todo")} activo={!linea} estado={{ ...base, linea: undefined }} />
           {lineasDelCatalogo().map((l) => (
-            <ChipFiltro
-              key={l}
+            <Chip key={l} pathname={rutaTienda} etiqueta={l} activo={linea === l} estado={{ ...base, linea: l }} />
+          ))}
+        </FilaFiltro>
+        <FilaFiltro id="filtro-orden" etiqueta={t("tienda.orden")}>
+          {ORDENES.map((o) => (
+            <Chip
+              key={o}
               pathname={rutaTienda}
-              etiqueta={l}
-              activo={linea === l}
-              query={{ ...filtros, linea: l }}
+              etiqueta={t(`tienda.orden.${o}`)}
+              activo={orden === o}
+              estado={{ ...base, orden: o === "relevancia" ? undefined : o }}
             />
           ))}
-        </div>
+          <Chip
+            pathname={rutaTienda}
+            etiqueta={t("tienda.soloDisponibles")}
+            activo={disponibles}
+            estado={{ ...base, disponibles: disponibles ? undefined : "1" }}
+          />
+        </FilaFiltro>
         {hayFiltros && (
           <Link
             href={rutaTienda}
@@ -200,21 +301,23 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
               stockMap.has(p.id) ? stockMap.get(p.id)! : null,
               tr,
             );
+            const res = resenasMap.get(p.id);
             return (
-            <li key={p.id}>
-              <Link
-                href={r(`/producto/${p.id}`)}
-                className="group block rounded-3xl border border-transparent p-2 transition-colors hover:border-tinta-suave/20"
-              >
-                <ImagenProducto producto={p} clase="aspect-square w-full" estadoStock={et} />
-                <p className="mt-3 text-sm leading-snug">{p.nombre}</p>
-                <p className="mt-0.5 text-xs text-tinta-suave">
-                  {p.linea}
-                  {p.tamano ? ` · ${p.tamano.split("/")[0].trim()}` : ""}
-                </p>
-                <p className="mt-1 text-sm">{textoPrecio(p.precio, tr)}</p>
-              </Link>
-            </li>
+              <li key={p.id}>
+                <Link
+                  href={r(`/producto/${p.id}`)}
+                  className="group block rounded-3xl border border-transparent p-2 transition-colors hover:border-tinta-suave/20"
+                >
+                  <ImagenProducto producto={p} clase="aspect-square w-full" estadoStock={et} />
+                  <p className="mt-3 text-sm leading-snug">{p.nombre}</p>
+                  <p className="mt-0.5 text-xs text-tinta-suave">
+                    {p.linea}
+                    {p.tamano ? ` · ${p.tamano.split("/")[0].trim()}` : ""}
+                  </p>
+                  <p className="mt-1 text-sm">{textoPrecio(p.precio, tr)}</p>
+                  {res && <EstrellasResumen media={res.media} total={res.total} tr={tr} />}
+                </Link>
+              </li>
             );
           })}
         </ul>

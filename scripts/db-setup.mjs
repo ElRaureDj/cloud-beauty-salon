@@ -49,17 +49,38 @@ await sql`create table if not exists resenas (
   creada_en   timestamptz not null default now()
 )`;
 await sql`create index if not exists resenas_lectura on resenas (producto_id, aprobada, creada_en desc)`;
+await sql`create table if not exists pedidos (
+  session_id     text primary key,
+  payment_intent text,
+  total          integer,
+  moneda         text,
+  email          text,
+  nombre         text,
+  direccion      text,
+  lineas         jsonb,
+  pagado         boolean not null default false,
+  reembolsado    boolean not null default false,
+  enviado        boolean not null default false,
+  creada_en      timestamptz not null default now()
+)`;
+// Migración suave para tablas creadas antes de añadir estas columnas.
+await sql`alter table pedidos add column if not exists payment_intent text`;
+await sql`alter table pedidos add column if not exists reembolsado boolean not null default false`;
+await sql`create index if not exists pedidos_recientes on pedidos (creada_en desc)`;
+await sql`create index if not exists pedidos_por_pi on pedidos (payment_intent)`;
 await sql`create table if not exists newsletter (
   email          text primary key,
   token          text not null,
   locale         text not null default 'es',
   confirmado     boolean not null default false,
+  cupon_enviado  boolean not null default false,
   creada_en      timestamptz not null default now(),
   confirmado_en  timestamptz,
   ultimo_envio   timestamptz
 )`;
-// Migración suave para tablas creadas antes de añadir la columna.
+// Migración suave para tablas creadas antes de añadir estas columnas.
 await sql`alter table newsletter add column if not exists ultimo_envio timestamptz`;
+await sql`alter table newsletter add column if not exists cupon_enviado boolean not null default false`;
 await sql`create index if not exists newsletter_token on newsletter (token)`;
 
 console.log(`Sembrando stock de ${productos.length} productos (on conflict do nothing)…`);

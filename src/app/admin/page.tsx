@@ -35,6 +35,12 @@ export default async function PaginaAdmin() {
         <h1 className="font-display text-2xl">Stock</h1>
         <nav className="flex gap-4">
           <Link
+            href="/admin/pedidos"
+            className="text-sm text-acento underline-offset-4 hover:underline"
+          >
+            Pedidos →
+          </Link>
+          <Link
             href="/admin/resenas"
             className="text-sm text-acento underline-offset-4 hover:underline"
           >

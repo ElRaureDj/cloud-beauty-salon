@@ -62,6 +62,16 @@ export const en: Record<ClaveI18n, string> = {
   "tienda.filtros.linea": "Line",
   "tienda.filtros.limpiar": "Clear filters",
   "tienda.sinResultados": "No products match those filters. Try removing one.",
+  "tienda.buscar": "Search products",
+  "tienda.buscar.enviar": "Search",
+  "tienda.orden": "Sort",
+  "tienda.orden.relevancia": "Relevance",
+  "tienda.orden.precioAsc": "Price ↑",
+  "tienda.orden.precioDesc": "Price ↓",
+  "tienda.orden.valorados": "Top rated",
+  "tienda.soloDisponibles": "In stock only",
+  "tienda.resenas.una": "review",
+  "tienda.resenas.varias": "reviews",
   "copy.marca.trust":
     "Authorized TRUSS distributor · Brazilian professional cosmetics",
   "precio.porConfirmar": "Price to be confirmed",
@@ -121,6 +131,11 @@ export const en: Record<ClaveI18n, string> = {
     "We couldn't complete this right now. Please try again in a few minutes.",
   "news.legalPre": "By signing up you accept the ",
   "news.legalEnlace": "privacy policy",
+  "news.bienvenida.asunto": "Your welcome gift at Cloud Beauty Salon",
+  "news.bienvenida.intro":
+    "Thanks for subscribing! Here's your discount code for your first order:",
+  "news.bienvenida.instru":
+    "Enter this code in the cart, under “Have a discount code?”, before checkout.",
   "carrito.titulo": "Your cart",
   "carrito.vacio": "Your cart is ready for its first product.",
   "carrito.irTienda": "Go to the shop",

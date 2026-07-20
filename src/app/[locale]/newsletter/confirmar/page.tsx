@@ -3,7 +3,13 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getT, resolverLocale } from "@/lib/i18n";
 import { rutaLocalizada } from "@/lib/i18n/rutas";
-import { confirmarNewsletter, existeToken } from "@/lib/newsletter";
+import {
+  confirmarNewsletter,
+  existeToken,
+  liberarCupon,
+  reclamarCupon,
+} from "@/lib/newsletter";
+import { enviarBienvenidaNewsletter } from "@/lib/newsletter-email";
 
 // Destino del enlace del correo de doble opt-in (bloque 4). El GET es de SOLO
 // LECTURA: muestra un botón y la mutación ocurre en el POST (server action).
@@ -30,7 +36,25 @@ export default async function PaginaConfirmar(
     const tk = String(formData.get("token") ?? "");
     let e: "ok" | "ko" | "err";
     try {
-      e = (await confirmarNewsletter(tk)) ? "ok" : "ko";
+      const res = await confirmarNewsletter(tk);
+      if (!res) {
+        e = "ko";
+      } else {
+        e = "ok";
+        // Cupón de bienvenida: reclamación atómica (exactamente una vez). Si el
+        // correo falla, liberamos para que un reintento del enlace lo recupere.
+        // Best-effort: nunca tumba la confirmación (que ya se persistió).
+        if (process.env.NEWSLETTER_CUPON) {
+          const claim = await reclamarCupon(tk);
+          if (claim) {
+            const enviado = await enviarBienvenidaNewsletter(
+              claim.email,
+              claim.locale,
+            );
+            if (!enviado) await liberarCupon(tk);
+          }
+        }
+      }
     } catch (error) {
       console.error("newsletter: confirmar falló", error);
       e = "err";

@@ -19,6 +19,32 @@ export type ResumenResenas = {
 
 const VACIO: ResumenResenas = { items: [], total: 0, media: 0 };
 
+// Media + nº de reseñas aprobadas por producto, en UNA query (prueba social de
+// la tienda). Sin BD / sin reseñas → el id no aparece en el mapa.
+export async function resumenPorProducto(
+  ids: string[],
+): Promise<Map<string, { media: number; total: number }>> {
+  const mapa = new Map<string, { media: number; total: number }>();
+  if (!sql || ids.length === 0) return mapa;
+  try {
+    const filas = (await sql`
+      select producto_id, avg(rating)::float as media, count(*)::int as total
+      from resenas
+      where aprobada and producto_id = any(${ids}::text[])
+      group by producto_id
+    `) as { producto_id: string; media: number; total: number }[];
+    for (const f of filas) {
+      mapa.set(f.producto_id, {
+        media: Number(f.media),
+        total: Number(f.total),
+      });
+    }
+  } catch (e) {
+    console.error("resumenPorProducto falló:", e);
+  }
+  return mapa;
+}
+
 export async function resenasDeProducto(id: string): Promise<ResumenResenas> {
   if (!sql) return VACIO;
   try {

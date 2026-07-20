@@ -1,6 +1,7 @@
 import Stripe from "stripe";
 import { enviarCorreo, escaparHtml } from "@/lib/email";
 import { sql } from "@/lib/db";
+import { direccionTexto, guardarPedido, marcarReembolsado } from "@/lib/pedidos";
 
 // Webhook de Stripe. Dos trabajos:
 //  1) Descontar stock del pedido pagado (bloque 3) — idempotente por sesión,
@@ -100,17 +101,7 @@ async function avisarPedido(opts: {
     .join("");
 
   const cliente = sesion.customer_details;
-  const dir = sesion.collected_information?.shipping_details?.address ?? null;
-  const dirTexto = dir
-    ? [
-        dir.line1,
-        dir.line2,
-        [dir.city, dir.state, dir.postal_code].filter(Boolean).join(" "),
-        dir.country,
-      ]
-        .filter(Boolean)
-        .join(", ")
-    : "—";
+  const dirTexto = direccionTexto(sesion);
 
   const estadoPago = fallido
     ? "PAGO FALLIDO — el cobro asíncrono no se completó, no despaches"
@@ -177,6 +168,17 @@ export async function POST(request: Request) {
   // implica que la unidad vuelva a la estantería); se ajusta a mano en /admin.
   if (evento.type === "charge.refunded") {
     const cargo = evento.data.object;
+    // Reembolso TOTAL → excluir el pedido del resumen de ventas del panel
+    // (best-effort; el panel de Stripe sigue siendo la fuente de verdad).
+    const pi =
+      typeof cargo.payment_intent === "string" ? cargo.payment_intent : null;
+    if (sql && pi && cargo.amount_refunded >= cargo.amount) {
+      try {
+        await marcarReembolsado(pi);
+      } catch (error) {
+        console.warn("webhook: no pude marcar el reembolso en el panel", error);
+      }
+    }
     if (destino) {
       await enviarCorreo({
         to: destino,
@@ -235,6 +237,16 @@ export async function POST(request: Request) {
         console.error("webhook: descuento de stock falló, pido reintento", error);
         return Response.json({ ok: false }, { status: 500 });
       }
+    }
+  }
+
+  // Registrar el pedido para el panel /admin (best-effort; el panel de Stripe
+  // sigue siendo la fuente de verdad). Idempotente por sesión.
+  if (sql) {
+    try {
+      await guardarPedido({ sesion, lineItems, pagado });
+    } catch (error) {
+      console.warn("webhook: no pude guardar el pedido para el panel", error);
     }
   }
 
