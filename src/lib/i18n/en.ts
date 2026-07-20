@@ -86,6 +86,12 @@ export const en: Record<ClaveI18n, string> = {
   "producto.agregar": "Add to cart",
   "producto.verCarrito": "View cart",
   "producto.modoDeUso": "How to use",
+  "producto.descripcionSeccion": "Description",
+  "producto.infoAdicional": "Additional information",
+  "producto.attr.tamano": "Size",
+  "producto.attr.linea": "Line",
+  "producto.attr.categoria": "Category",
+  "producto.attr.etapa": "Schedule stage",
   "producto.combinaCon": "Pairs with",
   "producto.completaRutina": "Complete your routine",
   "producto.completaRutina.intro":

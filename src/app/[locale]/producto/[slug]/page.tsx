@@ -7,7 +7,11 @@ import { getT, resolverLocale, LOCALES } from "@/lib/i18n";
 import { alternatesDeRuta, rutaLocalizada } from "@/lib/i18n/rutas";
 import { resumenPorProducto } from "@/lib/resenas";
 import { stockDeProducto } from "@/lib/stock";
-import { descripcionProducto, modoDeUsoProducto } from "@/lib/producto-i18n";
+import {
+  descripcionLargaProducto,
+  descripcionProducto,
+  modoDeUsoProducto,
+} from "@/lib/producto-i18n";
 import PanelCompra from "@/components/tienda/PanelCompra";
 import AnadirRutina from "@/components/tienda/AnadirRutina";
 import BotonFavorito from "@/components/tienda/BotonFavorito";
@@ -183,6 +187,46 @@ export default async function PaginaProducto(
           </p>
         </div>
       </div>
+
+      {/* Descripción larga oficial de TRUSS (si la hay para este producto). */}
+      {(() => {
+        const larga = descripcionLargaProducto(producto.id, loc);
+        return larga ? (
+          <section className="mt-14 max-w-prose">
+            <h2 className="font-display text-xl">
+              {t("producto.descripcionSeccion")}
+            </h2>
+            <p className="mt-3 whitespace-pre-line leading-relaxed text-tinta-suave">
+              {larga}
+            </p>
+          </section>
+        ) : null;
+      })()}
+
+      {/* Información adicional: atributos del producto en una tabla. */}
+      <section className="mt-14 max-w-prose">
+        <h2 className="font-display text-xl">{t("producto.infoAdicional")}</h2>
+        <dl className="mt-3 divide-y divide-tinta-suave/15 text-sm">
+          {(
+            [
+              producto.tamano
+                ? [t("producto.attr.tamano"), producto.tamano]
+                : null,
+              [t("producto.attr.linea"), producto.linea],
+              [t("producto.attr.categoria"), nombreCategoria(producto.categoria, tr)],
+              [
+                t("producto.attr.etapa"),
+                producto.etapa.map((e) => nombreEtapa(e, tr)).join(", "),
+              ],
+            ].filter(Boolean) as [string, string][]
+          ).map(([clave, valor]) => (
+            <div key={clave} className="flex justify-between gap-6 py-2">
+              <dt className="text-tinta-suave">{clave}</dt>
+              <dd className="text-right">{valor}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
 
       <Resenas productoId={producto.id} />
 

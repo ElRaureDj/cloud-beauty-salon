@@ -85,6 +85,12 @@ export const es = {
   "producto.agregar": "Agregar al carrito",
   "producto.verCarrito": "Ver el carrito",
   "producto.modoDeUso": "Modo de uso",
+  "producto.descripcionSeccion": "Descripción",
+  "producto.infoAdicional": "Información adicional",
+  "producto.attr.tamano": "Tamaño",
+  "producto.attr.linea": "Línea",
+  "producto.attr.categoria": "Categoría",
+  "producto.attr.etapa": "Etapa del cronograma",
   "producto.combinaCon": "Combina con",
   "producto.completaRutina": "Completa tu rutina",
   "producto.completaRutina.intro":
