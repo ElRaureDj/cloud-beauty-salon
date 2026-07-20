@@ -146,5 +146,18 @@ export async function aprobarResena(id: number): Promise<void> {
 
 export async function eliminarResena(id: number): Promise<void> {
   if (!sql) return;
+  const filas = (await sql`
+    select foto_url from resenas where id = ${id}
+  `) as { foto_url: string | null }[];
   await sql`delete from resenas where id = ${id}`;
+  // Borra también la foto de Vercel Blob para no dejar huérfanos (mejora I2).
+  const foto = filas[0]?.foto_url;
+  if (foto && process.env.BLOB_READ_WRITE_TOKEN) {
+    try {
+      const { del } = await import("@vercel/blob");
+      await del(foto);
+    } catch (e) {
+      console.warn("resena: no pude borrar la foto de Blob", e);
+    }
+  }
 }

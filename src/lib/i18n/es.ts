@@ -185,12 +185,12 @@ export const es = {
   "regalo.noConfig": "El pago no está disponible ahora mismo.",
   "regalo.enlace": "Tarjeta regalo",
   "regalo.nota":
-    "La persona recibirá un código por email para canjearlo al pagar. Válido en pedidos sin otro descuento.",
+    "La persona recibirá un código por email para canjearlo al pagar. Se usa en UNA sola compra (el importe se aplica de una vez; un pedido menor no guarda saldo) y no combina con otro descuento.",
   "regalo.email.asunto": "Tienes una tarjeta regalo",
   "regalo.email.intro":
     "Te han regalado una tarjeta de {importe} en Cloud Beauty Salon.",
   "regalo.email.instru":
-    "Escribe este código en el carrito, en “¿Tienes un código de descuento?”, al pagar.",
+    "Escribe este código en el carrito, en “¿Tienes un código de descuento?”, al pagar. Se aplica en una sola compra.",
   "regalo.email.compradorAsunto": "Tu tarjeta regalo está en camino",
   "regalo.email.comprador":
     "Tu tarjeta regalo de {importe} se ha enviado a {destinatario}. ¡Gracias!",

@@ -52,6 +52,7 @@ export default function BotonAgregar({
       },
       cantidad,
     );
+    setCantidad(1); // no arrastrar la cantidad si luego se quita del carrito
     abrirOverlay("carrito");
   };
 

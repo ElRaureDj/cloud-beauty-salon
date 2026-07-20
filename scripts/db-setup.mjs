@@ -92,8 +92,10 @@ await sql`create table if not exists tarjetas_regalo (
   destinatario     text,
   comprador        text,
   mensaje          text,
+  enviado          boolean not null default false,
   creada_en        timestamptz not null default now()
 )`;
+await sql`alter table tarjetas_regalo add column if not exists enviado boolean not null default false`;
 await sql`create table if not exists newsletter (
   email          text primary key,
   token          text not null,

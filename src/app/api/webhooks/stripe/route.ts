@@ -3,8 +3,11 @@ import { enviarCorreo, escaparHtml } from "@/lib/email";
 import { sql } from "@/lib/db";
 import { direccionTexto, guardarPedido, marcarReembolsado } from "@/lib/pedidos";
 import {
+  estadoRegalo,
   fijarCodigoRegalo,
   generarCodigoRegalo,
+  liberarRegalo,
+  marcarRegaloEnviado,
   reclamarRegalo,
 } from "@/lib/regalo";
 import { getT, resolverLocale } from "@/lib/i18n";
@@ -164,29 +167,56 @@ async function manejarRegalo(
     return;
   }
 
-  const primera = await reclamarRegalo({
-    session_id: sesion.id,
-    importe_centavos: importe,
-    destinatario,
-    comprador,
-    mensaje,
-  });
-  if (!primera) return; // ya emitido (reintento o segundo evento)
+  // 1) ASEGURAR EL CÓDIGO (una sola emisión). Si la emisión falla tras reclamar,
+  // se LIBERA la reclamación para que un reintento de Stripe la reemita limpio
+  // (sin esto, el comprador pagaría y el código no se emitiría jamás).
+  let estado = await estadoRegalo(sesion.id);
+  let code = estado?.code ?? null;
+  if (!code) {
+    const primera = await reclamarRegalo({
+      session_id: sesion.id,
+      importe_centavos: importe,
+      destinatario,
+      comprador,
+      mensaje,
+    });
+    if (!primera) {
+      // Otra entrega lo está emitiendo a la vez: re-leer; si aún no hay código,
+      // pedir reintento (500) para no adelantarnos.
+      estado = await estadoRegalo(sesion.id);
+      code = estado?.code ?? null;
+      if (!code) throw new Error("regalo: reclamado sin código, reintento");
+    } else {
+      const nuevo = generarCodigoRegalo();
+      let cuponId: string | null = null;
+      try {
+        const cupon = await stripe.coupons.create({
+          amount_off: importe,
+          currency: sesion.currency ?? "usd",
+          duration: "once",
+          name: `Tarjeta regalo ${nuevo}`,
+          max_redemptions: 1,
+        });
+        cuponId = cupon.id;
+        await stripe.promotionCodes.create({
+          promotion: { type: "coupon", coupon: cupon.id },
+          code: nuevo,
+          max_redemptions: 1,
+        });
+        await fijarCodigoRegalo(sesion.id, nuevo);
+        code = nuevo;
+      } catch (error) {
+        if (cuponId) await stripe.coupons.del(cuponId).catch(() => {});
+        await liberarRegalo(sesion.id);
+        throw error; // 500 → Stripe reintenta y reemite
+      }
+    }
+  }
 
-  const code = generarCodigoRegalo();
-  const cupon = await stripe.coupons.create({
-    amount_off: importe,
-    currency: sesion.currency ?? "usd",
-    duration: "once",
-    name: `Tarjeta regalo ${code}`,
-    max_redemptions: 1,
-  });
-  await stripe.promotionCodes.create({
-    promotion: { type: "coupon", coupon: cupon.id },
-    code,
-    max_redemptions: 1,
-  });
-  await fijarCodigoRegalo(sesion.id, code);
+  // 2) ENVIAR EL EMAIL AL DESTINATARIO (una vez). Si falla, 500 → el reintento
+  // reenvía (el código ya existe, la emisión se salta).
+  const estadoActual = await estadoRegalo(sesion.id);
+  if (estadoActual?.enviado) return;
 
   const importeTxt = dinero(importe, sesion.currency);
   const htmlDest =
@@ -195,11 +225,17 @@ async function manejarRegalo(
     (mensaje ? `<p style="font-style:italic">“${escaparHtml(mensaje)}”</p>` : "") +
     `<p style="margin:24px 0"><span style="display:inline-block;background:#221306;color:#d99a63;padding:14px 26px;border-radius:12px;font-size:22px;font-weight:700;letter-spacing:3px;font-family:monospace">${escaparHtml(code)}</span></p>` +
     `<p>${escaparHtml(t("regalo.email.instru"))}</p>`;
-  await enviarCorreo({
+  // El correo al destinatario ES crítico (lleva el código): si falla, 500 para
+  // que Stripe reintente y lo reenvíe (el código ya persiste, no se reemite).
+  const envio = await enviarCorreo({
     to: destinatario,
     subject: t("regalo.email.asunto"),
     html: htmlDest,
-  }).catch((e) => console.warn("regalo: email destinatario no enviado", e));
+  });
+  if (envio !== "enviado") {
+    throw new Error(`regalo: email al destinatario no enviado (${envio})`);
+  }
+  await marcarRegaloEnviado(sesion.id);
 
   if (comprador) {
     await enviarCorreo({

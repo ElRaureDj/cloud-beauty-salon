@@ -186,12 +186,12 @@ export const en: Record<ClaveI18n, string> = {
   "regalo.noConfig": "Payment isn't available right now.",
   "regalo.enlace": "Gift card",
   "regalo.nota":
-    "They'll get a code by email to redeem at checkout. Valid on orders without another discount.",
+    "They'll get a code by email to redeem at checkout. It's used on ONE order (the amount applies at once; a smaller order keeps no balance) and doesn't combine with another discount.",
   "regalo.email.asunto": "You've got a gift card",
   "regalo.email.intro":
     "You've been gifted a {importe} card at Cloud Beauty Salon.",
   "regalo.email.instru":
-    "Enter this code in the cart, under “Have a discount code?”, at checkout.",
+    "Enter this code in the cart, under “Have a discount code?”, at checkout. It applies on a single order.",
   "regalo.email.compradorAsunto": "Your gift card is on its way",
   "regalo.email.comprador":
     "Your {importe} gift card has been sent to {destinatario}. Thank you!",

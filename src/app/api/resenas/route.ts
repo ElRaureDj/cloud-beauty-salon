@@ -67,8 +67,10 @@ function emailValido(valor: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(valor);
 }
 
-// La foto debe ser una URL de Vercel Blob (la subió nuestro endpoint): evita que
-// se inyecte una URL arbitraria de un tercero como si fuera de una reseña.
+// La foto debe ser una URL de Vercel Blob (https, host *.public.blob.vercel-
+// storage.com): descarta URLs arbitrarias/no-imagen. No garantiza que sea NUESTRO
+// store (el host lleva un id dinámico), pero la reseña se MODERA en /admin antes
+// de publicarse, así que un admin ve la imagen antes de que sea visible.
 function fotoValida(url: unknown): string | null {
   if (typeof url !== "string" || url.length === 0 || url.length > 600) return null;
   try {
