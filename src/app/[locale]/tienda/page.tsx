@@ -216,6 +216,11 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
   }
 
   const hayFiltros = Boolean(categoria || etapa || linea || q || disponibles || orden !== "relevancia");
+  // Nº de filtros activos (para el contador del panel colapsable). La búsqueda
+  // vive en su barra aparte; el orden por defecto no cuenta.
+  const nFiltros =
+    [categoria, etapa, linea, disponibles].filter(Boolean).length +
+    (orden !== "relevancia" ? 1 : 0);
   const preciosPendientes = CATALOGO.every((p) => p.precio === 0);
 
   return (
@@ -274,6 +279,29 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
         </button>
       </form>
 
+      {/* Filtros colapsables: por defecto plegados (barra de una línea); se
+          auto-abren si ya hay filtros activos, para verlos y cambiarlos. <details>
+          nativo → cero JS, coherente con el enrutado por URL. */}
+      <details open={hayFiltros} className="group mt-4">
+        <summary className="flex w-fit cursor-pointer list-none items-center gap-2 rounded-full border border-tinta-suave/30 px-4 py-2 text-sm text-tinta-suave transition-colors hover:border-tinta-suave hover:text-tinta [&::-webkit-details-marker]:hidden">
+          <svg
+            viewBox="0 0 24 24"
+            className="h-4 w-4 transition-transform group-open:rotate-180"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            aria-hidden
+          >
+            <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          {t("tienda.filtros.grupo")}
+          {nFiltros > 0 && (
+            <span className="rounded-full bg-acento px-2 py-0.5 text-xs text-acento-tinta">
+              {nFiltros}
+            </span>
+          )}
+        </summary>
+
       <section aria-label={t("tienda.filtros.grupo")} className="mt-4 flex flex-col gap-3">
         <FilaFiltro id="filtro-categoria" etiqueta={t("tienda.filtros.categoria")}>
           <Chip pathname={rutaTienda} etiqueta={t("tienda.filtros.todo")} activo={!categoria} estado={{ ...base, categoria: undefined }} />
@@ -319,6 +347,7 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
           </Link>
         )}
       </section>
+      </details>
 
       {productos.length === 0 ? (
         <p className="mt-14 text-tinta-suave">{t("tienda.sinResultados")}</p>
