@@ -30,6 +30,43 @@ const DIAS: Record<string, string[]> = {
   en: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
 };
 
+// A NIVEL DE MÓDULO: si se define dentro del render, su identidad cambia en cada
+// render y React remonta los botones (se pierde el foco de teclado, WCAG 2.4.3).
+function Segmento<T extends string | number>({
+  valor,
+  opciones,
+  etiqueta,
+  onCambio,
+}: {
+  valor: T;
+  opciones: { v: T; texto: string }[];
+  etiqueta: string;
+  onCambio: (v: T) => void;
+}) {
+  return (
+    <div>
+      <p className="text-xs uppercase tracking-widest text-tinta-suave">{etiqueta}</p>
+      <div className="mt-2 flex flex-wrap gap-2">
+        {opciones.map((o) => (
+          <button
+            key={String(o.v)}
+            type="button"
+            aria-pressed={valor === o.v}
+            onClick={() => onCambio(o.v)}
+            className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${
+              valor === o.v
+                ? "border-acento bg-acento text-acento-tinta"
+                : "border-tinta-suave/30 text-tinta-suave hover:border-tinta-suave hover:text-tinta"
+            }`}
+          >
+            {o.texto}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function PlanCronograma({
   productosPorEtapa,
 }: {
@@ -79,39 +116,6 @@ export default function PlanCronograma({
     }
     if (vistos.size > 0) abrirOverlay("carrito");
   };
-
-  const Segmento = <T extends string | number>({
-    valor,
-    opciones,
-    etiqueta,
-    onCambio,
-  }: {
-    valor: T;
-    opciones: { v: T; texto: string }[];
-    etiqueta: string;
-    onCambio: (v: T) => void;
-  }) => (
-    <div>
-      <p className="text-xs uppercase tracking-widest text-tinta-suave">{etiqueta}</p>
-      <div className="mt-2 flex flex-wrap gap-2">
-        {opciones.map((o) => (
-          <button
-            key={String(o.v)}
-            type="button"
-            aria-pressed={valor === o.v}
-            onClick={() => onCambio(o.v)}
-            className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${
-              valor === o.v
-                ? "border-acento bg-acento text-acento-tinta"
-                : "border-tinta-suave/30 text-tinta-suave hover:border-tinta-suave hover:text-tinta"
-            }`}
-          >
-            {o.texto}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
 
   return (
     <div className="mt-8">

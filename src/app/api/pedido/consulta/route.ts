@@ -7,9 +7,14 @@ import { consultarPedido } from "@/lib/pedidos";
 // un id existe. Goteo por IP contra fuerza bruta; tope de cuerpo.
 const CUERPO_MAXIMO_BYTES = 2_000;
 const POR_HORA = 15;
+const MAX_CLAVES = 10_000; // cota de memoria del mapa en memoria
 const porIp = new Map<string, number[]>();
 
 function superaGoteo(ip: string): boolean {
+  // Cota dura de memoria: si el mapa crece demasiado (muchas IP distintas), se
+  // vacía. La defensa real de la consulta es el session_id inadivinable; esto
+  // solo es un freno secundario.
+  if (porIp.size > MAX_CLAVES) porIp.clear();
   const ahora = Date.now();
   const recientes = (porIp.get(ip) ?? []).filter(
     (marca) => ahora - marca < 60 * 60 * 1000,
@@ -21,6 +26,17 @@ function superaGoteo(ip: string): boolean {
   recientes.push(ahora);
   porIp.set(ip, recientes);
   return false;
+}
+
+// IP del cliente: en Vercel `x-real-ip` es la IP real (no falsificable por el
+// cliente); `x-forwarded-for` (primer valor) sí la controla el cliente, por eso
+// va solo de reserva.
+function ipCliente(request: Request): string {
+  return (
+    request.headers.get("x-real-ip")?.trim() ||
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    "local"
+  );
 }
 
 function emailValido(valor: string): boolean {
@@ -37,9 +53,7 @@ export async function POST(request: Request) {
   if (!tamano || tamano > CUERPO_MAXIMO_BYTES) {
     return Response.json({ ok: false }, { status: 413 });
   }
-  const ip =
-    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "local";
-  if (superaGoteo(ip)) {
+  if (superaGoteo(ipCliente(request))) {
     return Response.json({ ok: false }, { status: 429 });
   }
 
