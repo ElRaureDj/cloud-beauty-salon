@@ -220,15 +220,23 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
     <main className="mx-auto max-w-5xl px-6 pb-24 pt-28">
       <div className="flex items-start justify-between gap-4">
         <h1 className="font-display text-3xl sm:text-4xl">{t("tienda.titulo")}</h1>
-        <Link
-          href={r("/favoritos")}
-          className="mt-2 inline-flex shrink-0 items-center gap-1.5 text-sm text-tinta-suave underline-offset-4 hover:text-tinta"
-        >
-          <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden>
-            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-          </svg>
-          {t("favoritos.enlace")}
-        </Link>
+        <div className="mt-2 flex shrink-0 items-center gap-4 text-sm">
+          <Link
+            href={r("/kits")}
+            className="text-tinta-suave underline-offset-4 hover:text-tinta"
+          >
+            {t("kits.enlace")}
+          </Link>
+          <Link
+            href={r("/favoritos")}
+            className="inline-flex items-center gap-1.5 text-tinta-suave underline-offset-4 hover:text-tinta"
+          >
+            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden>
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+            </svg>
+            {t("favoritos.enlace")}
+          </Link>
+        </div>
       </div>
       <p className="mt-3 max-w-prose text-tinta-suave">{t("copy.marca.trust")}.</p>
       {preciosPendientes && (

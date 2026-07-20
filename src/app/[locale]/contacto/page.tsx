@@ -68,6 +68,21 @@ function ContactoES({ r }: { r: Ruta }) {
           </p>
         </section>
 
+        <section>
+          <h2 className="font-display text-xl">Más</h2>
+          <p className="mt-3 flex flex-wrap gap-x-6 gap-y-2">
+            <Link href={r("/nosotros")} className="text-acento underline-offset-4 hover:underline">
+              Nosotros
+            </Link>
+            <Link href={r("/faq")} className="text-acento underline-offset-4 hover:underline">
+              Preguntas frecuentes
+            </Link>
+            <Link href={r("/kits")} className="text-acento underline-offset-4 hover:underline">
+              Kits
+            </Link>
+          </p>
+        </section>
+
         <p className="nota-todo">
           TODO(guion §9.5): añadir WhatsApp, redes y dirección física cuando el
           salón tenga local y canales definitivos.
@@ -125,6 +140,21 @@ function ContactoEN({ r }: { r: Ruta }) {
           <p className="mt-3">
             Miami, Florida (USA). We&apos;re an online store for professional
             TRUSS hair-care products; the beauty salon opens soon.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="font-display text-xl">More</h2>
+          <p className="mt-3 flex flex-wrap gap-x-6 gap-y-2">
+            <Link href={r("/nosotros")} className="text-acento underline-offset-4 hover:underline">
+              About us
+            </Link>
+            <Link href={r("/faq")} className="text-acento underline-offset-4 hover:underline">
+              FAQ
+            </Link>
+            <Link href={r("/kits")} className="text-acento underline-offset-4 hover:underline">
+              Kits
+            </Link>
           </p>
         </section>
 

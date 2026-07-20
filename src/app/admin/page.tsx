@@ -2,6 +2,7 @@ import Link from "next/link";
 import { estaAutenticado } from "@/lib/admin-auth";
 import { CATALOGO } from "@/lib/catalogo";
 import { hayBD } from "@/lib/db";
+import { UMBRAL_STOCK_BAJO } from "@/lib/formato";
 import { stockDeProductos } from "@/lib/stock";
 import LoginAdmin from "./LoginAdmin";
 import EditorStock from "./EditorStock";
@@ -29,6 +30,11 @@ export default async function PaginaAdmin() {
     unidades: stock.get(p.id) ?? 0,
   }));
 
+  // Alerta de bajo stock (mejora G3): agotados y "pocas unidades" (≤ umbral).
+  const bajoStock = inicial
+    .filter((f) => f.unidades <= UMBRAL_STOCK_BAJO)
+    .sort((a, b) => a.unidades - b.unidades);
+
   return (
     <main className="mx-auto max-w-2xl px-6 py-12">
       <header className="flex items-center justify-between gap-4">
@@ -54,6 +60,24 @@ export default async function PaginaAdmin() {
           </Link>
         </nav>
       </header>
+      {bajoStock.length > 0 && (
+        <details className="mt-6 rounded-2xl border border-acento/40 bg-acento/10 p-4">
+          <summary className="cursor-pointer text-sm font-medium text-acento">
+            {bajoStock.length} con bajo stock (≤ {UMBRAL_STOCK_BAJO})
+          </summary>
+          <ul className="mt-3 flex flex-col gap-1 text-sm text-tinta-suave">
+            {bajoStock.map((f) => (
+              <li key={f.id} className="flex justify-between gap-3">
+                <span className="truncate">{f.nombre}</span>
+                <span className="shrink-0 tabular-nums">
+                  {f.unidades === 0 ? "agotado" : `${f.unidades} u.`}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </details>
+      )}
+
       <EditorStock inicial={inicial} />
     </main>
   );

@@ -24,7 +24,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     entrada("/", 1),
     entrada("/tienda", 0.9),
+    entrada("/kits", 0.6),
     ...CATALOGO.map((p) => entrada(`/producto/${p.id}`, 0.7)),
+    entrada("/nosotros", 0.4),
+    entrada("/faq", 0.4),
     entrada("/contacto", 0.3),
     entrada("/legal/envios", 0.3),
     entrada("/legal/privacidad", 0.2),
