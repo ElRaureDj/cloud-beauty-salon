@@ -7,6 +7,7 @@ import { getT, resolverLocale, LOCALES } from "@/lib/i18n";
 import { alternatesDeRuta, rutaLocalizada } from "@/lib/i18n/rutas";
 import { resumenPorProducto } from "@/lib/resenas";
 import { stockDeProducto } from "@/lib/stock";
+import { slugDeLinea } from "@/lib/lineas";
 import {
   descripcionLargaProducto,
   descripcionProducto,
@@ -150,9 +151,13 @@ export default async function PaginaProducto(
         />
 
         <div>
-          <p className="text-xs uppercase tracking-widest text-tinta-suave">
+          {/* La línea enlaza a su landing (mejora K2). */}
+          <Link
+            href={r(`/linea/${slugDeLinea(producto.linea)}`)}
+            className="text-xs uppercase tracking-widest text-tinta-suave underline-offset-4 transition-colors hover:text-tinta hover:underline"
+          >
             {producto.linea}
-          </p>
+          </Link>
           <div className="mt-1 flex items-start justify-between gap-3">
             <h1 className="font-display text-3xl">{producto.nombre}</h1>
             <BotonFavorito

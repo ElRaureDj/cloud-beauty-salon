@@ -219,6 +219,14 @@ export async function POST(request: Request) {
     mode: "payment",
     locale: datos.locale,
     line_items,
+    // Carritos abandonados (mejora K3): si la sesión expira sin pagar, Stripe
+    // genera una URL de recuperación (webhook checkout.session.expired) y
+    // nosotros mandamos UN email — solo si la clienta marcó el consentimiento
+    // de promociones en el propio Checkout (consent_collection).
+    consent_collection: { promotions: "auto" },
+    after_expiration: {
+      recovery: { enabled: true, allow_promotion_codes: true },
+    },
     // Stripe no admite `discounts` y `allow_promotion_codes` a la vez: si el
     // carrito ya trae el descuento de la rutina del diagnóstico, no ofrecemos
     // el campo de código; en cualquier otro caso, la clienta puede introducir

@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { CATALOGO } from "@/lib/catalogo";
+import { lineas } from "@/lib/lineas";
 import { rutasPorIdioma } from "@/lib/i18n/rutas";
 
 // §9.5: dominio real; en previews puede sobrescribirse con NEXT_PUBLIC_SITE_URL.
@@ -28,6 +29,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     entrada("/cronograma", 0.6),
     entrada("/regalo", 0.5),
     ...CATALOGO.map((p) => entrada(`/producto/${p.id}`, 0.7)),
+    ...lineas().map((l) => entrada(`/linea/${l.slug}`, 0.6)),
     entrada("/nosotros", 0.4),
     entrada("/faq", 0.4),
     entrada("/contacto", 0.3),

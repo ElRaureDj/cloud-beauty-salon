@@ -97,6 +97,11 @@ function PrivacidadES({ r }: { r: Ruta }) {
               regala y de quien la recibe para enviar el código y la confirmación.
             </li>
             <li>
+              <strong>Carrito abandonado.</strong> Si empiezas un pago, marcas la
+              casilla de consentimiento y no lo terminas, te enviamos un único
+              correo con el enlace para retomarlo. Sin esa casilla, no escribimos.
+            </li>
+            <li>
               <strong>Cookies y analítica.</strong> Esta web no usa cookies de
               rastreo ni publicidad. Medimos las visitas y el rendimiento de
               carga con la analítica de Vercel (Web Analytics y Speed Insights),
@@ -225,6 +230,11 @@ function PrivacidadEN({ r }: { r: Ruta }) {
             <li>
               <strong>Gift cards.</strong> We store the giver&apos;s and
               recipient&apos;s email to send the code and confirmation.
+            </li>
+            <li>
+              <strong>Abandoned cart.</strong> If you start a checkout, tick the
+              consent box and don&apos;t finish, we send a single email with a
+              link to resume it. Without that box, we don&apos;t write.
             </li>
             <li>
               <strong>Cookies and analytics.</strong> This website uses no

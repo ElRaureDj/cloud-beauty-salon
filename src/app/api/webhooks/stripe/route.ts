@@ -20,8 +20,9 @@ import { getT, resolverLocale } from "@/lib/i18n";
 //     respuesta; el pedido siempre queda en el panel de Stripe).
 //
 // Alta en Stripe (Developers → Webhooks): eventos checkout.session.completed,
-// checkout.session.async_payment_succeeded / .async_payment_failed y
-// charge.refunded; el secreto (whsec_…) en STRIPE_WEBHOOK_SECRET (+ redeploy).
+// checkout.session.async_payment_succeeded / .async_payment_failed,
+// charge.refunded y checkout.session.expired (carritos abandonados, K3);
+// el secreto (whsec_…) en STRIPE_WEBHOOK_SECRET (+ redeploy).
 
 const TIPOS_SESION = new Set<string>([
   "checkout.session.completed",
@@ -303,6 +304,33 @@ export async function POST(request: Request) {
           `<p><strong>El stock NO se repone automáticamente.</strong> Si la unidad vuelve a estar disponible, ajústala en el panel /admin.</p>`,
       }).catch((error) =>
         console.warn("webhook: aviso de reembolso no enviado", error),
+      );
+    }
+    return Response.json({ received: true }, { status: 200 });
+  }
+
+  // Carrito abandonado (mejora K3): la sesión expiró sin pagar. Se envía UN
+  // email de recuperación SOLO si la clienta dio email Y marcó el
+  // consentimiento de promociones en el Checkout (opt_in). Best-effort.
+  if (evento.type === "checkout.session.expired") {
+    const sesion = evento.data.object as Stripe.Checkout.Session;
+    const email = sesion.customer_details?.email;
+    const urlRecuperacion = sesion.after_expiration?.recovery?.url;
+    const consintio = sesion.consent?.promotions === "opt_in";
+    const esRegalo = sesion.metadata?.tipo === "regalo";
+    if (email && urlRecuperacion && consintio && !esRegalo) {
+      const loc = resolverLocale(sesion.locale ?? "es");
+      const { t } = getT(loc);
+      await enviarCorreo({
+        to: email,
+        subject: t("recupera.asunto"),
+        html:
+          `<h2>${escaparHtml(t("marca.nombre"))}</h2>` +
+          `<p>${escaparHtml(t("recupera.intro"))}</p>` +
+          `<p><a href="${escaparHtml(urlRecuperacion)}" style="display:inline-block;background:#d99a63;color:#221306;padding:12px 22px;border-radius:999px;text-decoration:none;font-weight:600">${escaparHtml(t("recupera.boton"))}</a></p>` +
+          `<p style="color:#888">${escaparHtml(t("recupera.ignorar"))}</p>`,
+      }).catch((error) =>
+        console.warn("webhook: email de recuperación no enviado", error),
       );
     }
     return Response.json({ received: true }, { status: 200 });

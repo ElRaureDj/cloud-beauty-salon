@@ -64,6 +64,7 @@ export const en: Record<ClaveI18n, string> = {
   "tienda.sinResultados": "No products match those filters. Try removing one.",
   "tienda.buscar": "Search products",
   "tienda.buscar.enviar": "Search",
+  "tienda.buscar.todos": "Search “{q}” across the shop →",
   "tienda.orden": "Sort",
   "tienda.orden.relevancia": "Relevance",
   "tienda.orden.precioAsc": "Price ↑",
@@ -153,6 +154,12 @@ export const en: Record<ClaveI18n, string> = {
   "aviso.email.asunto": "It's back in stock",
   "aviso.email.intro": "{producto} is available again at Cloud Beauty Salon.",
   "aviso.email.boton": "View the product",
+  "linea.titulo": "{nombre} line",
+  "linea.meta":
+    "The TRUSS {nombre} line: {n} professional products with shipping across the US.",
+  "linea.intro":
+    "Brazilian professional cosmetics by TRUSS. The {nombre} line works on {etapas} within the hair-care schedule, with {n} products designed to work together.",
+  "linea.verFiltrada": "View the line in the shop",
   "kits.titulo": "Kits",
   "kits.intro":
     "Ready-made routines. Each kit applies the 10% full-routine discount.",
@@ -173,6 +180,11 @@ export const en: Record<ClaveI18n, string> = {
   "faq.masPreguntas": "Have another question? Contact us →",
   "nosotros.enlace": "About us",
   "faq.enlace": "FAQ",
+  "recupera.asunto": "Your cart is waiting",
+  "recupera.intro":
+    "You left your purchase halfway. We saved your cart in case you'd like to finish it.",
+  "recupera.boton": "Finish my purchase",
+  "recupera.ignorar": "If you're no longer interested, just ignore this email. We won't write again about this cart.",
   "regalo.titulo": "Gift card",
   "regalo.intro":
     "Gift Cloud Beauty Salon. Choose the amount and they receive a code by email to use at checkout.",

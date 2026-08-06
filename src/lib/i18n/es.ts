@@ -63,6 +63,7 @@ export const es = {
   "tienda.sinResultados": "Ningún producto coincide con esos filtros. Prueba a quitar alguno.",
   "tienda.buscar": "Buscar productos",
   "tienda.buscar.enviar": "Buscar",
+  "tienda.buscar.todos": "Buscar “{q}” en toda la tienda →",
   "tienda.orden": "Ordenar",
   "tienda.orden.relevancia": "Relevancia",
   "tienda.orden.precioAsc": "Precio ↑",
@@ -152,6 +153,12 @@ export const es = {
   "aviso.email.asunto": "Ya está disponible de nuevo",
   "aviso.email.intro": "{producto} vuelve a estar disponible en Cloud Beauty Salon.",
   "aviso.email.boton": "Ver el producto",
+  "linea.titulo": "Línea {nombre}",
+  "linea.meta":
+    "La línea {nombre} de TRUSS: {n} productos profesionales con envío a todo EE. UU.",
+  "linea.intro":
+    "Cosmética profesional brasileña TRUSS. La línea {nombre} trabaja {etapas} dentro del cronograma capilar, con {n} productos que se complementan entre sí.",
+  "linea.verFiltrada": "Ver la línea en la tienda",
   "kits.titulo": "Kits",
   "kits.intro":
     "Rutinas listas para llevar. Cada kit aplica el 10% de descuento de la rutina completa.",
@@ -172,6 +179,11 @@ export const es = {
   "faq.masPreguntas": "¿Tienes otra pregunta? Contáctanos →",
   "nosotros.enlace": "Nosotros",
   "faq.enlace": "Preguntas frecuentes",
+  "recupera.asunto": "Tu carrito te espera",
+  "recupera.intro":
+    "Dejaste tu compra a medias. Guardamos tu carrito por si quieres terminarla.",
+  "recupera.boton": "Terminar mi compra",
+  "recupera.ignorar": "Si ya no te interesa, ignora este correo. No te volveremos a escribir por este carrito.",
   "regalo.titulo": "Tarjeta regalo",
   "regalo.intro":
     "Regala Cloud Beauty Salon. Elige el importe y la persona recibe un código por email para usar al pagar.",

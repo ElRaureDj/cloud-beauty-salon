@@ -16,6 +16,7 @@ import { resumenPorProducto } from "@/lib/resenas";
 import ImagenProducto from "@/components/tienda/ImagenProducto";
 import BotonFavorito from "@/components/tienda/BotonFavorito";
 import BotonAgregarRapido from "@/components/tienda/BotonAgregarRapido";
+import BuscadorTienda from "@/components/tienda/BuscadorTienda";
 import VistosRecientes from "@/components/tienda/VistosRecientes";
 
 export async function generateMetadata(
@@ -268,28 +269,26 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
         <p className="nota-todo mt-4">TODO(guion §9.6): faltan precios del catálogo.</p>
       )}
 
-      {/* Buscador: form GET (cero JS). Preserva el resto del estado como hidden. */}
-      <form action={rutaTienda} method="get" role="search" className="mt-8 flex gap-2">
-        {categoria && <input type="hidden" name="categoria" value={categoria} />}
-        {etapa && <input type="hidden" name="etapa" value={etapa} />}
-        {linea && <input type="hidden" name="linea" value={linea} />}
-        {orden !== "relevancia" && <input type="hidden" name="orden" value={orden} />}
-        {disponibles && <input type="hidden" name="disponibles" value="1" />}
-        <label className="sr-only" htmlFor="tienda-q">
-          {t("tienda.buscar")}
-        </label>
-        <input
-          id="tienda-q"
-          type="search"
-          name="q"
-          defaultValue={q ?? ""}
-          placeholder={t("tienda.buscar")}
-          className="min-w-0 flex-1 rounded-full border border-tinta-suave/30 bg-transparent px-4 py-2 text-base outline-none focus:border-acento sm:text-sm"
-        />
-        <button type="submit" className="boton-primario shrink-0 px-4 py-2 text-sm">
-          {t("tienda.buscar.enviar")}
-        </button>
-      </form>
+      {/* Buscador instantáneo (K1): typeahead en cliente; el form GET interno
+          preserva el flujo clásico (sin JS, Enter, botón) y el resto del estado. */}
+      <BuscadorTienda
+        action={rutaTienda}
+        qInicial={q ?? ""}
+        ocultos={{
+          ...(categoria ? { categoria } : {}),
+          ...(etapa ? { etapa } : {}),
+          ...(linea ? { linea } : {}),
+          ...(orden !== "relevancia" ? { orden } : {}),
+          ...(disponibles ? { disponibles: "1" } : {}),
+        }}
+        items={CATALOGO.map((p) => ({
+          id: p.id,
+          nombre: p.nombre,
+          linea: p.linea,
+          precio: p.precio,
+          imagen: p.imagen,
+        }))}
+      />
 
       {/* Filtros colapsables: por defecto plegados (barra de una línea); se
           auto-abren si ya hay filtros activos, para verlos y cambiarlos. <details>
