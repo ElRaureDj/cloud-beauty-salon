@@ -72,12 +72,15 @@ export async function guardarPedido(opts: {
   const pi =
     typeof sesion.payment_intent === "string" ? sesion.payment_intent : null;
   const dir = direccionTexto(sesion);
+  // Idioma del checkout: los emails posteriores (petición de reseña, L2) se
+  // envían en el idioma en que compró.
+  const idioma = sesion.locale === "en" ? "en" : "es";
   await sql`
-    insert into pedidos (session_id, payment_intent, total, moneda, email, nombre, direccion, lineas, pagado)
+    insert into pedidos (session_id, payment_intent, total, moneda, email, nombre, direccion, lineas, pagado, locale)
     values (
       ${sesion.id}, ${pi}, ${sesion.amount_total}, ${sesion.currency},
       ${cliente?.email ?? null}, ${cliente?.name ?? null},
-      ${dir}, ${JSON.stringify(lineas)}::jsonb, ${pagado}
+      ${dir}, ${JSON.stringify(lineas)}::jsonb, ${pagado}, ${idioma}
     )
     on conflict (session_id) do update set
       pagado         = pedidos.pagado or excluded.pagado,
@@ -207,6 +210,46 @@ export async function consultarPedido(
     moneda: f.moneda,
     lineas: f.lineas ?? [],
   };
+}
+
+// Petición de reseña post-compra (mejora L2): pedidos ENVIADOS hace días, con
+// email, aún sin solicitud. El cron los recorre a diario.
+export type PedidoParaResena = {
+  session_id: string;
+  email: string;
+  locale: string;
+  lineas: LineaPedido[];
+};
+
+export async function pedidosParaSolicitarResena(
+  diasMinimos = 7,
+  limite = 20,
+): Promise<PedidoParaResena[]> {
+  if (!sql) return [];
+  return (await sql`
+    select session_id, email, locale, lineas
+    from pedidos
+    where pagado and not reembolsado and enviado
+      and not resena_solicitada
+      and email is not null
+      and creada_en < now() - make_interval(days => ${diasMinimos})
+    order by creada_en asc
+    limit ${limite}
+  `) as PedidoParaResena[];
+}
+
+// Claim-first: solo la primera reclamación devuelve true (dos ejecuciones del
+// cron solapadas no duplican el correo).
+export async function reclamarSolicitudResena(
+  sessionId: string,
+): Promise<boolean> {
+  if (!sql) return false;
+  const filas = (await sql`
+    update pedidos set resena_solicitada = true
+    where session_id = ${sessionId} and not resena_solicitada
+    returning session_id
+  `) as unknown[];
+  return filas.length > 0;
 }
 
 export type VentaDia = { dia: string; total: number; pedidos: number };

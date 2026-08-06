@@ -17,6 +17,7 @@ import ImagenProducto from "@/components/tienda/ImagenProducto";
 import BotonFavorito from "@/components/tienda/BotonFavorito";
 import BotonAgregarRapido from "@/components/tienda/BotonAgregarRapido";
 import BuscadorTienda from "@/components/tienda/BuscadorTienda";
+import { BarraComparar, CompararCheck } from "@/components/tienda/Comparar";
 import VistosRecientes from "@/components/tienda/VistosRecientes";
 
 export async function generateMetadata(
@@ -419,6 +420,7 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
                   </p>
                   {res && <EstrellasResumen media={res.media} total={res.total} tr={tr} />}
                 </Link>
+                <CompararCheck id={p.id} />
                 <BotonFavorito
                   id={p.id}
                   className="absolute right-3 top-3 h-9 w-9 bg-fondo-0/70 backdrop-blur-sm"
@@ -441,6 +443,9 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
       )}
 
       <VistosRecientes catalogo={catalogoMin} />
+
+      {/* Barra flotante del comparador (aparece con 2+ seleccionados). */}
+      <BarraComparar />
 
       <Link
         href={r("/")}

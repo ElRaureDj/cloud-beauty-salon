@@ -26,6 +26,7 @@ export default function PieGlobal() {
       enlaces: [
         [ruta("/tienda"), t("header.tienda")],
         [ruta("/kits"), t("kits.enlace")],
+        [ruta("/rutina"), t("rutina.enlace")],
         [ruta("/cronograma"), t("cronograma.enlace")],
         [ruta("/regalo"), t("regalo.enlace")],
       ],
@@ -33,6 +34,7 @@ export default function PieGlobal() {
     {
       titulo: t("marca.nombre"),
       enlaces: [
+        [ruta("/guias"), t("guias.enlace")],
         [ruta("/nosotros"), t("nosotros.enlace")],
         [ruta("/faq"), t("faq.enlace")],
         [ruta("/contacto"), t("footer.contacto")],

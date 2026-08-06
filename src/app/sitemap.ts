@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { CATALOGO } from "@/lib/catalogo";
+import { GUIAS } from "@/lib/data/guias";
 import { lineas } from "@/lib/lineas";
 import { rutasPorIdioma } from "@/lib/i18n/rutas";
 
@@ -27,6 +28,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     entrada("/tienda", 0.9),
     entrada("/kits", 0.6),
     entrada("/cronograma", 0.6),
+    entrada("/rutina", 0.6),
+    entrada("/guias", 0.6),
+    ...GUIAS.map((g) => entrada(`/guias/${g.slug}`, 0.6)),
     entrada("/regalo", 0.5),
     ...CATALOGO.map((p) => entrada(`/producto/${p.id}`, 0.7)),
     ...lineas().map((l) => entrada(`/linea/${l.slug}`, 0.6)),

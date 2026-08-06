@@ -154,6 +154,28 @@ export const es = {
   "aviso.email.asunto": "Ya está disponible de nuevo",
   "aviso.email.intro": "{producto} vuelve a estar disponible en Cloud Beauty Salon.",
   "aviso.email.boton": "Ver el producto",
+  "guias.titulo": "Guías capilares",
+  "guias.intro":
+    "Aprende a leer tu pelo: el cronograma, cómo elegir productos y rutinas que funcionan.",
+  "guias.leer": "Leer la guía",
+  "guias.productos": "Productos de esta guía",
+  "guias.enlace": "Guías",
+  "comparar.titulo": "Comparar productos",
+  "comparar.chip": "Comparar",
+  "comparar.n": "{n} para comparar",
+  "comparar.ver": "Comparar",
+  "comparar.limpiar": "Quitar",
+  "comparar.vacio": "Elige al menos dos productos en la tienda para compararlos.",
+  "rutina.titulo": "Arma tu rutina",
+  "rutina.intro":
+    "Elige tu champú, tu acondicionador y tu tratamiento. Con dos o más pasos, el 10% de la rutina completa es tuyo.",
+  "rutina.paso.champu": "Tu champú",
+  "rutina.paso.acondicionador": "Tu acondicionador",
+  "rutina.paso.tratamiento": "Tu tratamiento",
+  "rutina.eligeDos": "Elige al menos dos pasos para el 10% de descuento.",
+  "rutina.anadirCon": "Añadir mi rutina · {n} productos",
+  "rutina.enlace": "Arma tu rutina",
+  "rutina.nota": "¿Dudas de qué toca esta semana? Mira tu cronograma:",
   "linea.titulo": "Línea {nombre}",
   "linea.meta":
     "La línea {nombre} de TRUSS: {n} productos profesionales con envío a todo EE. UU.",
@@ -180,6 +202,12 @@ export const es = {
   "faq.masPreguntas": "¿Tienes otra pregunta? Contáctanos →",
   "nosotros.enlace": "Nosotros",
   "faq.enlace": "Preguntas frecuentes",
+  "solicitud.asunto": "¿Qué te pareció tu compra?",
+  "solicitud.intro":
+    "Hace unos días recibiste tu pedido. Si ya lo probaste, nos encantaría leer tu opinión — ayuda muchísimo a otras clientas:",
+  "solicitud.verificada":
+    "Si dejas el email de tu compra al escribir la reseña, saldrá con la insignia de compra verificada.",
+  "solicitud.gracias": "Gracias por elegirnos. — Cloud Beauty Salon",
   "recupera.asunto": "Tu carrito te espera",
   "recupera.intro":
     "Dejaste tu compra a medias. Guardamos tu carrito por si quieres terminarla.",

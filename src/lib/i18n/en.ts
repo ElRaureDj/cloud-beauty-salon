@@ -155,6 +155,28 @@ export const en: Record<ClaveI18n, string> = {
   "aviso.email.asunto": "It's back in stock",
   "aviso.email.intro": "{producto} is available again at Cloud Beauty Salon.",
   "aviso.email.boton": "View the product",
+  "guias.titulo": "Hair-care guides",
+  "guias.intro":
+    "Learn to read your hair: the schedule, how to choose products and routines that work.",
+  "guias.leer": "Read the guide",
+  "guias.productos": "Products in this guide",
+  "guias.enlace": "Guides",
+  "comparar.titulo": "Compare products",
+  "comparar.chip": "Compare",
+  "comparar.n": "{n} to compare",
+  "comparar.ver": "Compare",
+  "comparar.limpiar": "Clear",
+  "comparar.vacio": "Pick at least two products in the shop to compare them.",
+  "rutina.titulo": "Build your routine",
+  "rutina.intro":
+    "Pick your shampoo, your conditioner and your treatment. With two or more steps, the 10% full-routine discount is yours.",
+  "rutina.paso.champu": "Your shampoo",
+  "rutina.paso.acondicionador": "Your conditioner",
+  "rutina.paso.tratamiento": "Your treatment",
+  "rutina.eligeDos": "Pick at least two steps for the 10% discount.",
+  "rutina.anadirCon": "Add my routine · {n} products",
+  "rutina.enlace": "Build your routine",
+  "rutina.nota": "Not sure what your hair needs this week? Check your schedule:",
   "linea.titulo": "{nombre} line",
   "linea.meta":
     "The TRUSS {nombre} line: {n} professional products with shipping across the US.",
@@ -181,6 +203,12 @@ export const en: Record<ClaveI18n, string> = {
   "faq.masPreguntas": "Have another question? Contact us →",
   "nosotros.enlace": "About us",
   "faq.enlace": "FAQ",
+  "solicitud.asunto": "How was your purchase?",
+  "solicitud.intro":
+    "You received your order a few days ago. If you've tried it, we'd love to read your review — it helps other clients a lot:",
+  "solicitud.verificada":
+    "If you enter your purchase email when writing the review, it will show the verified purchase badge.",
+  "solicitud.gracias": "Thank you for choosing us. — Cloud Beauty Salon",
   "recupera.asunto": "Your cart is waiting",
   "recupera.intro":
     "You left your purchase halfway. We saved your cart in case you'd like to finish it.",
