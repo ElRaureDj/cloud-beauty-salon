@@ -205,8 +205,11 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
     // domina la lista y los productos sin reseñas van al final. C = media global
     // (previo), M = su peso (nº de reseñas "virtuales" que atraen hacia C
     // mientras haya pocas reales). Así 1×5★ no supera a 200×4.8, y 1×1★ no
-    // encabeza por delante de los no valorados.
-    const vals = [...resenasMap.values()];
+    // encabeza por delante de los no valorados. El previo se calcula SOLO sobre
+    // los productos que se ordenan (el mapa trae un superconjunto pre-filtro).
+    const vals = productos
+      .map((p) => resenasMap.get(p.id))
+      .filter((v): v is { media: number; total: number } => Boolean(v));
     const nTotal = vals.reduce((s, r) => s + r.total, 0);
     const mediaGlobal =
       nTotal > 0 ? vals.reduce((s, r) => s + r.media * r.total, 0) / nTotal : 0;
@@ -413,15 +416,16 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
                   id={p.id}
                   className="absolute right-3 top-3 h-9 w-9 bg-fondo-0/70 backdrop-blur-sm"
                 />
-                {/* El "+" se revela al hover en escritorio (foco lo muestra
-                    siempre); en táctil queda visible. */}
+                {/* El "+" se revela al hover SOLO donde existe hover real
+                    (media hover:hover, no por ancho: una tablet táctil ancha
+                    lo dejaría invisible pero clicable). El foco lo muestra. */}
                 <BotonAgregarRapido
                   id={p.id}
                   nombre={p.nombre}
                   precio={p.precio}
                   imagen={p.imagen}
                   agotado={et.agotado}
-                  className="absolute bottom-3 right-3 h-9 w-9 sm:opacity-0 sm:group-hover:opacity-100 sm:focus-visible:opacity-100"
+                  className="absolute bottom-3 right-3 h-9 w-9 [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:opacity-100 focus-visible:opacity-100"
                 />
               </li>
             );

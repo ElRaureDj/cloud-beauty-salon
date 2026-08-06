@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useT } from "@/lib/i18n/client";
 import type { Producto } from "@/lib/catalogo";
 import { CANTIDAD_MAXIMA, useTienda } from "@/stores/carrito";
@@ -21,6 +21,11 @@ export default function BotonAgregar({
   const enCarrito = useTienda((s) => s.carrito.some((l) => l.id === producto.id));
   const abrirOverlay = useExperiencia((s) => s.abrirOverlay);
   const [cantidad, setCantidad] = useState(1);
+  // Anuncio SR ligado a la acción de añadir (no a la pertenencia: al cargar con
+  // el producto ya en el carrito no debe anunciarse nada). Transitorio.
+  const [anuncio, setAnuncio] = useState("");
+  const temporizador = useRef<number | undefined>(undefined);
+  useEffect(() => () => window.clearTimeout(temporizador.current), []);
 
   if (agotado && !enCarrito) {
     return (
@@ -35,7 +40,7 @@ export default function BotonAgregar({
       // anima-aparecer: micro-feedback al pasar de "Añadir" a "Ver el carrito".
       <>
         <span role="status" className="sr-only">
-          {t("carrito.anadido")}
+          {anuncio}
         </span>
         <button
           type="button"
@@ -59,11 +64,17 @@ export default function BotonAgregar({
       cantidad,
     );
     setCantidad(1); // no arrastrar la cantidad si luego se quita del carrito
+    setAnuncio(t("carrito.anadido"));
+    window.clearTimeout(temporizador.current);
+    temporizador.current = window.setTimeout(() => setAnuncio(""), 2000);
     abrirOverlay("carrito");
   };
 
   return (
     <div className="flex flex-wrap items-center gap-3">
+      <span role="status" className="sr-only">
+        {anuncio}
+      </span>
       {/* Píldora unificada con targets táctiles de 44px (WCAG 2.5.8). */}
       <div
         className="flex items-center rounded-full border border-tinta-suave/30"

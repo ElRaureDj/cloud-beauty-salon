@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { useT } from "@/lib/i18n/client";
 import { useTienda } from "@/stores/carrito";
 import { useExperiencia } from "@/stores/experiencia";
@@ -28,36 +29,46 @@ export default function BotonAgregarRapido({
   const agregar = useTienda((s) => s.agregar);
   const enCarrito = useTienda((s) => s.carrito.some((l) => l.id === id));
   const abrirOverlay = useExperiencia((s) => s.abrirOverlay);
+  // Anuncio LIGADO A LA ACCIÓN de añadir (no a la pertenencia al carrito: eso
+  // haría que el lector anunciara "añadido" al rehidratar la página con el
+  // producto ya dentro). Transitorio: se limpia solo.
+  const [anuncio, setAnuncio] = useState("");
+  const temporizador = useRef<number | undefined>(undefined);
+  useEffect(() => () => window.clearTimeout(temporizador.current), []);
 
   if (precio <= 0 || agotado) return null;
 
   return (
     <>
-      {/* Anuncio para lectores de pantalla al añadir (el botón solo cambia
-          de icono; sin esto, la acción era silenciosa). */}
       <span role="status" className="sr-only">
-        {enCarrito ? t("carrito.anadido") : ""}
+        {anuncio}
       </span>
       <button
-      type="button"
-      aria-label={enCarrito ? t("producto.verCarrito") : t("producto.agregar")}
-      onClick={() => {
-        if (enCarrito) abrirOverlay("carrito");
-        else agregar({ id, nombre, precio, imagen });
-      }}
-      className={`grid place-items-center rounded-full border transition-[color,background-color,border-color,opacity] duration-200 ${
-        enCarrito
-          ? "border-acento bg-acento text-acento-tinta"
-          : "border-tinta-suave/30 bg-fondo-0/70 text-tinta backdrop-blur-sm hover:border-acento hover:text-acento"
-      } ${className}`}
-    >
-      <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden>
-        {enCarrito ? (
-          <path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" />
-        ) : (
-          <path d="M12 5v14M5 12h14" strokeLinecap="round" />
-        )}
-      </svg>
+        type="button"
+        aria-label={enCarrito ? t("producto.verCarrito") : t("producto.agregar")}
+        onClick={() => {
+          if (enCarrito) {
+            abrirOverlay("carrito");
+            return;
+          }
+          agregar({ id, nombre, precio, imagen });
+          setAnuncio(t("carrito.anadido"));
+          window.clearTimeout(temporizador.current);
+          temporizador.current = window.setTimeout(() => setAnuncio(""), 2000);
+        }}
+        className={`grid place-items-center rounded-full border transition-[color,background-color,border-color,opacity] duration-200 ${
+          enCarrito
+            ? "border-acento bg-acento text-acento-tinta"
+            : "border-tinta-suave/30 bg-fondo-0/70 text-tinta backdrop-blur-sm hover:border-acento hover:text-acento"
+        } ${className}`}
+      >
+        <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden>
+          {enCarrito ? (
+            <path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" />
+          ) : (
+            <path d="M12 5v14M5 12h14" strokeLinecap="round" />
+          )}
+        </svg>
       </button>
     </>
   );

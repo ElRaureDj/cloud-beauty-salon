@@ -86,7 +86,9 @@ export default function Resenas({ productoId }: { productoId: string }) {
                     aria-hidden
                     className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-fondo-1 font-display text-sm text-acento"
                   >
-                    {r.autor.trim().charAt(0).toUpperCase()}
+                    {/* Primer code point (no charAt: un emoji son 2 unidades
+                        UTF-16 y saldría un carácter roto). */}
+                    {([...r.autor.trim()][0] ?? "•").toUpperCase()}
                   </span>
                   <span className="min-w-0">
                     <span className="flex items-center gap-2">
