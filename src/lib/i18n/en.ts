@@ -65,6 +65,7 @@ export const en: Record<ClaveI18n, string> = {
   "tienda.buscar": "Search products",
   "tienda.buscar.enviar": "Search",
   "tienda.buscar.todos": "Search “{q}” across the shop →",
+  "tienda.buscar.resultados": "{n} results",
   "tienda.orden": "Sort",
   "tienda.orden.relevancia": "Relevance",
   "tienda.orden.precioAsc": "Price ↑",

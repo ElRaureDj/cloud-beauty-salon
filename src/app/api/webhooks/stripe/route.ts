@@ -10,6 +10,7 @@ import {
   marcarRegaloEnviado,
   reclamarRegalo,
 } from "@/lib/regalo";
+import { reclamarRecuperacion } from "@/lib/recuperaciones";
 import { getT, resolverLocale } from "@/lib/i18n";
 
 // Webhook de Stripe. Dos trabajos:
@@ -311,14 +312,24 @@ export async function POST(request: Request) {
 
   // Carrito abandonado (mejora K3): la sesión expiró sin pagar. Se envía UN
   // email de recuperación SOLO si la clienta dio email Y marcó el
-  // consentimiento de promociones en el Checkout (opt_in). Best-effort.
+  // consentimiento de promociones en el Checkout (opt_in). El guard
+  // (recuperaciones_enviadas) lo hace idempotente por sesión y limita a 1
+  // correo por email cada 7 días — Stripe entrega al-menos-una-vez y cada
+  // sesión abandonada dispara su propio evento. Best-effort.
   if (evento.type === "checkout.session.expired") {
     const sesion = evento.data.object as Stripe.Checkout.Session;
     const email = sesion.customer_details?.email;
     const urlRecuperacion = sesion.after_expiration?.recovery?.url;
     const consintio = sesion.consent?.promotions === "opt_in";
     const esRegalo = sesion.metadata?.tipo === "regalo";
-    if (email && urlRecuperacion && consintio && !esRegalo) {
+    const permitido =
+      email && urlRecuperacion && consintio && !esRegalo
+        ? await reclamarRecuperacion(sesion.id, email).catch((e) => {
+            console.warn("webhook: guard de recuperación falló", e);
+            return false;
+          })
+        : false;
+    if (email && urlRecuperacion && permitido) {
       const loc = resolverLocale(sesion.locale ?? "es");
       const { t } = getT(loc);
       await enviarCorreo({

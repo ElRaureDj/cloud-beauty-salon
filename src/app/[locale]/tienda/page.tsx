@@ -228,6 +228,16 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
     );
   }
 
+  // Catálogo mínimo COMPARTIDO por las islas cliente (buscador y vistos): el
+  // payload RSC deduplica referencias al mismo array — una sola serialización.
+  const catalogoMin = CATALOGO.map((p) => ({
+    id: p.id,
+    nombre: p.nombre,
+    linea: p.linea,
+    precio: p.precio,
+    imagen: p.imagen,
+  }));
+
   const hayFiltros = Boolean(categoria || etapa || linea || q || disponibles || orden !== "relevancia");
   // Nº de filtros activos (para el contador del panel colapsable). La búsqueda
   // vive en su barra aparte; el orden por defecto no cuenta.
@@ -272,6 +282,10 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
       {/* Buscador instantáneo (K1): typeahead en cliente; el form GET interno
           preserva el flujo clásico (sin JS, Enter, botón) y el resto del estado. */}
       <BuscadorTienda
+        // key: en navegaciones soft (chips, "Quitar filtros", back) el
+        // componente no se remonta y el input quedaría desincronizado de la
+        // URL — reenviando un q ya limpiado al pulsar Buscar.
+        key={q ?? ""}
         action={rutaTienda}
         qInicial={q ?? ""}
         ocultos={{
@@ -281,13 +295,7 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
           ...(orden !== "relevancia" ? { orden } : {}),
           ...(disponibles ? { disponibles: "1" } : {}),
         }}
-        items={CATALOGO.map((p) => ({
-          id: p.id,
-          nombre: p.nombre,
-          linea: p.linea,
-          precio: p.precio,
-          imagen: p.imagen,
-        }))}
+        items={catalogoMin}
       />
 
       {/* Filtros colapsables: por defecto plegados (barra de una línea); se
@@ -432,14 +440,7 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
         </ul>
       )}
 
-      <VistosRecientes
-        catalogo={CATALOGO.map((p) => ({
-          id: p.id,
-          nombre: p.nombre,
-          precio: p.precio,
-          imagen: p.imagen,
-        }))}
-      />
+      <VistosRecientes catalogo={catalogoMin} />
 
       <Link
         href={r("/")}

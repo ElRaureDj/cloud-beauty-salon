@@ -85,10 +85,20 @@ export default function BuscadorTienda({
           onFocus={() => setAbierto(true)}
           placeholder={t("tienda.buscar")}
           autoComplete="off"
+          // Patrón combobox (aria-expanded no es válido sobre searchbox y
+          // aria-controls no debe apuntar a un id inexistente con el panel
+          // cerrado).
+          role="combobox"
+          aria-autocomplete="list"
+          aria-haspopup="listbox"
           aria-expanded={mostrar}
-          aria-controls={idLista}
+          aria-controls={mostrar ? idLista : undefined}
           className="min-w-0 flex-1 rounded-full border border-tinta-suave/30 bg-transparent px-4 py-2 text-base outline-none focus:border-acento sm:text-sm"
         />
+        {/* Anuncio del nº de resultados para lectores de pantalla. */}
+        <span role="status" className="sr-only">
+          {mostrar ? tf("tienda.buscar.resultados", { n: resultados.length }) : ""}
+        </span>
         <button type="submit" className="boton-primario shrink-0 px-4 py-2 text-sm">
           {t("tienda.buscar.enviar")}
         </button>
@@ -97,16 +107,22 @@ export default function BuscadorTienda({
       {mostrar && (
         <div
           id={idLista}
+          // preventDefault en mousedown: en Safari/Firefox los enlaces no
+          // reciben foco al pulsarlos → el blur del input llegaba con
+          // relatedTarget null y desmontaba el panel ANTES del click (los
+          // resultados eran inutilizables al tocar). Así el input conserva el
+          // foco y el click navega.
+          onMouseDown={(e) => e.preventDefault()}
           className="anima-aparecer absolute inset-x-0 top-full z-20 mt-2 overflow-hidden rounded-2xl border border-tinta-suave/20 bg-fondo-0/95 shadow-[0_16px_48px_rgba(0,0,0,0.5)] backdrop-blur-md"
         >
           {resultados.length === 0 ? (
-            <p className="px-4 py-3 text-sm text-tinta-suave" role="status">
+            <p className="px-4 py-3 text-sm text-tinta-suave">
               {t("tienda.sinResultados")}
             </p>
           ) : (
-            <ul>
+            <ul role="listbox" aria-label={t("tienda.buscar")}>
               {resultados.map((p) => (
-                <li key={p.id}>
+                <li key={p.id} role="option" aria-selected={false}>
                   <Link
                     href={ruta(`/producto/${p.id}`)}
                     className="flex items-center gap-3 px-3 py-2.5 transition-colors hover:bg-fondo-1/60 focus-visible:bg-fondo-1/60"

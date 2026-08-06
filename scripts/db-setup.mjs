@@ -96,6 +96,12 @@ await sql`create table if not exists tarjetas_regalo (
   creada_en        timestamptz not null default now()
 )`;
 await sql`alter table tarjetas_regalo add column if not exists enviado boolean not null default false`;
+await sql`create table if not exists recuperaciones_enviadas (
+  session_id text primary key,
+  email      text not null,
+  enviada_en timestamptz not null default now()
+)`;
+await sql`create index if not exists recuperaciones_por_email on recuperaciones_enviadas (email, enviada_en desc)`;
 await sql`create table if not exists newsletter (
   email          text primary key,
   token          text not null,

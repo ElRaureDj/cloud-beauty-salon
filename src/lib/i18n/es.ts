@@ -64,6 +64,7 @@ export const es = {
   "tienda.buscar": "Buscar productos",
   "tienda.buscar.enviar": "Buscar",
   "tienda.buscar.todos": "Buscar “{q}” en toda la tienda →",
+  "tienda.buscar.resultados": "{n} resultados",
   "tienda.orden": "Ordenar",
   "tienda.orden.relevancia": "Relevancia",
   "tienda.orden.precioAsc": "Precio ↑",
