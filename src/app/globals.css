@@ -49,19 +49,12 @@ body {
   color: var(--acento-tinta);
 }
 
+/* Sin tocar border-radius: el outline sigue el radio del propio elemento de
+   forma nativa en todos los navegadores actuales (forzarlo aquí PISABA las
+   utilidades rounded-* y cuadraba las píldoras al enfocarlas). */
 :focus-visible {
   outline: 2px solid var(--acento);
   outline-offset: 2px;
-  border-radius: 2px;
-}
-
-/* El outline hereda el radio en controles redondeados. */
-a:focus-visible,
-button:focus-visible,
-input:focus-visible,
-textarea:focus-visible,
-summary:focus-visible {
-  border-radius: inherit;
 }
 
 @media (pointer: fine) {

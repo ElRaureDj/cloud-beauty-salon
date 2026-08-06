@@ -65,9 +65,12 @@ export default function Header() {
   const totalArticulos = useTienda(contarArticulos);
 
   // Home del idioma actual: "/" en español, "/en" en inglés. usePathname()
-  // devuelve la ruta VISIBLE (el proxy reescribe sin cambiar la URL).
+  // devuelve la ruta VISIBLE (el proxy reescribe sin cambiar la URL), pero en
+  // el PRERENDER la home española llega como "/es": sin contemplarla, el HTML
+  // estático de "/" salía con la variante backdrop-blur sobre el canvas (el
+  // coste que el comentario de abajo dice evitar).
   const inicio = ruta("/");
-  const enInicio = pathname === inicio;
+  const enInicio = pathname === inicio || pathname === "/es";
 
   // Rehidrata carrito, respuestas y favoritos desde localStorage tras montar (§2).
   useEffect(() => {

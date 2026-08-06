@@ -125,6 +125,11 @@ export default function Experiencia() {
       end: () => ScrollTrigger.maxScroll(window),
       onUpdate: (self) => useExperiencia.getState().setProgreso(self.progress),
     });
+    // Sincroniza YA con el scroll real: el store sobrevive a las navegaciones
+    // y onUpdate no dispara hasta el primer scroll — al volver a "/" hacia
+    // delante (scroll 0) la cámara arrancaría en un progreso viejo. Cubre
+    // también el back-nav (progress refleja el scroll restaurado).
+    useExperiencia.getState().setProgreso(maestro.progress);
 
     // Mientras un overlay está abierto, el timeline no avanza (§2).
     const soltar = useExperiencia.subscribe((actual, previo) => {

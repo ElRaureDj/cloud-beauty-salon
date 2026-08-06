@@ -39,12 +39,17 @@ export function rutaEnOtroIdioma(
   destino: Locale,
   pathnameActual: string,
 ): string {
-  // Quita el prefijo /en si lo hubiera → subruta canónica sin idioma.
+  // Quita el prefijo de idioma si lo hubiera → subruta canónica sin idioma.
+  // OJO: /es también — en el PRERENDER de las páginas españolas estáticas el
+  // pathname llega con /es (no pasa por el proxy) y sin esto el HTML horneaba
+  // enlaces /en/es/… rotos para crawlers y clics pre-hidratación.
   const sinPrefijo =
-    pathnameActual === "/en"
+    pathnameActual === "/en" || pathnameActual === "/es"
       ? "/"
       : pathnameActual.startsWith("/en/")
         ? pathnameActual.slice("/en".length)
-        : pathnameActual;
+        : pathnameActual.startsWith("/es/")
+          ? pathnameActual.slice("/es".length)
+          : pathnameActual;
   return rutaLocalizada(destino, sinPrefijo);
 }

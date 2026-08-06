@@ -15,8 +15,10 @@ export default function PieGlobal() {
 
   // La home vive en "/" (visible) pero se PRERENDERIZA como "/es" en build:
   // hay que excluir las tres formas o el footer se colaría en el HTML estático
-  // de la home (y luego desaparecería al hidratar — mismatch).
+  // de la home (y luego desaparecería al hidratar — mismatch). La pantalla de
+  // compra confirmada también va limpia (celebración a viewport completo).
   if (pathname === "/" || pathname === "/es" || pathname === "/en") return null;
+  if (pathname.endsWith("/compra/exito")) return null;
 
   const columnas: { titulo: string; enlaces: [string, string][] }[] = [
     {
@@ -69,7 +71,9 @@ export default function PieGlobal() {
           </nav>
         </div>
         <div className="mt-10 flex flex-col gap-3 border-t border-tinta-suave/10 pt-6 text-xs text-tinta-suave sm:flex-row sm:items-center sm:justify-between">
-          <p>
+          {/* suppressHydrationWarning: si un build de diciembre se sirve en
+              enero, el año del HTML y el del cliente difieren un instante. */}
+          <p suppressHydrationWarning>
             © {new Date().getFullYear()} {t("marca.nombre")}
           </p>
           <div className="flex gap-5">

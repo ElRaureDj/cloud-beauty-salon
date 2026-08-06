@@ -59,8 +59,10 @@ export default function Preloader({ listo }: { listo: boolean }) {
     >
       {/* La salida tiene dirección: el bloque deriva sutilmente hacia arriba
           mientras funde — invita a "entrar" en vez de apagarse sin más. */}
+      {/* OJO Tailwind v4: -translate-y-* compila a la propiedad nativa
+          `translate` (no `transform`) — la transición debe cubrirla. */}
       <div
-        className={`flex flex-col items-center gap-6 transition-[opacity,transform] duration-500 ease-out motion-reduce:transform-none ${
+        className={`flex flex-col items-center gap-6 transition-[opacity,translate] duration-500 ease-out motion-reduce:translate-none ${
           fase === "saliendo" ? "-translate-y-3 opacity-0" : ""
         }`}
       >
