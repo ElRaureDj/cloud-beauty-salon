@@ -11,11 +11,14 @@ export default function ImagenProducto({
   clase = "",
   prioritaria = false,
   estadoStock = null,
+  sizes = "(max-width: 640px) 50vw, 33vw",
 }: {
   producto: Producto;
   clase?: string;
   prioritaria?: boolean;
   estadoStock?: EstadoStock | null;
+  /** Tamaños reales renderizados; la ficha pasa los suyos (imagen LCP). */
+  sizes?: string;
 }) {
   const agotado = estadoStock?.agotado ?? false;
   return (
@@ -26,8 +29,8 @@ export default function ImagenProducto({
         width={800}
         height={800}
         priority={prioritaria}
-        sizes="(max-width: 640px) 50vw, 33vw"
-        className={`h-full w-full object-contain transition-opacity ${
+        sizes={sizes}
+        className={`h-full w-full object-contain transition-[opacity,transform] duration-500 ease-out group-hover:scale-[1.05] motion-reduce:transition-none motion-reduce:group-hover:scale-100 ${
           agotado ? "opacity-40" : ""
         }`}
       />

@@ -40,7 +40,7 @@ export default function PanelCompra({ producto }: { producto: Producto }) {
         type="button"
         disabled
         aria-busy="true"
-        className="boton-primario w-full opacity-40 sm:w-auto"
+        className="boton-primario w-full animate-pulse opacity-40 sm:w-auto"
       >
         {tr.t("producto.comprobando")}
       </button>

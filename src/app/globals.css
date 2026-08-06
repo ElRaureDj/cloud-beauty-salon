@@ -35,15 +35,59 @@ body {
   background: var(--fondo-0);
   color: var(--tinta);
   font-family: var(--font-sans-base), system-ui, sans-serif;
+  /* Sin flash azul del sistema al tocar en móvil: el feedback lo dan los
+     propios estados de los controles. */
+  -webkit-tap-highlight-color: transparent;
+  /* Checkboxes y controles nativos (panel, formularios) en color de marca. */
+  accent-color: var(--acento);
+}
+
+/* Pulido de sistema (nivel pro): selección con color de marca, foco visible
+   elegante y consistente, y scrollbar fina que no rompe el fondo oscuro. */
+::selection {
+  background: color-mix(in srgb, var(--acento) 80%, transparent);
+  color: var(--acento-tinta);
+}
+
+:focus-visible {
+  outline: 2px solid var(--acento);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* El outline hereda el radio en controles redondeados. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+summary:focus-visible {
+  border-radius: inherit;
+}
+
+@media (pointer: fine) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--tinta-suave) 35%, transparent)
+      transparent;
+  }
 }
 
 .degradado-marca {
   background: radial-gradient(120% 90% at 50% 12%, var(--fondo-1) 0%, var(--fondo-0) 70%);
 }
 
-/* Botones: dicen exactamente lo que hacen (§3). */
+/* Botones: dicen exactamente lo que hacen (§3). El primario gana una
+   elevación cálida al hover (transición puntual, no animación continua). */
 .boton-primario {
-  @apply inline-flex items-center justify-center rounded-full bg-acento px-6 py-3 text-sm font-medium text-acento-tinta transition-transform active:scale-95;
+  @apply inline-flex items-center justify-center rounded-full bg-acento px-6 py-3 text-sm font-medium text-acento-tinta transition-[transform,box-shadow,filter] duration-200 active:scale-95;
+}
+
+@media (hover: hover) {
+  .boton-primario:hover {
+    filter: brightness(1.06);
+    box-shadow: 0 6px 24px color-mix(in srgb, var(--acento) 28%, transparent);
+    transform: translateY(-1px);
+  }
 }
 
 .boton-secundario {
@@ -54,10 +98,20 @@ body {
   @apply inline-block rounded-lg bg-fondo-1/70 px-3 py-2 font-mono text-xs text-tinta-suave;
 }
 
-/* Fondo de los overlays nativos <dialog>. */
+/* Fondo de los overlays nativos <dialog>: entra con fundido propio. */
+@keyframes fundido-backdrop {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 dialog::backdrop {
   background: rgba(23, 16, 18, 0.6);
   backdrop-filter: blur(4px);
+  animation: fundido-backdrop 0.3s ease-out both;
 }
 
 /* Micro-interacciones solo en CTAs activos e indicador de scroll (§3).
@@ -129,15 +183,17 @@ dialog::backdrop {
   }
 }
 
+/* Easing tipo "sheet" (iOS): arranca rápido y asienta con suavidad. */
 .anima-entrar-derecha {
-  animation: entrar-derecha 0.3s ease-out both;
+  animation: entrar-derecha 0.42s cubic-bezier(0.32, 0.72, 0, 1) both;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .pulso-activo::after,
   .anima-desliza,
   .anima-aparecer,
-  .anima-entrar-derecha {
+  .anima-entrar-derecha,
+  dialog::backdrop {
     animation: none;
   }
 }

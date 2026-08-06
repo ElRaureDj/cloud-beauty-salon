@@ -133,7 +133,11 @@ export default function CapitulosDom({ activo }: { activo: boolean }) {
         <p className="text-xs uppercase tracking-[0.3em] text-tinta-suave">
           {t("marca.nombre")}
         </p>
-        <h2 className="mt-3 font-display text-3xl sm:text-5xl">{t("hero.tagline")}</h2>
+        {/* Sombra doble (contorno + halo del color de fondo): el contraste no
+            puede depender de lo que la cámara tenga detrás. */}
+        <h2 className="mt-3 font-display text-3xl sm:text-5xl [text-shadow:0_1px_2px_rgba(23,16,18,0.55),0_8px_32px_rgba(23,16,18,0.65)]">
+          {t("hero.tagline")}
+        </h2>
       </div>
 
       {/* Cap. 0 — indicador de scroll */}
@@ -157,7 +161,7 @@ export default function CapitulosDom({ activo }: { activo: boolean }) {
       {/* Cap. 1 — copy.pelo.intro */}
       <p
         ref={copyPeloRef}
-        className="invisible absolute inset-x-6 top-[38%] text-center font-display text-3xl opacity-0 sm:text-4xl"
+        className="invisible absolute inset-x-6 top-[38%] text-center font-display text-3xl opacity-0 sm:text-4xl [text-shadow:0_1px_2px_rgba(23,16,18,0.55),0_8px_32px_rgba(23,16,18,0.65)]"
       >
         {t("copy.pelo.intro")}
       </p>

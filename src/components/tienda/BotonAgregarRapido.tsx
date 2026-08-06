@@ -32,14 +32,20 @@ export default function BotonAgregarRapido({
   if (precio <= 0 || agotado) return null;
 
   return (
-    <button
+    <>
+      {/* Anuncio para lectores de pantalla al añadir (el botón solo cambia
+          de icono; sin esto, la acción era silenciosa). */}
+      <span role="status" className="sr-only">
+        {enCarrito ? t("carrito.anadido") : ""}
+      </span>
+      <button
       type="button"
       aria-label={enCarrito ? t("producto.verCarrito") : t("producto.agregar")}
       onClick={() => {
         if (enCarrito) abrirOverlay("carrito");
         else agregar({ id, nombre, precio, imagen });
       }}
-      className={`grid place-items-center rounded-full border transition-colors ${
+      className={`grid place-items-center rounded-full border transition-[color,background-color,border-color,opacity] duration-200 ${
         enCarrito
           ? "border-acento bg-acento text-acento-tinta"
           : "border-tinta-suave/30 bg-fondo-0/70 text-tinta backdrop-blur-sm hover:border-acento hover:text-acento"
@@ -52,6 +58,7 @@ export default function BotonAgregarRapido({
           <path d="M12 5v14M5 12h14" strokeLinecap="round" />
         )}
       </svg>
-    </button>
+      </button>
+    </>
   );
 }

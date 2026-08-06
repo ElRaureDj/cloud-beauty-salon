@@ -45,9 +45,9 @@ export default function VistosRecientes({
   return (
     <section className="mt-16">
       <h2 className="font-display text-xl">{t("vistos.titulo")}</h2>
-      <ul className="mt-4 flex gap-4 overflow-x-auto pb-2">
+      <ul className="mt-4 flex snap-x gap-4 overflow-x-auto pb-2">
         {items.map((p) => (
-          <li key={p.id} className="w-32 shrink-0 sm:w-36">
+          <li key={p.id} className="w-32 shrink-0 snap-start sm:w-36">
             <Link
               href={ruta(`/producto/${p.id}`)}
               className="group block rounded-2xl border border-transparent p-1 transition-colors hover:border-tinta-suave/20"

@@ -142,7 +142,12 @@ export default async function PaginaProducto(
       </nav>
 
       <div className="mt-6 grid gap-8 sm:grid-cols-2">
-        <ImagenProducto producto={producto} clase="aspect-square w-full" prioritaria />
+        <ImagenProducto
+          producto={producto}
+          clase="aspect-square w-full"
+          prioritaria
+          sizes="(max-width: 640px) 100vw, 50vw"
+        />
 
         <div>
           <p className="text-xs uppercase tracking-widest text-tinta-suave">
@@ -160,7 +165,9 @@ export default async function PaginaProducto(
               {producto.tamano}
             </p>
           )}
-          <p className="mt-2 text-lg">{textoPrecio(producto.precio, tr)}</p>
+          <p className="mt-3 font-display text-2xl tabular-nums">
+            {textoPrecio(producto.precio, tr)}
+          </p>
 
           <div className="mt-3 flex flex-wrap gap-2">
             {producto.etapa.map((e) => (
@@ -192,7 +199,7 @@ export default async function PaginaProducto(
       {(() => {
         const larga = descripcionLargaProducto(producto.id, loc);
         return larga ? (
-          <section className="mt-14 max-w-prose">
+          <section className="mt-14 max-w-prose border-t border-tinta-suave/15 pt-10">
             <h2 className="font-display text-xl">
               {t("producto.descripcionSeccion")}
             </h2>
@@ -204,7 +211,7 @@ export default async function PaginaProducto(
       })()}
 
       {/* Información adicional: atributos del producto en una tabla. */}
-      <section className="mt-14 max-w-prose">
+      <section className="mt-14 max-w-prose border-t border-tinta-suave/15 pt-10">
         <h2 className="font-display text-xl">{t("producto.infoAdicional")}</h2>
         <dl className="mt-3 divide-y divide-tinta-suave/15 text-sm">
           {(

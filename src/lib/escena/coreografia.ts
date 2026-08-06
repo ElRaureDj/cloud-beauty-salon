@@ -116,5 +116,14 @@ export function intensidadLuzClave(p: number): number {
   return 1.2 + 0.6 * t * t * (3 - 2 * t); // smoothstep
 }
 
+// [3D] Caps. 5-7: relleno desde el lado de la cámara (−z) — resuelve la bota a
+// contraluz del cap. 6 y el tramo bajo apagado (§4, pulido). Base tenue todo el
+// viaje (hace de kicker) y sube con smoothstep entre p=0.58 y 0.72; se queda
+// encendido hasta el cierre (el ¾ trasero final también mira desde −z).
+export function intensidadLuzRelleno(p: number): number {
+  const t = Math.min(Math.max((p - 0.58) / 0.14, 0), 1);
+  return 0.2 + 0.85 * t * t * (3 - 2 * t);
+}
+
 // [3D] Cap. 3 — vitrina flotante (§4): rango en el que orbitan los productos.
 export const VITRINA = { inicio: 0.32, fin: 0.45 };

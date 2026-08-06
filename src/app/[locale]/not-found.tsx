@@ -10,12 +10,15 @@ export default function NoEncontrado() {
   const { t } = useT();
   const ruta = useRuta();
   return (
-    <main className="grid min-h-svh place-items-center px-6 text-center">
-      <div>
-        <p className="font-display text-5xl" aria-hidden>
+    <main className="degradado-marca grid min-h-svh place-items-center px-6 text-center">
+      <div className="anima-aparecer">
+        <p
+          className="font-display text-8xl text-tinta-suave/15 sm:text-9xl"
+          aria-hidden
+        >
           404
         </p>
-        <h1 className="mt-3 font-display text-2xl">{t("noEncontrado.titulo")}</h1>
+        <h1 className="-mt-6 font-display text-2xl">{t("noEncontrado.titulo")}</h1>
         <p className="mt-2 text-tinta-suave">{t("noEncontrado.mensaje")}</p>
         <div className="mt-6 flex justify-center gap-3">
           <Link href={ruta("/tienda")} className="boton-primario">

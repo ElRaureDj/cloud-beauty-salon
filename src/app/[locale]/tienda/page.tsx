@@ -56,22 +56,27 @@ function limpiarEstado(e: Estado): Record<string, string> {
 }
 
 // Chip-enlace genérico (filtro u orden): navega preservando el resto del estado.
+// `aria` sustituye el nombre accesible cuando la etiqueta visible lleva glifos
+// tipográficos (p. ej. "Precio ↑"). En táctil el chip es más alto (target 40px+).
 function Chip({
   activo,
   etiqueta,
   estado,
   pathname,
+  aria,
 }: {
   activo: boolean;
   etiqueta: string;
   estado: Estado;
   pathname: string;
+  aria?: string;
 }) {
   return (
     <Link
       href={{ pathname, query: limpiarEstado(estado) }}
       aria-current={activo ? "true" : undefined}
-      className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${
+      aria-label={aria}
+      className={`rounded-full border px-3 py-1.5 text-sm transition-colors max-sm:py-2 ${
         activo
           ? "border-acento bg-acento text-acento-tinta"
           : "border-tinta-suave/30 text-tinta-suave hover:border-tinta-suave hover:text-tinta"
@@ -175,15 +180,19 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
         p.linea.toLowerCase().includes(qLower)),
   );
 
-  // 2) Stock y reseñas de los candidatos (una query cada uno).
-  const stockMap = await stockDeProductos(productos.map((p) => p.id));
+  // 2) Stock y reseñas de los candidatos EN PARALELO (una query cada uno; las
+  // reseñas se piden sobre el superconjunto pre-filtro — filas de más
+  // irrelevantes a cambio de no encadenar los dos round-trips a Neon).
+  const candidatos = productos.map((p) => p.id);
+  const [stockMap, resenasMap] = await Promise.all([
+    stockDeProductos(candidatos),
+    resumenPorProducto(candidatos),
+  ]);
 
   // 3) "Solo disponibles": oculta stock 0 (si no hay BD, stockMap vacío → no filtra).
   if (disponibles) {
     productos = productos.filter((p) => (stockMap.get(p.id) ?? 1) > 0);
   }
-
-  const resenasMap = await resumenPorProducto(productos.map((p) => p.id));
 
   // 4) Orden. Precios "por confirmar" (0) al final en precioAsc.
   const conPrecio = (p: { precio: number }) => (p.precio > 0 ? p.precio : Infinity);
@@ -225,9 +234,9 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
 
   return (
     <main className="mx-auto max-w-5xl px-6 pb-24 pt-28">
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
         <h1 className="font-display text-3xl sm:text-4xl">{t("tienda.titulo")}</h1>
-        <div className="mt-2 flex shrink-0 items-center gap-4 text-sm">
+        <div className="flex shrink-0 items-center gap-4 text-sm">
           <Link
             href={r("/cronograma")}
             className="text-tinta-suave underline-offset-4 hover:text-tinta"
@@ -327,6 +336,13 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
               key={o}
               pathname={rutaTienda}
               etiqueta={t(`tienda.orden.${o}`)}
+              aria={
+                o === "precioAsc"
+                  ? t("tienda.orden.precioAsc.aria")
+                  : o === "precioDesc"
+                    ? t("tienda.orden.precioDesc.aria")
+                    : undefined
+              }
               activo={orden === o}
               estado={{ ...base, orden: o === "relevancia" ? undefined : o }}
             />
@@ -350,41 +366,62 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
       </details>
 
       {productos.length === 0 ? (
-        <p className="mt-14 text-tinta-suave">{t("tienda.sinResultados")}</p>
+        <div className="mt-14 grid place-items-center rounded-3xl border border-dashed border-tinta-suave/25 px-6 py-16 text-center">
+          <div>
+            <p className="font-display text-3xl text-tinta-suave/60" aria-hidden>
+              ◌
+            </p>
+            <p className="mt-3 text-tinta-suave">{t("tienda.sinResultados")}</p>
+            {hayFiltros && (
+              <Link href={rutaTienda} className="boton-secundario mt-6">
+                {t("tienda.filtros.limpiar")}
+              </Link>
+            )}
+          </div>
+        </div>
       ) : (
         <ul className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3">
-          {productos.map((p) => {
+          {productos.map((p, i) => {
             const et = etiquetaStock(
               stockMap.has(p.id) ? stockMap.get(p.id)! : null,
               tr,
             );
             const res = resenasMap.get(p.id);
             return (
-              <li key={p.id} className="relative">
+              <li key={p.id} className="group relative">
                 <Link
                   href={r(`/producto/${p.id}`)}
-                  className="group block rounded-3xl border border-transparent p-2 transition-colors hover:border-tinta-suave/20"
+                  className="group block rounded-3xl border border-transparent p-2 transition-colors hover:border-tinta-suave/20 hover:bg-fondo-1/40"
                 >
-                  <ImagenProducto producto={p} clase="aspect-square w-full" estadoStock={et} />
+                  <ImagenProducto
+                    producto={p}
+                    clase="aspect-square w-full"
+                    estadoStock={et}
+                    prioritaria={i < 3}
+                  />
                   <p className="mt-3 text-sm leading-snug">{p.nombre}</p>
                   <p className="mt-0.5 text-xs text-tinta-suave">
                     {p.linea}
                     {p.tamano ? ` · ${p.tamano.split("/")[0].trim()}` : ""}
                   </p>
-                  <p className="mt-1 text-sm">{textoPrecio(p.precio, tr)}</p>
+                  <p className="mt-1 text-sm font-medium tabular-nums">
+                    {textoPrecio(p.precio, tr)}
+                  </p>
                   {res && <EstrellasResumen media={res.media} total={res.total} tr={tr} />}
                 </Link>
                 <BotonFavorito
                   id={p.id}
                   className="absolute right-3 top-3 h-9 w-9 bg-fondo-0/70 backdrop-blur-sm"
                 />
+                {/* El "+" se revela al hover en escritorio (foco lo muestra
+                    siempre); en táctil queda visible. */}
                 <BotonAgregarRapido
                   id={p.id}
                   nombre={p.nombre}
                   precio={p.precio}
                   imagen={p.imagen}
                   agotado={et.agotado}
-                  className="absolute bottom-3 right-3 h-9 w-9"
+                  className="absolute bottom-3 right-3 h-9 w-9 sm:opacity-0 sm:group-hover:opacity-100 sm:focus-visible:opacity-100"
                 />
               </li>
             );

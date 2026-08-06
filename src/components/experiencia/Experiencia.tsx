@@ -65,6 +65,13 @@ export default function Experiencia() {
     [router, ruta],
   );
 
+  // Precalienta /tienda: los CTAs de la experiencia navegan con router.push,
+  // que (a diferencia de <Link>) no prefetchea — sin esto, el primer clic a la
+  // tienda paga la descarga del chunk en frío.
+  useEffect(() => {
+    router.prefetch(ruta("/tienda"));
+  }, [router, ruta]);
+
   // Decisión de modo (§2): sin WebGL o con prefers-reduced-motion → fallback.
   // setTimeout y no requestAnimationFrame: rAF no corre en pestañas ocultas
   // y dejaría el preloader colgado si la página carga en segundo plano.

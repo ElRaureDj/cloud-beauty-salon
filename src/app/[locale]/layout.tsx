@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import Analitica from "@/components/marketing/Analitica";
 import "../globals.css";
 import Header from "@/components/header/Header";
+import PieGlobal from "@/components/PieGlobal";
 import { getT, isLocale, LOCALES } from "@/lib/i18n";
 import { LocaleProvider } from "@/lib/i18n/client";
 
@@ -76,6 +77,7 @@ export default async function RootLayout(props: LayoutProps<"/[locale]">) {
         <LocaleProvider locale={locale}>
           <Header />
           {props.children}
+          <PieGlobal />
         </LocaleProvider>
         {/* Analítica de 1er nivel de Vercel (§ bloque 4): visitas y velocidad
             reales SIN cookies de rastreo (no requiere banner de consentimiento).

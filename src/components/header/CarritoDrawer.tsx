@@ -129,7 +129,7 @@ export default function CarritoDrawer() {
         <div className="flex h-full flex-col">
           {conBundle && (
             <p className="mb-3 inline-flex items-center gap-2 self-start rounded-full bg-acento/15 px-3 py-1 text-xs text-acento">
-              ✦ {t("carrito.bundle")}
+              <span aria-hidden>✦</span> {t("carrito.bundle")}
             </p>
           )}
 
@@ -153,7 +153,8 @@ export default function CarritoDrawer() {
                 </div>
                 {enRutina(linea.id) && (
                   <p className="mt-1 text-xs text-acento">
-                    ✦ {tf("carrito.linea.enRutina", { pct: pctBundle })}
+                    <span aria-hidden>✦</span>{" "}
+                    {tf("carrito.linea.enRutina", { pct: pctBundle })}
                   </p>
                 )}
                 <div className="mt-2 flex items-center justify-between">
@@ -195,13 +196,21 @@ export default function CarritoDrawer() {
             {!preciosPendientes && subtotal > 0 && (
               <div className="mb-4">
                 <p className="text-xs text-tinta-suave">
-                  {envioGratis
-                    ? `✓ ${t("carrito.envioGratis.logrado")}`
-                    : tf("carrito.envioGratis.falta", {
-                        monto: `$${faltaEnvio.toFixed(2)}`,
-                      })}
+                  {envioGratis ? (
+                    <>
+                      <span aria-hidden>✓ </span>
+                      {t("carrito.envioGratis.logrado")}
+                    </>
+                  ) : (
+                    tf("carrito.envioGratis.falta", {
+                      monto: `$${faltaEnvio.toFixed(2)}`,
+                    })
+                  )}
                 </p>
-                <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-tinta-suave/15">
+                <div
+                  aria-hidden
+                  className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-tinta-suave/15"
+                >
                   <div
                     className="h-full rounded-full bg-acento transition-[width] duration-500"
                     style={{ width: `${progresoEnvio * 100}%` }}

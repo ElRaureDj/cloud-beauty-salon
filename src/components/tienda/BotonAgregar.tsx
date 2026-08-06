@@ -32,13 +32,19 @@ export default function BotonAgregar({
 
   if (enCarrito) {
     return (
-      <button
-        type="button"
-        onClick={() => abrirOverlay("carrito")}
-        className="boton-primario w-full sm:w-auto"
-      >
-        {t("producto.verCarrito")}
-      </button>
+      // anima-aparecer: micro-feedback al pasar de "Añadir" a "Ver el carrito".
+      <>
+        <span role="status" className="sr-only">
+          {t("carrito.anadido")}
+        </span>
+        <button
+          type="button"
+          onClick={() => abrirOverlay("carrito")}
+          className="boton-primario anima-aparecer w-full sm:w-auto"
+        >
+          {t("producto.verCarrito")}
+        </button>
+      </>
     );
   }
 
@@ -58,13 +64,18 @@ export default function BotonAgregar({
 
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <div className="flex items-center gap-1" role="group" aria-label={t("producto.cantidad")}>
+      {/* Píldora unificada con targets táctiles de 44px (WCAG 2.5.8). */}
+      <div
+        className="flex items-center rounded-full border border-tinta-suave/30"
+        role="group"
+        aria-label={t("producto.cantidad")}
+      >
         <button
           type="button"
           aria-label={t("producto.cantidad.menos")}
           onClick={() => setCantidad((c) => Math.max(1, c - 1))}
           disabled={cantidad <= 1}
-          className="grid h-9 w-9 place-items-center rounded-full border border-tinta-suave/30 hover:border-tinta-suave disabled:opacity-30"
+          className="grid h-11 w-11 place-items-center rounded-full text-lg transition-colors hover:text-acento disabled:opacity-30"
         >
           −
         </button>
@@ -76,7 +87,7 @@ export default function BotonAgregar({
           aria-label={t("producto.cantidad.mas")}
           onClick={() => setCantidad((c) => Math.min(CANTIDAD_MAXIMA, c + 1))}
           disabled={cantidad >= CANTIDAD_MAXIMA}
-          className="grid h-9 w-9 place-items-center rounded-full border border-tinta-suave/30 hover:border-tinta-suave disabled:opacity-30"
+          className="grid h-11 w-11 place-items-center rounded-full text-lg transition-colors hover:text-acento disabled:opacity-30"
         >
           +
         </button>

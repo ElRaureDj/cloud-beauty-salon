@@ -38,7 +38,8 @@ function Estrellas({ valor, clase = "text-base" }: { valor: number; clase?: stri
 // las reseñas aprobadas al montar y ofrece un formulario moderado. Sin BD
 // (activo=false) la sección no se muestra: no invita a opinar donde no se puede.
 export default function Resenas({ productoId }: { productoId: string }) {
-  const { t } = useT();
+  const tr = useT();
+  const { t, tf } = tr;
   const [estado, setEstado] = useState<Estado | null>(null);
 
   const cargar = () => {
@@ -79,15 +80,39 @@ export default function Resenas({ productoId }: { productoId: string }) {
           {resenas.items.map((r) => (
             <li key={r.id} className="rounded-2xl border border-tinta-suave/20 p-4">
               <div className="flex items-center justify-between gap-3">
-                <span className="flex items-center gap-2 text-sm font-medium">
-                  {r.autor}
-                  {r.verificada && (
-                    <span className="rounded-full border border-acento/50 px-2 py-0.5 text-[10px] font-normal text-acento">
-                      ✓ {t("resenas.verificada")}
+                <span className="flex min-w-0 items-center gap-2.5 text-sm font-medium">
+                  {/* Avatar con inicial: ancla visual sin pedir foto de perfil. */}
+                  <span
+                    aria-hidden
+                    className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-fondo-1 font-display text-sm text-acento"
+                  >
+                    {r.autor.trim().charAt(0).toUpperCase()}
+                  </span>
+                  <span className="min-w-0">
+                    <span className="flex items-center gap-2">
+                      <span className="truncate">{r.autor}</span>
+                      {r.verificada && (
+                        <span className="shrink-0 rounded-full border border-acento/50 px-2 py-0.5 text-[10px] font-normal text-acento">
+                          <span aria-hidden>✓ </span>
+                          {t("resenas.verificada")}
+                        </span>
+                      )}
                     </span>
-                  )}
+                    <span className="block text-xs font-normal text-tinta-suave">
+                      {new Date(r.fecha).toLocaleDateString(
+                        tr.locale === "en" ? "en-US" : "es-US",
+                        { dateStyle: "medium" },
+                      )}
+                    </span>
+                  </span>
                 </span>
-                <Estrellas valor={r.rating} clase="text-sm" />
+                <span className="shrink-0">
+                  <Estrellas valor={r.rating} clase="text-sm" />
+                  {/* La valoración, audible para lectores de pantalla. */}
+                  <span className="sr-only">
+                    {tf("resenas.estrellas", { n: r.rating })}
+                  </span>
+                </span>
               </div>
               <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-tinta-suave">
                 {r.texto}
@@ -263,7 +288,7 @@ function FormularioResena({
             aria-label={tf("resenas.estrellas", { n })}
             onClick={() => setRating(n)}
             className={`text-2xl leading-none transition-colors ${
-              n <= rating ? "text-acento" : "text-tinta-suave/40 hover:text-acento"
+              n <= rating ? "text-acento" : "text-tinta-suave/60 hover:text-acento"
             }`}
           >
             ★

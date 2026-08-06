@@ -119,6 +119,12 @@ export default function Header() {
           >
             {t("header.tienda")}
           </Link>
+          <Link
+            href={ruta("/kits")}
+            className="hidden text-sm text-tinta-suave transition-colors hover:text-tinta sm:inline"
+          >
+            {t("kits.enlace")}
+          </Link>
 
           {/* Fallback sin query mientras hidrata: evita deoptar a CSR las
               páginas estáticas; en cliente se completa con los filtros. */}
@@ -155,7 +161,12 @@ export default function Header() {
               <path d="M9 8V6a3 3 0 016 0v2" strokeLinecap="round" />
             </svg>
             {totalArticulos > 0 && (
-              <span className="absolute -right-0.5 -top-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-acento px-1 text-[10px] font-semibold text-acento-tinta">
+              // aria-hidden: el aria-label del botón ya anuncia el total (sin
+              // esto, el lector leía el número dos veces).
+              <span
+                aria-hidden
+                className="absolute -right-0.5 -top-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-acento px-1 text-[10px] font-semibold text-acento-tinta"
+              >
                 {totalArticulos}
               </span>
             )}

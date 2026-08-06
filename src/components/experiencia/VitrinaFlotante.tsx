@@ -201,6 +201,10 @@ export default function VitrinaFlotante({
             // tarjeta no deben perforar a las de atrás; el orden lo fija
             // renderOrder por distancia en cada frame.
             depthWrite: false,
+            // Las tarjetas son UI pintada en canvas sRGB, no objetos de escena:
+            // fuera del tone mapping ACES (por defecto en R3F) el blanco y el
+            // filete de acento se pintan tal cual, sin velo gris cálido.
+            toneMapped: false,
           }),
       ),
     [productos, tr],

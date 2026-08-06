@@ -57,11 +57,24 @@ export default function Preloader({ listo }: { listo: boolean }) {
       aria-busy="true"
       aria-live="polite"
     >
-      <div className="flex flex-col items-center gap-6">
+      {/* La salida tiene dirección: el bloque deriva sutilmente hacia arriba
+          mientras funde — invita a "entrar" en vez de apagarse sin más. */}
+      <div
+        className={`flex flex-col items-center gap-6 transition-[opacity,transform] duration-500 ease-out motion-reduce:transform-none ${
+          fase === "saliendo" ? "-translate-y-3 opacity-0" : ""
+        }`}
+      >
         <span className="font-display text-lg uppercase tracking-[0.3em]">
           {t("marca.nombre")}
         </span>
-        <div className="h-0.5 w-44 overflow-hidden rounded-full bg-fondo-1">
+        <div
+          role="progressbar"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={listo ? 100 : Math.max(6, Math.round(carga * 92))}
+          aria-label={t("cargando.experiencia")}
+          className="h-0.5 w-44 overflow-hidden rounded-full bg-fondo-1"
+        >
           <div
             className="h-full bg-acento transition-[width] duration-700 ease-out"
             style={{ width: `${listo ? 100 : Math.max(6, Math.round(carga * 92))}%` }}

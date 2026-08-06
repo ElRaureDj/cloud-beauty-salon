@@ -69,6 +69,8 @@ export const en: Record<ClaveI18n, string> = {
   "tienda.orden.precioAsc": "Price ↑",
   "tienda.orden.precioDesc": "Price ↓",
   "tienda.orden.valorados": "Top rated",
+  "tienda.orden.precioAsc.aria": "Price: low to high",
+  "tienda.orden.precioDesc.aria": "Price: high to low",
   "tienda.soloDisponibles": "In stock only",
   "tienda.resenas.una": "review",
   "tienda.resenas.varias": "reviews",
@@ -163,7 +165,7 @@ export const en: Record<ClaveI18n, string> = {
   "kits.rizos.nombre": "Curls Kit",
   "kits.rizos.desc": "Defines curls and controls frizz without weighing hair down.",
   "kits.reconstruccion.nombre": "Repair Kit",
-  "kits.reconstruccion.desc": "Repairs hair damaged by chemistry or heat.",
+  "kits.reconstruccion.desc": "Repairs hair damaged by chemical processes or heat.",
   "kits.hidratacion.nombre": "Hydration Kit",
   "kits.hidratacion.desc": "Restores water and softness to dry hair.",
   "faq.titulo": "Frequently asked questions",
@@ -250,6 +252,7 @@ export const en: Record<ClaveI18n, string> = {
   "news.bienvenida.instru":
     "Enter this code in the cart, under “Have a discount code?”, before checkout.",
   "carrito.titulo": "Your cart",
+  "carrito.anadido": "Added to cart",
   "carrito.vacio": "Your cart is ready for its first product.",
   "carrito.irTienda": "Go to the shop",
   "carrito.quitar": "Remove",
@@ -293,7 +296,7 @@ export const en: Record<ClaveI18n, string> = {
   "quiz.pregunta.porosidad.ayuda":
     "The strand test: drop a clean strand into a glass of water. If it floats for a while, low porosity; if it sinks fast, high.",
   "quiz.pregunta.cuero": "How does your scalp behave?",
-  "quiz.pregunta.quimica": "Does your hair have active chemistry?",
+  "quiz.pregunta.quimica": "Has your hair had any chemical treatments?",
   "quiz.pregunta.quimica.ayuda": "Check all that apply.",
   "quiz.pregunta.colores": "Your color, before and now",
   "quiz.pregunta.colores.original": "Natural color",
@@ -375,7 +378,7 @@ export const en: Record<ClaveI18n, string> = {
   "reco.razon.termico":
     "Daily heat: a heat protectant is a must in your set.",
   "reco.razon.crecimiento":
-    "No chemistry and aiming for growth: hydration + a strengthening line.",
+    "No chemical treatments and aiming for growth: hydration + a strengthening line.",
   "reco.razon.base":
     "Your hair needs a steady {etapa} base: this routine covers it end to end.",
   "quiz.resultado.titulo": "Your routine is ready",
