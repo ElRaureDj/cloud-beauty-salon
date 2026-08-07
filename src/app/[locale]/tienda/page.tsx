@@ -427,14 +427,17 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
                 />
                 {/* El "+" se revela al hover SOLO donde existe hover real
                     (media hover:hover, no por ancho: una tablet táctil ancha
-                    lo dejaría invisible pero clicable). El foco lo muestra. */}
+                    lo dejaría invisible pero clicable). El foco lo muestra.
+                    Va APILADO bajo el corazón, sobre la imagen: anclado abajo
+                    caía en la banda del chip "Comparar" y en móviles estrechos
+                    se solapaban (toque robado = compra no deseada). */}
                 <BotonAgregarRapido
                   id={p.id}
                   nombre={p.nombre}
                   precio={p.precio}
                   imagen={p.imagen}
                   agotado={et.agotado}
-                  className="absolute bottom-3 right-3 h-9 w-9 [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:opacity-100 focus-visible:opacity-100"
+                  className="absolute right-3 top-14 h-9 w-9 [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:opacity-100 focus-visible:opacity-100"
                 />
               </li>
             );

@@ -23,6 +23,11 @@ export async function GET(request: Request) {
   if (request.headers.get("authorization") !== `Bearer ${secreto}`) {
     return Response.json({ ok: false }, { status: 401 });
   }
+  // Sin Resend configurado, TODOS los envíos fallarían de forma determinista
+  // y quemaríamos los claims sin mandar nada: mejor no reclamar ninguno.
+  if (!process.env.RESEND_API_KEY) {
+    return Response.json({ ok: false, configurado: false }, { status: 503 });
+  }
 
   const pendientes = await pedidosParaSolicitarResena(DIAS_TRAS_ENVIO, LOTE);
   const origen = process.env.NEXT_PUBLIC_SITE_URL ?? "https://cloudbeautysalon.com";

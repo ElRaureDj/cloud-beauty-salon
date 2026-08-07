@@ -73,6 +73,7 @@ await sql`alter table pedidos add column if not exists payment_intent text`;
 await sql`alter table pedidos add column if not exists reembolsado boolean not null default false`;
 await sql`alter table pedidos add column if not exists locale text not null default 'es'`;
 await sql`alter table pedidos add column if not exists resena_solicitada boolean not null default false`;
+await sql`alter table pedidos add column if not exists enviado_en timestamptz`;
 await sql`create index if not exists pedidos_recientes on pedidos (creada_en desc)`;
 await sql`create index if not exists pedidos_por_pi on pedidos (payment_intent)`;
 await sql`create table if not exists avisos_stock (

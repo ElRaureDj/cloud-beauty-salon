@@ -110,8 +110,11 @@ export const GUIAS: Guia[] = [
     productos: [
       "equilibrium-shampoo",
       "ultra-hydration-shampoo",
+      "vegan-detox-shampoo",
       "color-shield-shampoo-300ml-10-1-fl-oz",
       "frizz-zero-shampoo",
+      "curly-shampoo",
+      "miracle-shampoo",
     ],
   },
   {

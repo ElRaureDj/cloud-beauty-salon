@@ -10,7 +10,11 @@ const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://cloudbeautysalon.com";
 // Una entrada por página canónica, con la URL en español (idioma por defecto,
 // sin prefijo) y los alternates hreflang por idioma (§9 bilingüe). Google lee
 // languages para servir la versión correcta a cada usuario.
-function entrada(path: string, priority: number): MetadataRoute.Sitemap[number] {
+function entrada(
+  path: string,
+  priority: number,
+  lastModified?: string,
+): MetadataRoute.Sitemap[number] {
   const porIdioma = rutasPorIdioma(path);
   const languages = Object.fromEntries(
     Object.entries(porIdioma).map(([l, ruta]) => [l, `${BASE}${ruta}`]),
@@ -19,6 +23,7 @@ function entrada(path: string, priority: number): MetadataRoute.Sitemap[number] 
     url: `${BASE}${porIdioma.es}`,
     alternates: { languages },
     priority,
+    ...(lastModified ? { lastModified } : {}),
   };
 }
 
@@ -30,7 +35,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     entrada("/cronograma", 0.6),
     entrada("/rutina", 0.6),
     entrada("/guias", 0.6),
-    ...GUIAS.map((g) => entrada(`/guias/${g.slug}`, 0.6)),
+    ...GUIAS.map((g) => entrada(`/guias/${g.slug}`, 0.6, g.fecha)),
     entrada("/regalo", 0.5),
     ...CATALOGO.map((p) => entrada(`/producto/${p.id}`, 0.7)),
     ...lineas().map((l) => entrada(`/linea/${l.slug}`, 0.6)),

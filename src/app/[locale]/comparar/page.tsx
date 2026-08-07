@@ -25,9 +25,10 @@ export default async function PaginaComparar(
   const r = (path: string) => rutaLocalizada(loc, path);
 
   const idsRaw = typeof busqueda.ids === "string" ? busqueda.ids : "";
-  const productos = idsRaw
-    .split(",")
-    .map((id) => productoPorId(id.trim()))
+  // Dedupe: ?ids= es entrada no confiable (URL editable) — un id repetido
+  // duplicaría columnas (keys de React) y expulsaría un producto legítimo.
+  const productos = [...new Set(idsRaw.split(",").map((id) => id.trim()))]
+    .map((id) => productoPorId(id))
     .filter((p): p is Producto => Boolean(p))
     .slice(0, MAX);
 
@@ -66,9 +67,12 @@ export default async function PaginaComparar(
           <table className="w-full min-w-[640px] border-collapse text-sm">
             <thead>
               <tr>
-                <th className="w-36" aria-hidden />
+                {/* Celda vacía SIN aria-hidden: ocultarla desalineaba las
+                    columnas para lectores de pantalla (cabecera con una celda
+                    menos que el cuerpo). */}
+                <td className="w-36" />
                 {productos.map((p) => (
-                  <th key={p.id} className="p-3 text-left font-normal align-top">
+                  <th key={p.id} scope="col" className="p-3 text-left font-normal align-top">
                     <Link href={r(`/producto/${p.id}`)} className="group block">
                       <ImagenProducto producto={p} clase="aspect-square w-full max-w-48" />
                       <span className="mt-3 block text-sm font-medium leading-snug">
@@ -94,7 +98,10 @@ export default async function PaginaComparar(
             <tbody className="divide-y divide-tinta-suave/15">
               {filas.map(([etiqueta, valor]) => (
                 <tr key={etiqueta}>
-                  <th className="py-3 pr-4 text-left align-top text-xs font-normal uppercase tracking-widest text-tinta-suave">
+                  <th
+                    scope="row"
+                    className="py-3 pr-4 text-left align-top text-xs font-normal uppercase tracking-widest text-tinta-suave"
+                  >
                     {etiqueta}
                   </th>
                   {productos.map((p) => (

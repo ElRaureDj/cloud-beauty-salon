@@ -62,6 +62,9 @@ export default function ArmaRutina({ items }: { items: ItemRutinaBuilder[] }) {
       .filter((i): i is ItemRutinaBuilder => Boolean(i));
   }, [eleccion, items]);
 
+  // El ahorro mostrado es el 10% de LO ELEGIDO AQUÍ. Si ya había un bundle
+  // vivo (quiz/kit), marcarBundle fusiona y el drawer mostrará un descuento
+  // MAYOR: promete de menos a propósito — nunca de más.
   const total = elegidos.reduce((s, i) => s + i.precio, 0);
   const conDescuento = elegidos.length >= 2 ? total * (1 - DESCUENTO_BUNDLE) : total;
   const ahorro = total - conDescuento;

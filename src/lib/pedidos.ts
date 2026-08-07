@@ -164,7 +164,15 @@ export async function marcarEnviado(
   enviado: boolean,
 ): Promise<void> {
   if (!sql) return;
-  await sql`update pedidos set enviado = ${enviado} where session_id = ${sessionId}`;
+  // enviado_en se fija en la PRIMERA transición a enviado (y no se pisa): la
+  // petición de reseña (L2) cuenta los días desde el ENVÍO real, no desde la
+  // creación del pedido.
+  await sql`
+    update pedidos
+      set enviado = ${enviado},
+          enviado_en = case when ${enviado} then coalesce(enviado_en, now()) else enviado_en end
+    where session_id = ${sessionId}
+  `;
 }
 
 // Consulta pública de un pedido (mejora H3): requiere session_id EXACTO Y que el
@@ -226,13 +234,15 @@ export async function pedidosParaSolicitarResena(
   limite = 20,
 ): Promise<PedidoParaResena[]> {
   if (!sql) return [];
+  // Los días se cuentan desde el ENVÍO (enviado_en); coalesce con creada_en
+  // para filas anteriores a la migración que ya estaban marcadas enviadas.
   return (await sql`
     select session_id, email, locale, lineas
     from pedidos
     where pagado and not reembolsado and enviado
       and not resena_solicitada
       and email is not null
-      and creada_en < now() - make_interval(days => ${diasMinimos})
+      and coalesce(enviado_en, creada_en) < now() - make_interval(days => ${diasMinimos})
     order by creada_en asc
     limit ${limite}
   `) as PedidoParaResena[];
