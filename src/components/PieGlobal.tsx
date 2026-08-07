@@ -74,7 +74,7 @@ export default function PieGlobal() {
             ))}
           </nav>
         </div>
-        <div className="mt-10 flex flex-col gap-3 border-t border-tinta-suave/10 pt-6 text-xs text-tinta-suave sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-10 flex flex-col gap-3 border-t border-borde pt-6 text-xs text-tinta-suave sm:flex-row sm:items-center sm:justify-between">
           {/* suppressHydrationWarning: si un build de diciembre se sirve en
               enero, el año del HTML y el del cliente difieren un instante. */}
           <p suppressHydrationWarning>

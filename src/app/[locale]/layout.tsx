@@ -7,7 +7,6 @@ import Header from "@/components/header/Header";
 import PieGlobal from "@/components/PieGlobal";
 import { getT, isLocale, LOCALES } from "@/lib/i18n";
 import { LocaleProvider } from "@/lib/i18n/client";
-import Script from "next/script";
 import { FONDO_POR_TEMA, SCRIPT_TEMA } from "@/lib/tema";
 
 // TODO(guion): tipografías placeholder hasta tener el manual de marca (§3, §8):
@@ -88,10 +87,15 @@ export default async function RootLayout(props: LayoutProps<"/[locale]">) {
       <head>
         {/* Antes del primer pintado: aplica el tema guardado. Sin esto, quien
             eligió "claro" vería un fogonazo oscuro en cada carga (el HTML es
-            estático y el servidor no puede conocer su elección). */}
-        <Script
+            estático y el servidor no puede conocer su elección).
+            OJO: NO vale <Script strategy="beforeInteractive"> aquí. En el App
+            Router y sin `src`, next/script no emite el script: emite un
+            `self.__next_s.push(...)` que ejecuta el bootstrap del cliente
+            —o sea, DESPUÉS del primer pintado— y el fogonazo vuelve
+            (node_modules/next/dist/client/script.js, rama beforeInteractive).
+            Un <script> crudo lo ejecuta el parser en su sitio, síncrono. */}
+        <script
           id="tema-inicial"
-          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{ __html: SCRIPT_TEMA }}
         />
       </head>

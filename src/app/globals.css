@@ -27,6 +27,8 @@
      texto ilegible en vez de salvarlo). */
   --sombra-texto: 0 1px 2px rgba(23, 16, 18, 0.55),
     0 0 8px rgba(23, 16, 18, 0.7), 0 8px 32px rgba(23, 16, 18, 0.65);
+  --halo-svg: drop-shadow(0 0 3px rgba(23, 16, 18, 0.85))
+    drop-shadow(0 1px 6px rgba(23, 16, 18, 0.7));
 
 
   /* Piezas que NO se pueden derivar de los seis colores porque dependen del
@@ -43,8 +45,6 @@
   --sombra-flotante: 0 16px 48px
     color-mix(in srgb, #000 52%, transparent);
 
-  /* Velo de los <dialog>. */
-  --velo-modal: rgba(23, 16, 18, 0.6);
 
   /* Halo del degradado de marca: en oscuro ilumina desde ARRIBA (fondo-1 es
      más claro que fondo-0); en claro el orden se invierte, así que el
@@ -88,11 +88,12 @@
 
     --sombra-texto: 0 1px 2px rgba(250, 246, 241, 0.85),
       0 0 8px rgba(250, 246, 241, 0.95), 0 8px 28px rgba(250, 246, 241, 0.95);
+    --halo-svg: drop-shadow(0 0 3px rgba(250, 246, 241, 0.95))
+      drop-shadow(0 1px 6px rgba(250, 246, 241, 0.9));
 
     --borde: color-mix(in srgb, var(--tinta-suave) 34%, transparent);
     --sombra-flotante: 0 16px 48px
       color-mix(in srgb, var(--tinta) 22%, transparent);
-    --velo-modal: rgba(43, 30, 34, 0.38);
     --degradado-marca: radial-gradient(
       120% 90% at 50% 12%,
       var(--fondo-0) 0%,
@@ -120,11 +121,12 @@
 
   --sombra-texto: 0 1px 2px rgba(250, 246, 241, 0.85),
     0 0 8px rgba(250, 246, 241, 0.95), 0 8px 28px rgba(250, 246, 241, 0.95);
+  --halo-svg: drop-shadow(0 0 3px rgba(250, 246, 241, 0.95))
+    drop-shadow(0 1px 6px rgba(250, 246, 241, 0.9));
 
   --borde: color-mix(in srgb, var(--tinta-suave) 34%, transparent);
   --sombra-flotante: 0 16px 48px
     color-mix(in srgb, var(--tinta) 22%, transparent);
-  --velo-modal: rgba(43, 30, 34, 0.38);
   --degradado-marca: radial-gradient(
     120% 90% at 50% 12%,
     var(--fondo-0) 0%,
@@ -191,6 +193,13 @@ body {
   text-shadow: var(--sombra-texto);
 }
 
+/* text-shadow NO afecta a la geometría SVG (solo a texto): el chevron del
+   indicador de scroll se quedaba sin halo y, sobre el pantalón negro del
+   modelo, en claro caía a ~2.7:1. Mismo halo, por la vía que sí pinta trazos. */
+.texto-sobre-escena svg {
+  filter: var(--halo-svg);
+}
+
 .degradado-marca {
   background: var(--degradado-marca);
 }
@@ -233,10 +242,25 @@ body {
   }
 }
 
+/* OJO: aquí NO se usan variables CSS. En Chrome <122 y Safari <17.4 el
+   ::backdrop no hereda del elemento que lo origina, así que var(--velo-modal)
+   no resolvería y el atajo `background` caería a transparent — el velo
+   desaparecería entero y el modal quedaría flotando sobre la página viva. Por
+   eso el color va literal y el tema se elige con un selector descendente. */
 dialog::backdrop {
-  background: var(--velo-modal);
+  background: rgba(23, 16, 18, 0.6);
   backdrop-filter: blur(4px);
   animation: fundido-backdrop 0.3s ease-out both;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-tema="oscuro"]) dialog::backdrop {
+    background: rgba(43, 30, 34, 0.38);
+  }
+}
+
+:root[data-tema="claro"] dialog::backdrop {
+  background: rgba(43, 30, 34, 0.38);
 }
 
 /* Micro-interacciones solo en CTAs activos e indicador de scroll (§3).
@@ -394,5 +418,28 @@ dialog::backdrop {
   .onda-marca-lenta,
   dialog::backdrop {
     animation: none;
+  }
+}
+
+/* Impresión: el navegador descarta el fondo del autor, así que en tema oscuro
+   el texto (casi blanco) salía invisible sobre el papel. Se fuerza la paleta
+   clara y se quitan sombras y halos, que en tinta solo ensucian. */
+@media print {
+  :root,
+  :root[data-tema="oscuro"],
+  :root[data-tema="claro"] {
+    color-scheme: light;
+
+    --fondo-0: #fff;
+    --fondo-1: #fff;
+    --tinta: #2b1e22;
+    --tinta-suave: #5d4e49;
+    --acento: #8f5019;
+    --acento-tinta: #fff;
+
+    --borde: color-mix(in srgb, var(--tinta-suave) 50%, transparent);
+    --sombra-flotante: none;
+    --sombra-texto: none;
+    --halo-svg: none;
   }
 }

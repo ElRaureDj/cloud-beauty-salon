@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useRef, useSyncExternalStore } from "react";
 import { useTema } from "@/stores/tema";
 import { PREFERENCIAS, type Preferencia } from "@/lib/tema";
 import { useT } from "@/lib/i18n/client";
@@ -29,25 +29,57 @@ const ICONOS: Record<Preferencia, React.ReactNode> = {
   oscuro: <path d="M13 9.6A5.6 5.6 0 016.4 3a5.6 5.6 0 106.6 6.6z" />,
 };
 
+/** Instantánea del servidor: allí no hay DOM y la preferencia sale siempre "auto". */
+const AUTO = (): Preferencia => "auto";
+const leer = (): Preferencia => useTema.getState().preferencia;
+
 export default function SelectorTema() {
   const { t } = useT();
-  const guardada = useTema((s) => s.preferencia);
   const elegir = useTema((s) => s.elegir);
 
   // El store se inicializa leyendo el <html> (lo necesita la escena 3D en su
-  // PRIMER render), pero este selector sí se prerenderiza en el servidor, donde
-  // no hay DOM y la preferencia siempre sale "auto". Marcar el activo antes de
-  // hidratar rompería la hidratación, así que hasta entonces se pinta el mismo
-  // estado que el HTML del servidor y se corrige en el primer efecto.
-  const [montado, setMontado] = useState(false);
-  useEffect(() => setMontado(true), []);
-  const preferencia = montado ? guardada : "auto";
+  // PRIMER render), pero este selector SÍ se prerenderiza: marcar el activo
+  // real en el primer render de cliente rompería la hidratación. Con la
+  // instantánea de servidor de useSyncExternalStore, React usa "auto" mientras
+  // hidrata —igual que el HTML— y pasa al valor real justo después, sin efecto
+  // ni estado extra.
+  const preferencia = useSyncExternalStore(useTema.subscribe, leer, AUTO);
+  const grupo = useRef<HTMLDivElement>(null);
+
+  // Un radiogroup se recorre con las FLECHAS, no con el tabulador: el grupo
+  // entero ocupa una sola parada de tabulación (tabIndex móvil, "roving") y
+  // dentro se mueve con ←/→ o ↑/↓, eligiendo al pasar. Sin esto, el selector
+  // anunciaba ser un grupo de radio y no se comportaba como tal.
+  const alTeclear = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    const paso =
+      e.key === "ArrowRight" || e.key === "ArrowDown"
+        ? 1
+        : e.key === "ArrowLeft" || e.key === "ArrowUp"
+          ? -1
+          : 0;
+    if (!paso) return;
+    e.preventDefault();
+    // Del STORE, no de `preferencia`: con la tecla mantenida los eventos llegan
+    // más rápido de lo que React vuelve a renderizar, y partiendo del valor del
+    // render todas las repeticiones calculaban desde el mismo punto (probado:
+    // →,→,← acababa en "oscuro" en vez de en "claro").
+    const i = PREFERENCIAS.indexOf(useTema.getState().preferencia);
+    const siguiente =
+      PREFERENCIAS[(i + paso + PREFERENCIAS.length) % PREFERENCIAS.length];
+    elegir(siguiente);
+    // El foco acompaña a la selección, como pide el patrón.
+    grupo.current
+      ?.querySelectorAll<HTMLButtonElement>('[role="radio"]')
+      [PREFERENCIAS.indexOf(siguiente)]?.focus();
+  };
 
   return (
     <div
+      ref={grupo}
       role="radiogroup"
       aria-label={t("tema.titulo")}
-      className="flex items-center gap-0.5 rounded-full border border-tinta-suave/25 p-0.5"
+      onKeyDown={alTeclear}
+      className="flex items-center gap-0.5 rounded-full border border-borde p-0.5"
     >
       {PREFERENCIAS.map((p) => {
         const activa = preferencia === p;
@@ -59,6 +91,7 @@ export default function SelectorTema() {
             aria-checked={activa}
             aria-label={t(`tema.${p}`)}
             title={t(`tema.${p}`)}
+            tabIndex={activa ? 0 : -1}
             onClick={() => elegir(p)}
             className={`grid h-6 w-6 place-items-center rounded-full transition-colors ${
               activa

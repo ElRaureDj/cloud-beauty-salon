@@ -125,7 +125,7 @@ export default function BuscadorTienda({
                 <li key={p.id} role="option" aria-selected={false}>
                   <Link
                     href={ruta(`/producto/${p.id}`)}
-                    className="flex items-center gap-3 px-3 py-2.5 transition-colors hover:bg-fondo-1/60 focus-visible:bg-fondo-1/60"
+                    className="flex items-center gap-3 px-3 py-2.5 transition-colors hover:bg-tinta-suave/10 focus-visible:bg-tinta-suave/10"
                   >
                     <span className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg border border-borde bg-white">
                       <Image
@@ -160,7 +160,7 @@ export default function BuscadorTienda({
                       contenedor.current?.querySelector("form") as HTMLFormElement | null
                     )?.submit();
                   }}
-                  className="w-full px-4 py-2.5 text-left text-sm text-acento transition-colors hover:bg-fondo-1/60"
+                  className="w-full px-4 py-2.5 text-left text-sm text-acento transition-colors hover:bg-tinta-suave/10"
                 >
                   {tf("tienda.buscar.todos", { q: q.trim() })}
                 </button>

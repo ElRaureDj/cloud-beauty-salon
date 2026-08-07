@@ -63,12 +63,25 @@ function pintar(preferencia: Preferencia, resuelto: TemaResuelto) {
   if (preferencia === "auto") delete raiz.dataset.tema;
   else raiz.dataset.tema = preferencia;
 
-  // La barra del navegador en móvil: los <meta> con media cubren el modo auto,
-  // pero una elección explícita contra el ajuste del sistema necesita esto.
+  // La barra del navegador en móvil. El layout emite DOS <meta theme-color>
+  // condicionados por esquema (uno dark, uno light), que es justo lo correcto
+  // en modo "auto". Con una elección EXPLÍCITA hay que desactivar esa condición
+  // —si no, el móvil sigue al sistema y contradice lo elegido—, y al volver a
+  // "auto" hay que RESTAURARLA: machacar las dos con el mismo color dejaba la
+  // barra congelada y el cambio automático dejaba de funcionar.
   for (const meta of document.querySelectorAll<HTMLMetaElement>(
     'meta[name="theme-color"]',
   )) {
-    meta.content = FONDO_POR_TEMA[resuelto];
+    // El `media` original se guarda la primera vez, para poder devolverlo.
+    if (meta.dataset.media === undefined) meta.dataset.media = meta.media;
+    if (preferencia === "auto") {
+      meta.media = meta.dataset.media;
+      meta.content =
+        FONDO_POR_TEMA[meta.media.includes("light") ? "claro" : "oscuro"];
+    } else {
+      meta.media = "";
+      meta.content = FONDO_POR_TEMA[resuelto];
+    }
   }
 }
 
@@ -104,13 +117,17 @@ export function sincronizarTema(): () => void {
   const consulta = window.matchMedia(CONSULTA_CLARO);
   const recalcular = () => {
     const { preferencia } = useTema.getState();
-    useTema.setState({ resuelto: resolverTema(preferencia, consulta.matches) });
+    const resuelto = resolverTema(preferencia, consulta.matches);
+    pintar(preferencia, resuelto);
+    useTema.setState({ resuelto });
   };
 
-  useTema.setState({
-    preferencia: guardada,
-    resuelto: resolverTema(guardada, consulta.matches),
-  });
+  const resuelto = resolverTema(guardada, consulta.matches);
+  // El script del <head> ya puso data-tema, pero NO tocó los <meta
+  // theme-color>: con una elección explícita contra el ajuste del sistema, la
+  // barra del navegador arrancaba del color equivocado.
+  pintar(guardada, resuelto);
+  useTema.setState({ preferencia: guardada, resuelto });
 
   consulta.addEventListener("change", recalcular);
   return () => consulta.removeEventListener("change", recalcular);

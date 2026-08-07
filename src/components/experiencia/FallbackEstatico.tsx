@@ -31,7 +31,7 @@ export default function FallbackEstatico() {
       <section className="px-6 py-24 text-center">
         <div
           aria-hidden
-          className="mx-auto h-64 w-48 rounded-[42%] border border-borde bg-gradient-to-b from-fondo-1 to-fondo-0"
+          className="degradado-marca mx-auto h-64 w-48 rounded-[42%] border border-borde"
         />
         <h3 className="mt-8 font-display text-3xl">{t("copy.pelo.intro")}</h3>
         <div className="mt-10 flex flex-col items-center gap-3">

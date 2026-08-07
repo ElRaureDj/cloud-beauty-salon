@@ -61,7 +61,14 @@ function Swatches({
                 ? "border-acento scale-110"
                 : "border-tinta-suave/60"
             }`}
-            style={{ backgroundColor: s.valor }}
+            // Aro INTERIOR además del borde: los tonos claros de la paleta
+            // (platino #f2e6c9, rubio #e8c98a) sobre el crema del tema claro
+            // perdían el contorno y el disco desaparecía.
+            style={{
+              backgroundColor: s.valor,
+              boxShadow:
+                "inset 0 0 0 1.5px color-mix(in srgb, var(--tinta) 22%, transparent)",
+            }}
           />
         ))}
       </div>

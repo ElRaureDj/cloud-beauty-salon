@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import "../globals.css";
-import Script from "next/script";
 import { FONDO_POR_TEMA, SCRIPT_TEMA } from "@/lib/tema";
 
 // Layout raíz del panel interno (fuera de [locale]): aporta su propio <html> y
@@ -30,9 +29,8 @@ export default function AdminLayout({
       <head>
         {/* Mismo script que la tienda: el panel obedece la preferencia que
             eligió Disleny, no solo el ajuste del sistema. */}
-        <Script
+        <script
           id="tema-inicial"
-          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{ __html: SCRIPT_TEMA }}
         />
       </head>

@@ -377,7 +377,7 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
       </details>
 
       {productos.length === 0 ? (
-        <div className="mt-14 grid place-items-center rounded-3xl border border-dashed border-tinta-suave/25 px-6 py-16 text-center">
+        <div className="mt-14 grid place-items-center rounded-3xl border border-dashed border-borde px-6 py-16 text-center">
           <div>
             <p className="font-display text-3xl text-tinta-suave/75" aria-hidden>
               ◌

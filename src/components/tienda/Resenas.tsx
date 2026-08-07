@@ -26,8 +26,8 @@ function Estrellas({ valor, clase = "text-base" }: { valor: number; clase?: stri
   return (
     <span aria-hidden className={`${clase} leading-none tracking-tight`}>
       {Array.from({ length: 5 }, (_, i) => (
-        <span key={i} className={i < llenas ? "text-acento" : "text-tinta-suave/45"}>
-          ★
+        <span key={i} className={i < llenas ? "text-acento" : "text-tinta-suave/70"}>
+          {i < llenas ? "★" : "☆"}
         </span>
       ))}
     </span>
@@ -290,10 +290,14 @@ function FormularioResena({
             aria-label={tf("resenas.estrellas", { n })}
             onClick={() => setRating(n)}
             className={`text-2xl leading-none transition-colors ${
-              n <= rating ? "text-acento" : "text-tinta-suave hover:text-acento"
+              n <= rating ? "text-acento" : "text-tinta-suave/70 hover:text-acento"
             }`}
           >
-            ★
+            {/* La forma distingue el estado (lleno vs contorno): con solo color,
+                en oscuro la vacía salía MÁS brillante que la marcada —el
+                control se leía al revés— y en claro las dos quedaban a 1.02:1.
+                Así funciona también en escala de grises y con daltonismo. */}
+            {n <= rating ? "★" : "☆"}
           </button>
         ))}
       </div>

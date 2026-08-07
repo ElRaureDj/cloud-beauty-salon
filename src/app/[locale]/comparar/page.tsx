@@ -95,7 +95,7 @@ export default async function PaginaComparar(
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-tinta-suave/15">
+            <tbody className="divide-y divide-borde">
               {filas.map(([etiqueta, valor]) => (
                 <tr key={etiqueta}>
                   <th

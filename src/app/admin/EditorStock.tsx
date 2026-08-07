@@ -52,7 +52,7 @@ export default function EditorStock({ inicial }: { inicial: Fila[] }) {
 
   return (
     <div>
-      <ul className="mt-6 divide-y divide-tinta-suave/15">
+      <ul className="mt-6 divide-y divide-borde">
         {filas.map((f) => (
           <li key={f.id} className="flex items-center justify-between gap-4 py-2">
             <div className="min-w-0">

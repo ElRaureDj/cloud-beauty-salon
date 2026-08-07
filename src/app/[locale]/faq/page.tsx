@@ -110,7 +110,7 @@ export default async function PaginaFaq(props: PageProps<"/[locale]/faq">) {
       <h1 className="font-display text-3xl sm:text-4xl">{t("faq.titulo")}</h1>
       <p className="mt-3 text-tinta-suave">{t("faq.intro")}</p>
 
-      <dl className="mt-10 divide-y divide-tinta-suave/15">
+      <dl className="mt-10 divide-y divide-borde">
         {PREGUNTAS.map((p) => (
           <div key={p.q.es} className="py-5">
             <dt className="font-display text-lg">{p.q[loc]}</dt>

@@ -36,7 +36,10 @@ export default function ImagenProducto({
       />
       {agotado ? (
         <span className="absolute inset-0 grid place-items-center">
-          <span className="rounded-full bg-tinta/80 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-fondo-0">
+          {/* Negro/blanco a propósito, NO tokens: el chip va sobre el plato
+              blanco del packshot, que es blanco en los dos temas. Con
+              bg-tinta/80 quedaba casi blanco sobre blanco en el tema oscuro. */}
+          <span className="rounded-full bg-black/75 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-white">
             {estadoStock?.texto}
           </span>
         </span>

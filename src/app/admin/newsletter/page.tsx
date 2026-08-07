@@ -32,7 +32,7 @@ export default async function PaginaAdminNewsletter() {
         </p>
       ) : (
         <>
-          <ul className="mt-6 divide-y divide-tinta-suave/15">
+          <ul className="mt-6 divide-y divide-borde">
             {lista.map((s) => (
               <li
                 key={s.email}

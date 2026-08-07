@@ -218,7 +218,7 @@ export default async function PaginaProducto(
       {/* Información adicional: atributos del producto en una tabla. */}
       <section className="mt-14 max-w-prose border-t border-borde pt-10">
         <h2 className="font-display text-xl">{t("producto.infoAdicional")}</h2>
-        <dl className="mt-3 divide-y divide-tinta-suave/15 text-sm">
+        <dl className="mt-3 divide-y divide-borde text-sm">
           {(
             [
               producto.tamano
