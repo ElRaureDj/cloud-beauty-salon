@@ -63,9 +63,9 @@ export default function ListaFavoritos({
         <li key={p.id} className="relative">
           <Link
             href={ruta(`/producto/${p.id}`)}
-            className="group block rounded-3xl border border-transparent p-2 transition-colors hover:border-tinta-suave/20"
+            className="group block rounded-3xl border border-transparent p-2 transition-colors hover:border-borde"
           >
-            <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-white">
+            <div className="relative aspect-square w-full overflow-hidden rounded-2xl border border-borde bg-white">
               <Image
                 src={p.imagen}
                 alt={p.nombre}
@@ -82,7 +82,7 @@ export default function ListaFavoritos({
           </Link>
           <BotonFavorito
             id={p.id}
-            className="absolute right-3 top-3 h-9 w-9 bg-fondo-0/70 backdrop-blur-sm"
+            className="absolute right-3 top-3 h-9 w-9 border border-borde bg-fondo-1/90 backdrop-blur-sm"
           />
         </li>
       ))}

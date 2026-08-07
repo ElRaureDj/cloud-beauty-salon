@@ -59,7 +59,7 @@ export default function BotonAgregarRapido({
         className={`grid place-items-center rounded-full border transition-[color,background-color,border-color,opacity] duration-200 ${
           enCarrito
             ? "border-acento bg-acento text-acento-tinta"
-            : "border-tinta-suave/30 bg-fondo-0/70 text-tinta backdrop-blur-sm hover:border-acento hover:text-acento"
+            : "border-borde bg-fondo-1/90 text-tinta backdrop-blur-sm hover:border-acento hover:text-acento"
         } ${className}`}
       >
         <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden>

@@ -113,7 +113,7 @@ export default function BuscadorTienda({
           // resultados eran inutilizables al tocar). Así el input conserva el
           // foco y el click navega.
           onMouseDown={(e) => e.preventDefault()}
-          className="anima-aparecer absolute inset-x-0 top-full z-20 mt-2 overflow-hidden rounded-2xl border border-tinta-suave/20 bg-fondo-0/95 shadow-[0_16px_48px_rgba(0,0,0,0.5)] backdrop-blur-md"
+          className="anima-aparecer absolute inset-x-0 top-full z-20 mt-2 overflow-hidden rounded-2xl border border-borde bg-fondo-1/95 panel-flotante backdrop-blur-md"
         >
           {resultados.length === 0 ? (
             <p className="px-4 py-3 text-sm text-tinta-suave">
@@ -127,7 +127,7 @@ export default function BuscadorTienda({
                     href={ruta(`/producto/${p.id}`)}
                     className="flex items-center gap-3 px-3 py-2.5 transition-colors hover:bg-fondo-1/60 focus-visible:bg-fondo-1/60"
                   >
-                    <span className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-white">
+                    <span className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg border border-borde bg-white">
                       <Image
                         src={p.imagen}
                         alt=""
@@ -149,7 +149,7 @@ export default function BuscadorTienda({
                   </Link>
                 </li>
               ))}
-              <li className="border-t border-tinta-suave/15">
+              <li className="border-t border-borde">
                 <button
                   type="submit"
                   form={undefined}

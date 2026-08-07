@@ -21,6 +21,11 @@ export const es = {
   "header.tienda": "Tienda",
   "header.carrito": "Abrir el carrito",
   "header.idioma": "Idioma",
+  // Selector de tema. "Auto" = seguir el ajuste del teléfono/ordenador.
+  "tema.titulo": "Tema",
+  "tema.auto": "Tema automático, según tu dispositivo",
+  "tema.claro": "Tema claro",
+  "tema.oscuro": "Tema oscuro",
   "header.idioma.es": "Ver en español",
   "header.idioma.en": "Ver en inglés",
   "header.articulo": "artículo",

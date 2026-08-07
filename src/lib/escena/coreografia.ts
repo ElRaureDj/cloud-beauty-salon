@@ -110,10 +110,12 @@ export function orbitaRespiracion(p: number, tiempo: number): number {
   return 0;
 }
 
-// [3D] Cap. 1: la luz clave gana intensidad sobre el pelo (§4 Cap. 1).
-export function intensidadLuzClave(p: number): number {
+// [3D] Cap. 1: la luz clave gana intensidad sobre el pelo (§4 Cap. 1). `base`
+// depende del tema: sobre fondo claro la escena necesita menos clave y más
+// ambiente (ver LUCES_POR_TEMA en Escena.tsx).
+export function intensidadLuzClave(p: number, base = 1.2): number {
   const t = Math.min(Math.max(p / 0.15, 0), 1);
-  return 1.2 + 0.6 * t * t * (3 - 2 * t); // smoothstep
+  return base + 0.6 * t * t * (3 - 2 * t); // smoothstep
 }
 
 // [3D] Caps. 5-7: relleno desde el lado de la cámara (−z) — resuelve la bota a

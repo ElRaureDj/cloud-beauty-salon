@@ -48,7 +48,7 @@ export function BarraComparar() {
 
   return (
     <div className="anima-aparecer fixed inset-x-0 bottom-4 z-40 px-4">
-      <div className="mx-auto flex max-w-md items-center justify-between gap-3 rounded-full border border-tinta-suave/25 bg-fondo-0/95 py-2 pl-5 pr-2 shadow-[0_16px_48px_rgba(0,0,0,0.55)] backdrop-blur-md">
+      <div className="mx-auto flex max-w-md items-center justify-between gap-3 rounded-full border border-tinta-suave/25 bg-fondo-1/95 py-2 pl-5 pr-2 panel-flotante backdrop-blur-md">
         <span className="text-sm text-tinta-suave">
           {tf("comparar.n", { n: ids.length })}
         </span>

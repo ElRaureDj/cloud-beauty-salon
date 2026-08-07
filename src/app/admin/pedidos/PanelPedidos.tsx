@@ -89,7 +89,7 @@ export default function PanelPedidos({ inicial }: { inicial: PedidoVista[] }) {
       {pedidos.map((p) => (
         <li
           key={p.session_id}
-          className="rounded-2xl border border-tinta-suave/20 p-4"
+          className="rounded-2xl border border-borde p-4"
         >
           <div className="flex items-center justify-between gap-3">
             <span className="text-sm font-medium">

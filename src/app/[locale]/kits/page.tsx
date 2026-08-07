@@ -53,7 +53,7 @@ export default async function PaginaKits(props: PageProps<"/[locale]/kits">) {
           return (
             <section
               key={kit.id}
-              className="flex flex-col rounded-3xl border border-tinta-suave/20 p-5"
+              className="flex flex-col rounded-3xl border border-borde p-5"
             >
               <h2 className="font-display text-xl">{t(kit.nombre)}</h2>
               <p className="mt-1 text-sm text-tinta-suave">{t(kit.descripcion)}</p>
@@ -66,7 +66,7 @@ export default async function PaginaKits(props: PageProps<"/[locale]/kits">) {
                   <li key={p.id}>
                     <Link
                       href={r(`/producto/${p.id}`)}
-                      className="group block rounded-2xl border border-transparent p-1 transition-colors hover:border-tinta-suave/20"
+                      className="group block rounded-2xl border border-transparent p-1 transition-colors hover:border-borde"
                     >
                       <ImagenProducto producto={p} clase="aspect-square w-full" />
                       <p className="mt-1 line-clamp-2 text-[11px] leading-tight text-tinta-suave">

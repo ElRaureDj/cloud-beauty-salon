@@ -152,7 +152,7 @@ export default function PlanCronograma({
         {plan.map((paso, i) => (
           <li
             key={i}
-            className="flex items-center gap-4 rounded-2xl border border-tinta-suave/20 p-3"
+            className="flex items-center gap-4 rounded-2xl border border-borde p-3"
           >
             <div className="w-24 shrink-0">
               <p className="text-sm font-medium">{paso.dia}</p>
@@ -163,7 +163,7 @@ export default function PlanCronograma({
                 href={ruta(`/producto/${paso.producto.id}`)}
                 className="flex min-w-0 flex-1 items-center gap-3 underline-offset-4 hover:underline"
               >
-                <span className="relative aspect-square w-12 shrink-0 overflow-hidden rounded-lg bg-white">
+                <span className="relative aspect-square w-12 shrink-0 overflow-hidden rounded-lg border border-borde bg-white">
                   <Image
                     src={paso.producto.imagen}
                     alt={paso.producto.nombre}

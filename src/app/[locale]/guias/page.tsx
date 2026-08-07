@@ -38,7 +38,7 @@ export default async function PaginaGuias(props: PageProps<"/[locale]/guias">) {
           <li key={g.slug}>
             <Link
               href={r(`/guias/${g.slug}`)}
-              className="block rounded-3xl border border-tinta-suave/20 p-6 transition-colors hover:border-tinta-suave/50 hover:bg-fondo-1/40"
+              className="block rounded-3xl border border-borde p-6 transition-colors hover:border-tinta-suave/50 hover:bg-fondo-1/40"
             >
               <h2 className="font-display text-xl">{g.titulo[loc]}</h2>
               <p className="mt-2 text-sm leading-relaxed text-tinta-suave">

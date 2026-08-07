@@ -1,8 +1,15 @@
 @import "tailwindcss";
 
 /* TODO(guion): paleta pendiente del manual de marca {{MARCA}} (§3, §9.5).
-   Placeholders: degradado profundo cálido + 1 acento cálido para CTAs. */
+   Placeholders: degradado profundo cálido + 1 acento cálido para CTAs.
+
+   DOS TEMAS. El oscuro es la base (aquí, en :root); el claro es crema cálido,
+   no blanco puro: los packshots de TRUSS ya vienen sobre blanco y se quedaban
+   "flotando" sin borde. Toda la interfaz sale de estas seis variables, así que
+   el tema entero se cambia aquí — ver el bloque del tema claro más abajo. */
 :root {
+  color-scheme: dark;
+
   --fondo-0: #171012;
   --fondo-1: #34222b;
   --tinta: #f3ece7;
@@ -10,8 +17,121 @@
   --acento: #d99a63;
   --acento-tinta: #221306;
 
+  /* Degradado del isotipo: en claro tiene que oscurecerse o la nube se lava
+     sobre el crema (el dorado de marca da 2.2:1 ahí). */
+  --marca-a: #f2d3b0;
+  --marca-b: #d99a63;
+
+  /* Halo de legibilidad del texto que va SOBRE el 3D: tiene que ser del color
+     del fondo, así que cambia con el tema (en claro, un halo oscuro haría el
+     texto ilegible en vez de salvarlo). */
+  --sombra-texto: 0 1px 2px rgba(23, 16, 18, 0.55),
+    0 0 8px rgba(23, 16, 18, 0.7), 0 8px 32px rgba(23, 16, 18, 0.65);
+
+
+  /* Piezas que NO se pueden derivar de los seis colores porque dependen del
+     tema de otra manera (orden de luminancia, dirección del brillo, densidad
+     del velo). Todas tienen su pareja en el bloque del tema claro. */
+
+  /* Borde sutil de tarjetas y paneles. En oscuro, tinta-suave contrasta 10:1
+     con el fondo y un 20% basta; en claro contrasta 6:1 y el mismo 20% deja
+     las tarjetas difuminadas — por eso NO es un simple `border-tinta-suave/20`. */
+  --borde: color-mix(in srgb, var(--tinta-suave) 20%, transparent);
+
+  /* Elevación de paneles flotantes (buscador, barra de comparar, overlays).
+     Una sombra negra sobre crema no da profundidad: da un halo gris sucio. */
+  --sombra-flotante: 0 16px 48px
+    color-mix(in srgb, #000 52%, transparent);
+
+  /* Velo de los <dialog>. */
+  --velo-modal: rgba(23, 16, 18, 0.6);
+
+  /* Halo del degradado de marca: en oscuro ilumina desde ARRIBA (fondo-1 es
+     más claro que fondo-0); en claro el orden se invierte, así que el
+     degradado se voltea o saldría un manchón beige en la parte de arriba. */
+  --degradado-marca: radial-gradient(
+    120% 90% at 50% 12%,
+    var(--fondo-1) 0%,
+    var(--fondo-0) 70%
+  );
+
+  /* Hover del CTA: en oscuro el acento se ENCIENDE; en claro es caramelo sobre
+     crema y aclararlo lo lavaría — ahí hay que oscurecerlo. */
+  --hover-brillo: 1.06;
+
+  /* Pulgar de la barra de scroll: mismo porcentaje = mucho menos contraste en
+     claro, donde tinta-suave está más cerca del fondo. */
+  --scroll-pulgar: color-mix(in srgb, var(--tinta-suave) 35%, transparent);
+
   /* §0: la página mide ~800vh en móvil y ~700vh en desktop. */
   --alto-experiencia: 800vh;
+}
+
+/* Los valores del tema claro viven en un solo sitio y se aplican por dos vías:
+   el ajuste del dispositivo (modo "auto", sin atributo) y la elección explícita
+   de la clienta (data-tema). El acento se OSCURECE (5.9:1 sobre el crema): el
+   dorado de marca sobre crema no llega a 2.5:1 y hay 126 sitios que lo usan
+   como color de TEXTO. La identidad dorada sigue viva en el isotipo. */
+@media (prefers-color-scheme: light) {
+  :root:not([data-tema="oscuro"]) {
+    color-scheme: light;
+
+    --fondo-0: #faf6f1;
+    --fondo-1: #efe3d7;
+    --tinta: #2b1e22;
+    --tinta-suave: #6d5b55;
+    --acento: #8f5019;
+    --acento-tinta: #fffaf4;
+
+    --marca-a: #c88a45;
+    --marca-b: #8f5019;
+
+    --sombra-texto: 0 1px 2px rgba(250, 246, 241, 0.85),
+      0 0 8px rgba(250, 246, 241, 0.95), 0 8px 28px rgba(250, 246, 241, 0.95);
+
+    --borde: color-mix(in srgb, var(--tinta-suave) 34%, transparent);
+    --sombra-flotante: 0 16px 48px
+      color-mix(in srgb, var(--tinta) 22%, transparent);
+    --velo-modal: rgba(43, 30, 34, 0.38);
+    --degradado-marca: radial-gradient(
+      120% 90% at 50% 12%,
+      var(--fondo-0) 0%,
+      var(--fondo-1) 95%
+    );
+    --hover-brillo: 0.93;
+    --scroll-pulgar: color-mix(in srgb, var(--tinta-suave) 55%, transparent);
+  }
+}
+
+/* Va DESPUÉS de la media query a propósito: misma especificidad, gana el
+   orden — así "Claro" explícito manda aunque el dispositivo esté en oscuro. */
+:root[data-tema="claro"] {
+  color-scheme: light;
+
+  --fondo-0: #faf6f1;
+  --fondo-1: #efe3d7;
+  --tinta: #2b1e22;
+  --tinta-suave: #6d5b55;
+  --acento: #8f5019;
+  --acento-tinta: #fffaf4;
+
+  --marca-a: #c88a45;
+  --marca-b: #8f5019;
+
+  --sombra-texto: 0 1px 2px rgba(250, 246, 241, 0.85),
+    0 0 8px rgba(250, 246, 241, 0.95), 0 8px 28px rgba(250, 246, 241, 0.95);
+
+  --borde: color-mix(in srgb, var(--tinta-suave) 34%, transparent);
+  --sombra-flotante: 0 16px 48px
+    color-mix(in srgb, var(--tinta) 22%, transparent);
+  --velo-modal: rgba(43, 30, 34, 0.38);
+  --degradado-marca: radial-gradient(
+    120% 90% at 50% 12%,
+    var(--fondo-0) 0%,
+    var(--fondo-1) 95%
+  );
+  --hover-brillo: 0.93;
+  --scroll-pulgar: color-mix(in srgb, var(--tinta-suave) 55%, transparent);
 }
 
 @media (min-width: 768px) {
@@ -27,6 +147,7 @@
   --color-tinta-suave: var(--tinta-suave);
   --color-acento: var(--acento);
   --color-acento-tinta: var(--acento-tinta);
+  --color-borde: var(--borde);
   --font-sans: var(--font-sans-base);
   --font-display: var(--font-display-base);
 }
@@ -60,13 +181,24 @@ body {
 @media (pointer: fine) {
   * {
     scrollbar-width: thin;
-    scrollbar-color: color-mix(in srgb, var(--tinta-suave) 35%, transparent)
-      transparent;
+    scrollbar-color: var(--scroll-pulgar) transparent;
   }
 }
 
+/* Todo texto que se lee ENCIMA del canvas 3D: el contraste no puede depender
+   de lo que la cámara tenga detrás en ese instante. */
+.texto-sobre-escena {
+  text-shadow: var(--sombra-texto);
+}
+
 .degradado-marca {
-  background: radial-gradient(120% 90% at 50% 12%, var(--fondo-1) 0%, var(--fondo-0) 70%);
+  background: var(--degradado-marca);
+}
+
+/* Paneles que flotan por encima del contenido con el MISMO color que la
+   página: sin esta sombra no se leen como una capa aparte. */
+.panel-flotante {
+  box-shadow: var(--sombra-flotante);
 }
 
 /* Botones: dicen exactamente lo que hacen (§3). El primario gana una
@@ -77,7 +209,7 @@ body {
 
 @media (hover: hover) {
   .boton-primario:hover {
-    filter: brightness(1.06);
+    filter: brightness(var(--hover-brillo));
     box-shadow: 0 6px 24px color-mix(in srgb, var(--acento) 28%, transparent);
     transform: translateY(-1px);
   }
@@ -102,7 +234,7 @@ body {
 }
 
 dialog::backdrop {
-  background: rgba(23, 16, 18, 0.6);
+  background: var(--velo-modal);
   backdrop-filter: blur(4px);
   animation: fundido-backdrop 0.3s ease-out both;
 }

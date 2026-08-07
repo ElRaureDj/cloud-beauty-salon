@@ -51,7 +51,7 @@ export default function ModeracionResenas({
         </li>
       )}
       {pendientes.map((r) => (
-        <li key={r.id} className="rounded-2xl border border-tinta-suave/20 p-4">
+        <li key={r.id} className="rounded-2xl border border-borde p-4">
           <div className="flex items-center justify-between gap-3">
             <span className="text-sm font-medium">
               {r.autor} · {r.rating}★

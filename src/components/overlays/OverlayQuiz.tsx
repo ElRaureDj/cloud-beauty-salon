@@ -213,7 +213,7 @@ export default function OverlayQuiz() {
                     key={g.grupo}
                     role="group"
                     aria-label={t(g.clave)}
-                    className="rounded-2xl border border-tinta-suave/20 p-3 text-center"
+                    className="rounded-2xl border border-borde p-3 text-center"
                   >
                     <div className="flex items-center justify-center gap-1 text-tinta-suave">
                       <OndaPatron nivel={g.onda} />
@@ -261,7 +261,7 @@ export default function OverlayQuiz() {
                       className={`rounded-2xl border px-4 py-3 text-left transition-colors ${
                         activo
                           ? "border-acento"
-                          : "border-tinta-suave/20 hover:border-acento"
+                          : "border-borde hover:border-acento"
                       }`}
                     >
                       <span className="block">{t(o.clave)}</span>
@@ -381,7 +381,7 @@ export default function OverlayQuiz() {
             {recomendacion.paquete.map((p) => (
               <li
                 key={p.id}
-                className="flex items-center justify-between gap-3 rounded-2xl border border-tinta-suave/20 px-4 py-3"
+                className="flex items-center justify-between gap-3 rounded-2xl border border-borde px-4 py-3"
               >
                 <div>
                   <p className="text-sm">{p.nombre}</p>

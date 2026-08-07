@@ -50,9 +50,9 @@ export default function VistosRecientes({
           <li key={p.id} className="w-32 shrink-0 snap-start sm:w-36">
             <Link
               href={ruta(`/producto/${p.id}`)}
-              className="group block rounded-2xl border border-transparent p-1 transition-colors hover:border-tinta-suave/20"
+              className="group block rounded-2xl border border-transparent p-1 transition-colors hover:border-borde"
             >
-              <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-white">
+              <div className="relative aspect-square w-full overflow-hidden rounded-2xl border border-borde bg-white">
                 <Image
                   src={p.imagen}
                   alt={p.nombre}

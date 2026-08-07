@@ -112,10 +112,10 @@ export default function ArmaRutina({ items }: { items: ItemRutinaBuilder[] }) {
                     className={`block w-full rounded-2xl border p-2 text-left transition-colors ${
                       activo
                         ? "border-acento bg-fondo-1/60"
-                        : "border-tinta-suave/20 hover:border-tinta-suave/50"
+                        : "border-borde hover:border-tinta-suave/50"
                     }`}
                   >
-                    <span className="relative block aspect-square w-full overflow-hidden rounded-xl bg-white">
+                    <span className="relative block aspect-square w-full overflow-hidden rounded-xl border border-borde bg-white">
                       <Image
                         src={p.imagen}
                         alt=""
@@ -140,7 +140,7 @@ export default function ArmaRutina({ items }: { items: ItemRutinaBuilder[] }) {
       ))}
 
       {/* Resumen pegajoso: total, ahorro y CTA. */}
-      <div className="sticky bottom-0 -mx-6 border-t border-tinta-suave/20 bg-fondo-0/90 px-6 py-4 backdrop-blur-md">
+      <div className="sticky bottom-0 -mx-6 border-t border-borde bg-fondo-0/90 px-6 py-4 backdrop-blur-md">
         <div className="mx-auto flex max-w-2xl flex-wrap items-center justify-between gap-3">
           <div>
             {elegidos.length >= 2 ? (

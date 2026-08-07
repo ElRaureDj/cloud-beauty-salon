@@ -13,6 +13,8 @@ import {
   orbitaRespiracion,
 } from "@/lib/escena/coreografia";
 import { useExperiencia } from "@/stores/experiencia";
+import { useTema } from "@/stores/tema";
+import type { TemaResuelto } from "@/lib/tema";
 import VitrinaFlotante from "./VitrinaFlotante";
 
 // Asset definitivo (§8): "Business Lady 02" de ida-faber (CGTrader, licencia
@@ -78,29 +80,43 @@ function ModeloGlb({ alPrimerFrame }: PropsModelo) {
 // [3D] Sombra de contacto + halo cálido bajo los pies: ancla la figura al
 // "suelo" sin coste de shadow maps. Una sola textura de canvas compone el
 // charco de luz (acento muy tenue) y el núcleo oscuro bajo los pies.
-function SombraContacto() {
+// El charco de luz cálido existía para dar contraste local sobre el fondo casi
+// negro; sobre crema no aporta nada y ensucia. En claro queda solo la sombra
+// —más ancha y más suave, como la de una luz de estudio sobre suelo claro—.
+const SUELO_POR_TEMA: Record<
+  TemaResuelto,
+  { halo: string | null; nucleo: string; radioNucleo: number }
+> = {
+  oscuro: { halo: "217, 154, 99", nucleo: "8, 4, 6", radioNucleo: 95 },
+  claro: { halo: null, nucleo: "74, 52, 44", radioNucleo: 120 },
+};
+
+function SombraContacto({ tema }: { tema: TemaResuelto }) {
   const textura = useMemo(() => {
+    const suelo = SUELO_POR_TEMA[tema];
     const lienzo = document.createElement("canvas");
     lienzo.width = 512;
     lienzo.height = 512;
     const ctx = lienzo.getContext("2d")!;
-    // Halo cálido amplio (da contraste local sobre el fondo casi negro).
-    const halo = ctx.createRadialGradient(256, 256, 0, 256, 256, 250);
-    halo.addColorStop(0, "rgba(217, 154, 99, 0.14)");
-    halo.addColorStop(0.55, "rgba(217, 154, 99, 0.05)");
-    halo.addColorStop(1, "rgba(217, 154, 99, 0)");
-    ctx.fillStyle = halo;
-    ctx.fillRect(0, 0, 512, 512);
+    // Halo cálido amplio (solo en oscuro: da contraste local sobre el casi negro).
+    if (suelo.halo) {
+      const halo = ctx.createRadialGradient(256, 256, 0, 256, 256, 250);
+      halo.addColorStop(0, `rgba(${suelo.halo}, 0.14)`);
+      halo.addColorStop(0.55, `rgba(${suelo.halo}, 0.05)`);
+      halo.addColorStop(1, `rgba(${suelo.halo}, 0)`);
+      ctx.fillStyle = halo;
+      ctx.fillRect(0, 0, 512, 512);
+    }
     // Núcleo de sombra bajo los pies.
-    const nucleo = ctx.createRadialGradient(256, 256, 0, 256, 256, 95);
-    nucleo.addColorStop(0, "rgba(8, 4, 6, 0.55)");
-    nucleo.addColorStop(1, "rgba(8, 4, 6, 0)");
+    const nucleo = ctx.createRadialGradient(256, 256, 0, 256, 256, suelo.radioNucleo);
+    nucleo.addColorStop(0, `rgba(${suelo.nucleo}, ${suelo.halo ? 0.55 : 0.42})`);
+    nucleo.addColorStop(1, `rgba(${suelo.nucleo}, 0)`);
     ctx.fillStyle = nucleo;
     ctx.fillRect(0, 0, 512, 512);
     const t = new THREE.CanvasTexture(lienzo);
     t.colorSpace = THREE.SRGBColorSpace;
     return t;
-  }, []);
+  }, [tema]);
 
   useEffect(() => () => textura.dispose(), [textura]);
 
@@ -121,9 +137,11 @@ function SombraContacto() {
 type PropsRig = {
   luzRef: React.RefObject<THREE.DirectionalLight | null>;
   luzRellenoRef: React.RefObject<THREE.DirectionalLight | null>;
+  /** Intensidad base de la clave según el tema (Rig la pisa cada frame). */
+  claveBase: number;
 };
 
-function Rig({ luzRef, luzRellenoRef }: PropsRig) {
+function Rig({ luzRef, luzRellenoRef, claveBase }: PropsRig) {
   const { camera } = useThree();
   const posicion = useRef(new THREE.Vector3());
   const objetivo = useRef(new THREE.Vector3());
@@ -169,7 +187,8 @@ function Rig({ luzRef, luzRellenoRef }: PropsRig) {
     camera.lookAt(miradaSuave.current);
 
     // [3D] La luz clave gana intensidad sobre el pelo en el Cap. 1 (§4).
-    if (luzRef.current) luzRef.current.intensity = intensidadLuzClave(progreso);
+    if (luzRef.current)
+      luzRef.current.intensity = intensidadLuzClave(progreso, claveBase);
     // [3D] El relleno del tramo bajo se enciende al descender (caps. 5-6):
     // arregla la bota a contraluz y el tramo bajo apagado (pulido §4).
     if (luzRellenoRef.current)
@@ -184,9 +203,24 @@ type PropsEscena = {
   alAbrirProducto: (id: string) => void;
 };
 
+// Alumbrado por tema. Sobre crema, el suelo y las paredes imaginarias devuelven
+// luz en vez de tragársela: el rebote de la hemisférica sube y el rim baja (su
+// trabajo era separar la silueta de un fondo casi negro; sobre claro solo
+// ensucia el borde del pelo). Sin más ambiente, la figura se lee como un
+// recorte oscuro pegado sobre el crema.
+const LUCES_POR_TEMA: Record<
+  TemaResuelto,
+  { rebote: number; ambiente: number; rim: number; clave: number }
+> = {
+  oscuro: { rebote: 0x2a1c1d, ambiente: 0.55, rim: 0.35, clave: 1.2 },
+  claro: { rebote: 0xe7dacc, ambiente: 0.9, rim: 0.16, clave: 1.05 },
+};
+
 export default function Escena({ alPrimerFrame, alAbrirProducto }: PropsEscena) {
   const luzRef = useRef<THREE.DirectionalLight | null>(null);
   const luzRellenoRef = useRef<THREE.DirectionalLight | null>(null);
+  const tema = useTema((s) => s.resuelto);
+  const luces = LUCES_POR_TEMA[tema];
 
   return (
     <Canvas
@@ -198,17 +232,17 @@ export default function Escena({ alPrimerFrame, alAbrirProducto }: PropsEscena) 
           hemisférica de ambiente + clave frontal + rim trasero cálido (separa
           la silueta del fondo oscuro) + relleno bajo que se enciende al
           descender (Rig). TODO(guion): HDRI estudio 1K de Poly Haven (§8). */}
-      <hemisphereLight args={[0xfff1e6, 0x2a1c1d, 0.55]} />
+      <hemisphereLight args={[0xfff1e6, luces.rebote, luces.ambiente]} />
       <directionalLight
         ref={luzRef}
         position={[1.2, 2.6, 1.6]}
-        intensity={1.2}
+        intensity={luces.clave}
         color={0xffe9d6}
       />
       {/* Rim tenue: separa melena y hombros del fondo oscuro todo el viaje. */}
       <directionalLight
         position={[-2.2, 2.3, -1.4]}
-        intensity={0.35}
+        intensity={luces.rim}
         color={0xd9a883}
       />
       {/* Relleno de los caps. 5-7 (intensidad dinámica en Rig). */}
@@ -221,9 +255,9 @@ export default function Escena({ alPrimerFrame, alAbrirProducto }: PropsEscena) 
       <Suspense fallback={null}>
         <ModeloGlb alPrimerFrame={alPrimerFrame} />
       </Suspense>
-      <SombraContacto />
+      <SombraContacto tema={tema} />
       <VitrinaFlotante alAbrirProducto={alAbrirProducto} />
-      <Rig luzRef={luzRef} luzRellenoRef={luzRellenoRef} />
+      <Rig luzRef={luzRef} luzRellenoRef={luzRellenoRef} claveBase={luces.clave} />
     </Canvas>
   );
 }

@@ -130,12 +130,14 @@ export default function CapitulosDom({ activo }: { activo: boolean }) {
     <div className="pointer-events-none fixed inset-0 z-30" aria-hidden={!activo}>
       {/* Cap. 0 — tagline de portada */}
       <div ref={taglineRef} className="absolute inset-x-6 bottom-[22%] text-center">
-        <p className="text-xs uppercase tracking-[0.3em] text-tinta-suave">
+        <p className="texto-sobre-escena text-xs uppercase tracking-[0.3em] text-tinta-suave">
           {t("marca.nombre")}
         </p>
-        {/* Sombra doble (contorno + halo del color de fondo): el contraste no
-            puede depender de lo que la cámara tenga detrás. */}
-        <h2 className="mt-3 font-display text-3xl sm:text-5xl [text-shadow:0_1px_2px_rgba(23,16,18,0.55),0_8px_32px_rgba(23,16,18,0.65)]">
+        {/* Sombra doble (contorno + halo DEL COLOR DE FONDO): el contraste no
+            puede depender de lo que la cámara tenga detrás. El halo va en una
+            variable CSS porque cambia con el tema — en claro, un halo oscuro
+            haría el texto ilegible en vez de salvarlo (ver globals.css). */}
+        <h2 className="mt-3 font-display text-3xl sm:text-5xl texto-sobre-escena">
           {t("hero.tagline")}
         </h2>
       </div>
@@ -143,7 +145,7 @@ export default function CapitulosDom({ activo }: { activo: boolean }) {
       {/* Cap. 0 — indicador de scroll */}
       <div
         ref={indicadorRef}
-        className="absolute inset-x-0 bottom-8 flex flex-col items-center gap-1 text-tinta-suave"
+        className="texto-sobre-escena absolute inset-x-0 bottom-8 flex flex-col items-center gap-1 text-tinta-suave"
       >
         <span className="text-xs uppercase tracking-[0.25em]">{t("hero.desliza")}</span>
         <svg
@@ -161,7 +163,7 @@ export default function CapitulosDom({ activo }: { activo: boolean }) {
       {/* Cap. 1 — copy.pelo.intro */}
       <p
         ref={copyPeloRef}
-        className="invisible absolute inset-x-6 top-[38%] text-center font-display text-3xl opacity-0 sm:text-4xl [text-shadow:0_1px_2px_rgba(23,16,18,0.55),0_8px_32px_rgba(23,16,18,0.65)]"
+        className="invisible absolute inset-x-6 top-[38%] text-center font-display text-3xl opacity-0 sm:text-4xl texto-sobre-escena"
       >
         {t("copy.pelo.intro")}
       </p>

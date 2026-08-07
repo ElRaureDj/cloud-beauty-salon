@@ -26,7 +26,7 @@ function Estrellas({ valor, clase = "text-base" }: { valor: number; clase?: stri
   return (
     <span aria-hidden className={`${clase} leading-none tracking-tight`}>
       {Array.from({ length: 5 }, (_, i) => (
-        <span key={i} className={i < llenas ? "text-acento" : "text-tinta-suave/30"}>
+        <span key={i} className={i < llenas ? "text-acento" : "text-tinta-suave/45"}>
           ★
         </span>
       ))}
@@ -62,7 +62,7 @@ export default function Resenas({ productoId }: { productoId: string }) {
 
   const { resenas } = estado;
   return (
-    <section className="mt-14 border-t border-tinta-suave/15 pt-10">
+    <section className="mt-14 border-t border-borde pt-10">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="font-display text-xl">{t("resenas.titulo")}</h2>
         {resenas.total > 0 && (
@@ -78,7 +78,7 @@ export default function Resenas({ productoId }: { productoId: string }) {
       ) : (
         <ul className="mt-5 flex flex-col gap-4">
           {resenas.items.map((r) => (
-            <li key={r.id} className="rounded-2xl border border-tinta-suave/20 p-4">
+            <li key={r.id} className="rounded-2xl border border-borde p-4">
               <div className="flex items-center justify-between gap-3">
                 <span className="flex min-w-0 items-center gap-2.5 text-sm font-medium">
                   {/* Avatar con inicial: ancla visual sin pedir foto de perfil. */}
@@ -236,7 +236,7 @@ function FormularioResena({
     <form
       onSubmit={enviar}
       noValidate
-      className="mt-6 rounded-2xl border border-tinta-suave/20 p-4"
+      className="mt-6 rounded-2xl border border-borde p-4"
     >
       {/* Honeypot: invisible para humanos; los bots que lo rellenen reciben un
           éxito falso sin guardar nada (route.ts). */}
@@ -290,7 +290,7 @@ function FormularioResena({
             aria-label={tf("resenas.estrellas", { n })}
             onClick={() => setRating(n)}
             className={`text-2xl leading-none transition-colors ${
-              n <= rating ? "text-acento" : "text-tinta-suave/60 hover:text-acento"
+              n <= rating ? "text-acento" : "text-tinta-suave hover:text-acento"
             }`}
           >
             ★

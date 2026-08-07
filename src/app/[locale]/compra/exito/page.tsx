@@ -39,7 +39,7 @@ export default async function PaginaCompraExito(
         {sessionId && (
           <div className="mx-auto mt-6 max-w-sm">
             <p className="text-xs text-tinta-suave">{t("compra.exito.numero")}</p>
-            <p className="mt-1 break-all rounded-lg border border-tinta-suave/20 px-3 py-2 font-mono text-xs">
+            <p className="mt-1 break-all rounded-lg border border-borde px-3 py-2 font-mono text-xs">
               {sessionId}
             </p>
             <Link

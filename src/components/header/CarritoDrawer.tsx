@@ -137,7 +137,7 @@ export default function CarritoDrawer() {
             {carrito.map((linea) => (
               <li
                 key={linea.id}
-                className="rounded-2xl border border-tinta-suave/20 p-3"
+                className="rounded-2xl border border-borde p-3"
               >
                 <div className="flex items-start justify-between gap-3">
                   <Link
@@ -192,7 +192,7 @@ export default function CarritoDrawer() {
 
           <Sugerencias ids={carrito.map((l) => l.id)} />
 
-          <div className="mt-4 border-t border-tinta-suave/20 pt-4">
+          <div className="mt-4 border-t border-borde pt-4">
             {!preciosPendientes && subtotal > 0 && (
               <div className="mb-4">
                 <p className="text-xs text-tinta-suave">
@@ -317,14 +317,14 @@ function Sugerencias({ ids }: { ids: string[] }) {
   if (items.length === 0) return null;
 
   return (
-    <div className="mt-4 border-t border-tinta-suave/15 pt-4">
+    <div className="mt-4 border-t border-borde pt-4">
       <p className="text-xs uppercase tracking-widest text-tinta-suave">
         {t("carrito.sugerencias")}
       </p>
       <ul className="mt-2 flex flex-col gap-2">
         {items.map((s) => (
           <li key={s.id} className="flex items-center gap-3">
-            <span className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-white">
+            <span className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg border border-borde bg-white">
               <Image
                 src={s.imagen}
                 alt=""

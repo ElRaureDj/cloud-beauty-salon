@@ -204,7 +204,7 @@ export default async function PaginaProducto(
       {(() => {
         const larga = descripcionLargaProducto(producto.id, loc);
         return larga ? (
-          <section className="mt-14 max-w-prose border-t border-tinta-suave/15 pt-10">
+          <section className="mt-14 max-w-prose border-t border-borde pt-10">
             <h2 className="font-display text-xl">
               {t("producto.descripcionSeccion")}
             </h2>
@@ -216,7 +216,7 @@ export default async function PaginaProducto(
       })()}
 
       {/* Información adicional: atributos del producto en una tabla. */}
-      <section className="mt-14 max-w-prose border-t border-tinta-suave/15 pt-10">
+      <section className="mt-14 max-w-prose border-t border-borde pt-10">
         <h2 className="font-display text-xl">{t("producto.infoAdicional")}</h2>
         <dl className="mt-3 divide-y divide-tinta-suave/15 text-sm">
           {(
@@ -253,7 +253,7 @@ export default async function PaginaProducto(
               <li key={p.id}>
                 <Link
                   href={r(`/producto/${p.id}`)}
-                  className="group block rounded-3xl border border-transparent p-2 transition-colors hover:border-tinta-suave/20"
+                  className="group block rounded-3xl border border-transparent p-2 transition-colors hover:border-borde"
                 >
                   <ImagenProducto producto={p} clase="aspect-square w-full" />
                   <p className="mt-2 text-sm leading-snug">{p.nombre}</p>

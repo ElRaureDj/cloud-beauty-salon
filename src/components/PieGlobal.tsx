@@ -45,7 +45,7 @@ export default function PieGlobal() {
   ];
 
   return (
-    <footer className="mt-24 border-t border-tinta-suave/15">
+    <footer className="mt-24 border-t border-borde">
       <div className="mx-auto max-w-5xl px-6 py-12">
         <div className="flex flex-col gap-10 sm:flex-row sm:justify-between">
           <div className="max-w-xs">

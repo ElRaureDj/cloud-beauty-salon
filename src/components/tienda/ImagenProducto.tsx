@@ -22,7 +22,7 @@ export default function ImagenProducto({
 }) {
   const agotado = estadoStock?.agotado ?? false;
   return (
-    <div className={`relative overflow-hidden rounded-2xl bg-white ${clase}`}>
+    <div className={`relative overflow-hidden rounded-2xl border border-borde bg-white ${clase}`}>
       <Image
         src={producto.imagen}
         alt={producto.nombre}
@@ -36,7 +36,7 @@ export default function ImagenProducto({
       />
       {agotado ? (
         <span className="absolute inset-0 grid place-items-center">
-          <span className="rounded-full bg-black/75 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-white">
+          <span className="rounded-full bg-tinta/80 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-fondo-0">
             {estadoStock?.texto}
           </span>
         </span>

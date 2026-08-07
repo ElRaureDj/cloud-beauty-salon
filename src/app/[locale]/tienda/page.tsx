@@ -379,7 +379,7 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
       {productos.length === 0 ? (
         <div className="mt-14 grid place-items-center rounded-3xl border border-dashed border-tinta-suave/25 px-6 py-16 text-center">
           <div>
-            <p className="font-display text-3xl text-tinta-suave/60" aria-hidden>
+            <p className="font-display text-3xl text-tinta-suave/75" aria-hidden>
               ◌
             </p>
             <p className="mt-3 text-tinta-suave">{t("tienda.sinResultados")}</p>
@@ -402,7 +402,7 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
               <li key={p.id} className="group relative">
                 <Link
                   href={r(`/producto/${p.id}`)}
-                  className="group block rounded-3xl border border-transparent p-2 transition-colors hover:border-tinta-suave/20 hover:bg-fondo-1/40"
+                  className="group block rounded-3xl border border-transparent p-2 transition-colors hover:border-borde hover:bg-fondo-1/40"
                 >
                   <ImagenProducto
                     producto={p}
@@ -423,7 +423,7 @@ export default async function PaginaTienda(props: PageProps<"/[locale]/tienda">)
                 <CompararCheck id={p.id} />
                 <BotonFavorito
                   id={p.id}
-                  className="absolute right-3 top-3 h-9 w-9 bg-fondo-0/70 backdrop-blur-sm"
+                  className="absolute right-3 top-3 h-9 w-9 border border-borde bg-fondo-1/90 backdrop-blur-sm"
                 />
                 {/* El "+" se revela al hover SOLO donde existe hover real
                     (media hover:hover, no por ancho: una tablet táctil ancha

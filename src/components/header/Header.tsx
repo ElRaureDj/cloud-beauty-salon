@@ -8,10 +8,12 @@ import { LOCALES } from "@/lib/i18n";
 import { rutaEnOtroIdioma } from "@/lib/i18n/rutas";
 import { prefiereMenosMovimiento } from "@/lib/webgl";
 import { LogoNube } from "@/components/marca/Logo";
+import SelectorTema from "./SelectorTema";
 import { contarArticulos, useTienda } from "@/stores/carrito";
 import { useFavoritos } from "@/stores/favoritos";
 import { useVistos } from "@/stores/vistos";
 import { useExperiencia } from "@/stores/experiencia";
+import { sincronizarTema } from "@/stores/tema";
 import CarritoDrawer from "./CarritoDrawer";
 
 // Selector de idioma (§9): conserva la subruta actual Y su query al cambiar —
@@ -79,6 +81,11 @@ export default function Header() {
     void useFavoritos.persist.rehydrate();
     void useVistos.persist.rehydrate();
   }, []);
+
+  // El tema ya lo aplicó el script inline del <head> (sin fogonazo); esto solo
+  // lleva el valor al store —lo necesita la escena 3D— y deja escuchando el
+  // ajuste del dispositivo por si cambia con la pestaña abierta.
+  useEffect(() => sincronizarTema(), []);
 
   // El estado de overlay vive en memoria y sobrevive a las navegaciones
   // cliente: al cambiar de ruta, cualquier overlay abierto se cierra.
@@ -153,6 +160,8 @@ export default function Header() {
           <Suspense fallback={<SelectorIdiomaVista sufijo="" />}>
             <SelectorIdioma />
           </Suspense>
+
+          <SelectorTema />
 
           <button
             type="button"

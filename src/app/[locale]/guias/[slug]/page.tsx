@@ -92,14 +92,14 @@ export default async function PaginaGuia(
       ))}
 
       {productos.length > 0 && (
-        <section className="mt-14 border-t border-tinta-suave/15 pt-10">
+        <section className="mt-14 border-t border-borde pt-10">
           <h2 className="font-display text-xl">{t("guias.productos")}</h2>
           <ul className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
             {productos.map((p) => (
               <li key={p.id}>
                 <Link
                   href={r(`/producto/${p.id}`)}
-                  className="group block rounded-3xl border border-transparent p-2 transition-colors hover:border-tinta-suave/20 hover:bg-fondo-1/40"
+                  className="group block rounded-3xl border border-transparent p-2 transition-colors hover:border-borde hover:bg-fondo-1/40"
                 >
                   <ImagenProducto producto={p} clase="aspect-square w-full" />
                   <p className="mt-2 text-sm leading-snug">{p.nombre}</p>

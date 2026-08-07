@@ -9,6 +9,8 @@ import { useT } from "@/lib/i18n/client";
 import type { Traductor } from "@/lib/i18n";
 import { VITRINA } from "@/lib/escena/coreografia";
 import { useExperiencia } from "@/stores/experiencia";
+import { useTema } from "@/stores/tema";
+import type { TemaResuelto } from "@/lib/tema";
 
 // [3D] Cap. 3 — vitrina flotante (§4): un puñado de productos acompaña el
 // descenso; cada uno clicable → /producto/[slug]. Las tarjetas se colocan DENTRO
@@ -48,7 +50,50 @@ const HUECOS = [
 const LIENZO_W = 300;
 const LIENZO_H = 400;
 
-function texturaTarjeta(producto: Producto, tr: Traductor): THREE.CanvasTexture {
+// Las tarjetas son blancas en los dos temas (el packshot viene sobre blanco y
+// se funde con la tarjeta). Lo que cambia en claro es cómo se DESPEGAN del
+// fondo: sobre crema, una tarjeta blanca translúcida es casi invisible, así que
+// se opacan y ganan borde y sombra.
+const TARJETA_POR_TEMA: Record<
+  TemaResuelto,
+  {
+    sombra: string;
+    desenfoque: number;
+    borde: string;
+    grosorBorde: number;
+    opacidad: number;
+    acento: string;
+    categoria: string;
+  }
+> = {
+  oscuro: {
+    sombra: "rgba(18,12,15,0.30)",
+    desenfoque: 26,
+    borde: "rgba(201,186,179,0.55)",
+    grosorBorde: 1.5,
+    opacidad: 0.72,
+    acento: "rgba(217,154,99,0.9)",
+    categoria: "rgba(160,110,70,0.95)",
+  },
+  claro: {
+    sombra: "rgba(74,52,44,0.28)",
+    desenfoque: 30,
+    borde: "rgba(140,116,104,0.5)",
+    grosorBorde: 2,
+    opacidad: 0.95,
+    // El acento del tema claro (#8f5019): si no, la vitrina va en dorado
+    // mientras el resto de la pantalla va en caramelo.
+    acento: "rgba(143,80,25,0.95)",
+    categoria: "rgba(122,84,56,0.95)",
+  },
+};
+
+function texturaTarjeta(
+  producto: Producto,
+  tr: Traductor,
+  tema: TemaResuelto,
+): THREE.CanvasTexture {
+  const estilo = TARJETA_POR_TEMA[tema];
   const lienzo = document.createElement("canvas");
   lienzo.width = LIENZO_W;
   lienzo.height = LIENZO_H;
@@ -66,8 +111,8 @@ function texturaTarjeta(producto: Producto, tr: Traductor): THREE.CanvasTexture 
 
     // Sombra suave detrás de la tarjeta.
     ctx.save();
-    ctx.shadowColor = "rgba(18,12,15,0.30)";
-    ctx.shadowBlur = 26;
+    ctx.shadowColor = estilo.sombra;
+    ctx.shadowBlur = estilo.desenfoque;
     ctx.shadowOffsetY = 12;
     ctx.beginPath();
     ctx.roundRect(cx, cy, cw, ch, radio);
@@ -83,8 +128,8 @@ function texturaTarjeta(producto: Producto, tr: Traductor): THREE.CanvasTexture 
     ctx.roundRect(cx, cy, cw, ch, radio);
     ctx.fillStyle = grad;
     ctx.fill();
-    ctx.strokeStyle = "rgba(201,186,179,0.55)";
-    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = estilo.borde;
+    ctx.lineWidth = estilo.grosorBorde;
     ctx.stroke();
 
     // Filete de acento bajo la imagen.
@@ -92,7 +137,7 @@ function texturaTarjeta(producto: Producto, tr: Traductor): THREE.CanvasTexture 
     ctx.beginPath();
     ctx.moveTo(medioX - 22, 266);
     ctx.lineTo(medioX + 22, 266);
-    ctx.strokeStyle = "rgba(217,154,99,0.9)";
+    ctx.strokeStyle = estilo.acento;
     ctx.lineWidth = 2;
     ctx.stroke();
 
@@ -123,7 +168,7 @@ function texturaTarjeta(producto: Producto, tr: Traductor): THREE.CanvasTexture 
       y += 22;
     }
     ctx.font = "500 13px system-ui, sans-serif";
-    ctx.fillStyle = "rgba(160,110,70,0.95)";
+    ctx.fillStyle = estilo.categoria;
     ctx.fillText(
       nombreCategoria(producto.categoria, tr).toUpperCase(),
       medioX,
@@ -165,7 +210,6 @@ const ARRIBA = new THREE.Vector3();
 const PLANO_ANCHO = 0.24; // ancho del planeGeometry
 const FRAC_ANCHO = 0.34; // fracción del semiancho de pantalla por tarjeta
 const ESCALA_MAX = 0.6; // techo en pantallas anchas (no crecen sin límite)
-const OPACIDAD_MAX = 0.72; // translúcidas
 const HOVER_ESCALA = 1.2; // agrandado al pasar el cursor
 
 export default function VitrinaFlotante({
@@ -173,6 +217,8 @@ export default function VitrinaFlotante({
 }: {
   alAbrirProducto: (id: string) => void;
 }) {
+  const tema = useTema((s) => s.resuelto);
+  const opacidadMax = TARJETA_POR_TEMA[tema].opacidad;
   const grupoRef = useRef<THREE.Group | null>(null);
   // Hover: índice de la tarjeta bajo el cursor y escala actual de cada una
   // (para animar suavemente el agrandado con lerp). −1 = ninguna.
@@ -193,7 +239,7 @@ export default function VitrinaFlotante({
       productos.map(
         (p) =>
           new THREE.MeshBasicMaterial({
-            map: texturaTarjeta(p, tr),
+            map: texturaTarjeta(p, tr, tema),
             transparent: true,
             opacity: 0,
             side: THREE.DoubleSide,
@@ -207,7 +253,7 @@ export default function VitrinaFlotante({
             toneMapped: false,
           }),
       ),
-    [productos, tr],
+    [productos, tr, tema],
   );
 
   // El cursor y los recursos GPU no deben sobrevivir al canvas.
@@ -275,8 +321,8 @@ export default function VitrinaFlotante({
       // opaca del todo para destacar.
       const difuminado = THREE.MathUtils.clamp(1.2 - hueco.distancia * 0.2, 0.55, 1);
       materiales[i].opacity = hover
-        ? alfa * Math.min(1, OPACIDAD_MAX + 0.22)
-        : alfa * OPACIDAD_MAX * difuminado;
+        ? alfa * Math.min(1, opacidadMax + 0.22)
+        : alfa * opacidadMax * difuminado;
     });
   });
 

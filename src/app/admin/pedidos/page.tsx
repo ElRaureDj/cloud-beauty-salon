@@ -44,7 +44,7 @@ function GraficoVentas({
   const conVentas = serie.some((s) => s.total > 0);
 
   return (
-    <div className="mt-4 rounded-2xl border border-tinta-suave/20 p-4">
+    <div className="mt-4 rounded-2xl border border-borde p-4">
       <p className="text-xs uppercase tracking-widest text-tinta-suave">
         Ventas · últimos {DIAS_GRAFICO} días
       </p>
@@ -130,7 +130,7 @@ export default async function PaginaAdminPedidos() {
         </Link>
       </header>
 
-      <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-tinta-suave/20 px-4 py-3 text-sm">
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-borde px-4 py-3 text-sm">
         <p>
           <span className="text-tinta-suave">Ventas (pagadas): </span>
           <strong>{ventas.pedidos}</strong>

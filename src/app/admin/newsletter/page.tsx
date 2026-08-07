@@ -50,7 +50,7 @@ export default async function PaginaAdminNewsletter() {
           <p className="mt-6 text-xs text-tinta-suave">
             Para copiar (email · enlace de baja, separados por tabulador):
           </p>
-          <pre className="mt-2 max-h-60 overflow-auto rounded-2xl border border-tinta-suave/20 p-4 text-xs">
+          <pre className="mt-2 max-h-60 overflow-auto rounded-2xl border border-borde p-4 text-xs">
             {lista
               .map((s) => `${s.email}\t${urlBaja(s.locale, s.token)}`)
               .join("\n")}

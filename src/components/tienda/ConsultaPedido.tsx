@@ -113,7 +113,7 @@ export default function ConsultaPedido({ numeroInicial }: { numeroInicial?: stri
       )}
 
       {estado === "ok" && pedido && (
-        <div className="mt-6 rounded-2xl border border-tinta-suave/20 p-4">
+        <div className="mt-6 rounded-2xl border border-borde p-4">
           <div className="flex items-center justify-between gap-3">
             <span className="rounded-full border border-acento px-3 py-1 text-sm text-acento">
               {etiquetaEstado(pedido)}
@@ -132,7 +132,7 @@ export default function ConsultaPedido({ numeroInicial }: { numeroInicial?: stri
               </li>
             ))}
           </ul>
-          <p className="mt-4 border-t border-tinta-suave/15 pt-3 text-sm">
+          <p className="mt-4 border-t border-borde pt-3 text-sm">
             <span className="text-tinta-suave">{t("pedido.total")}: </span>
             <strong>{dinero(pedido.total, pedido.moneda)}</strong>
           </p>

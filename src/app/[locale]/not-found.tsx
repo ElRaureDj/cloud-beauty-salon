@@ -13,7 +13,7 @@ export default function NoEncontrado() {
     <main className="degradado-marca grid min-h-svh place-items-center px-6 text-center">
       <div className="anima-aparecer">
         <p
-          className="font-display text-8xl text-tinta-suave/15 sm:text-9xl"
+          className="font-display text-8xl text-tinta-suave/25 sm:text-9xl"
           aria-hidden
         >
           404

@@ -7,6 +7,8 @@ import Header from "@/components/header/Header";
 import PieGlobal from "@/components/PieGlobal";
 import { getT, isLocale, LOCALES } from "@/lib/i18n";
 import { LocaleProvider } from "@/lib/i18n/client";
+import Script from "next/script";
+import { FONDO_POR_TEMA, SCRIPT_TEMA } from "@/lib/tema";
 
 // TODO(guion): tipografías placeholder hasta tener el manual de marca (§3, §8):
 // 1 display con carácter para titulares + 1 sans legible para todo lo demás.
@@ -61,7 +63,13 @@ export async function generateMetadata(
 }
 
 export const viewport: Viewport = {
-  themeColor: "#171012",
+  // Un color por tema: la barra del navegador en móvil acompaña al fondo. Esto
+  // cubre el modo "auto"; si la clienta elige un tema CONTRA el ajuste de su
+  // sistema, el store reescribe estos <meta> al vuelo (ver stores/tema.ts).
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: FONDO_POR_TEMA.oscuro },
+    { media: "(prefers-color-scheme: light)", color: FONDO_POR_TEMA.claro },
+  ],
 };
 
 export default async function RootLayout(props: LayoutProps<"/[locale]">) {
@@ -72,7 +80,21 @@ export default async function RootLayout(props: LayoutProps<"/[locale]">) {
     <html
       lang={locale}
       className={`${display.variable} ${sans.variable} h-full antialiased`}
+      // El script del tema escribe data-tema en <html> antes de hidratar:
+      // sin esto React avisa de que el atributo no coincide con el HTML
+      // del servidor (que no puede conocer la elección de la clienta).
+      suppressHydrationWarning
     >
+      <head>
+        {/* Antes del primer pintado: aplica el tema guardado. Sin esto, quien
+            eligió "claro" vería un fogonazo oscuro en cada carga (el HTML es
+            estático y el servidor no puede conocer su elección). */}
+        <Script
+          id="tema-inicial"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: SCRIPT_TEMA }}
+        />
+      </head>
       <body className="min-h-full bg-fondo-0 font-sans text-tinta">
         <LocaleProvider locale={locale}>
           <Header />

@@ -61,9 +61,12 @@ export function LogoNube({
       focusable="false"
     >
       <defs>
+        {/* El degradado sale de variables CSS: sobre el crema del tema claro
+            el dorado de marca se queda en 2.2:1 y la nube se lava, así que ahí
+            baja a caramelo (ver globals.css, --marca-a/--marca-b). */}
         <linearGradient id={idGrad} x1="0" y1="0" x2="0.35" y2="1">
-          <stop offset="0" stopColor="#f2d3b0" />
-          <stop offset="1" stopColor="#d99a63" />
+          <stop offset="0" stopColor="var(--marca-a)" />
+          <stop offset="1" stopColor="var(--marca-b)" />
         </linearGradient>
         <mask id={idMascara}>
           {/* Blanco = visible; negro = calado (las ondas). Los trazos se

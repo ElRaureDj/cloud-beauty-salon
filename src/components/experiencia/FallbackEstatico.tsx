@@ -31,7 +31,7 @@ export default function FallbackEstatico() {
       <section className="px-6 py-24 text-center">
         <div
           aria-hidden
-          className="mx-auto h-64 w-48 rounded-[42%] bg-gradient-to-b from-fondo-1 to-fondo-0"
+          className="mx-auto h-64 w-48 rounded-[42%] border border-borde bg-gradient-to-b from-fondo-1 to-fondo-0"
         />
         <h3 className="mt-8 font-display text-3xl">{t("copy.pelo.intro")}</h3>
         <div className="mt-10 flex flex-col items-center gap-3">
@@ -57,7 +57,7 @@ export default function FallbackEstatico() {
       </section>
 
       {/* Cap. 3 — marca y tienda */}
-      <section className="border-y border-tinta-suave/15 px-6 py-14 text-center">
+      <section className="border-y border-borde px-6 py-14 text-center">
         <p className="text-sm uppercase tracking-[0.2em] text-tinta-suave">
           {t("copy.marca.trust")}
         </p>

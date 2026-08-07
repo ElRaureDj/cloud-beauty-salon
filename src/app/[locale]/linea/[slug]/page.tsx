@@ -127,7 +127,7 @@ export default async function PaginaLinea(
           <li key={p.id} className="group relative">
             <Link
               href={r(`/producto/${p.id}`)}
-              className="group block rounded-3xl border border-transparent p-2 transition-colors hover:border-tinta-suave/20 hover:bg-fondo-1/40"
+              className="group block rounded-3xl border border-transparent p-2 transition-colors hover:border-borde hover:bg-fondo-1/40"
             >
               <ImagenProducto
                 producto={p}
@@ -144,7 +144,7 @@ export default async function PaginaLinea(
             </Link>
             <BotonFavorito
               id={p.id}
-              className="absolute right-3 top-3 h-9 w-9 bg-fondo-0/70 backdrop-blur-sm"
+              className="absolute right-3 top-3 h-9 w-9 border border-borde bg-fondo-1/90 backdrop-blur-sm"
             />
           </li>
         ))}

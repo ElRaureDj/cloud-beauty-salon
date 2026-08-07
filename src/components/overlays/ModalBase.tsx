@@ -60,8 +60,8 @@ export default function ModalBase({
       }}
       className={
         esDrawer
-          ? "anima-entrar-derecha m-0 ml-auto h-dvh max-h-[100dvh] w-full max-w-sm bg-fondo-0 p-0 text-tinta shadow-2xl"
-          : "anima-aparecer m-auto max-h-[85dvh] w-[calc(100%-2rem)] max-w-md overflow-y-auto rounded-3xl bg-fondo-0 p-0 text-tinta shadow-2xl"
+          ? "anima-entrar-derecha m-0 ml-auto h-dvh max-h-[100dvh] w-full max-w-sm bg-fondo-0 p-0 text-tinta panel-flotante"
+          : "anima-aparecer m-auto max-h-[85dvh] w-[calc(100%-2rem)] max-w-md overflow-y-auto rounded-3xl bg-fondo-0 p-0 text-tinta panel-flotante"
       }
     >
       <div className={esDrawer ? "flex h-full flex-col p-6" : "p-6"}>
