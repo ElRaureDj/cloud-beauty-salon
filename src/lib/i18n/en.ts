@@ -6,6 +6,7 @@ import type { ClaveI18n } from "./es";
 // {ahorro}) are preserved verbatim.
 export const en: Record<ClaveI18n, string> = {
   "marca.nombre": "Cloud Beauty Salon",
+  "marca.nombre.corto": "Cloud Beauty",
   "meta.descripcion":
     "Professional TRUSS hair care, a hair diagnosis and routines tailored to you. Coming soon: hair salon, manicure and pedicure.",
   "hero.tagline": "Your hair, salon-grade.",

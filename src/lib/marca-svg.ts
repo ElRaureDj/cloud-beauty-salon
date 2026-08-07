@@ -5,9 +5,11 @@
 // subconjunto). El dibujo es el mismo que components/marca/Logo.tsx.
 
 // El signo se dibuja SIEMPRE en el lienzo 64×40; su caja real es
-// x 10.5→54.5 (44 de ancho), y 5→29 (24 de alto). El icono cuadrado no
-// reescribe coordenadas: reutiliza este dibujo y lo centra con un transform.
-const CAJA = { x: 10.5, y: 5, ancho: 44, alto: 24 };
+// x 10.5→54.5 (44 de ancho), y 5→30 (25 de alto: OJO, los dos círculos
+// laterales bajan a y=30, medio punto por debajo del borde del rect base).
+// El icono cuadrado no reescribe coordenadas: reutiliza este dibujo y lo
+// centra con un transform.
+const CAJA = { x: 10.5, y: 5, ancho: 44, alto: 25 };
 
 // Trazos extendidos más allá del lienzo: la máscara solo pinta donde hay nube.
 // `simple` = variante de tamaño mínimo (una sola onda más gruesa): igual que en
@@ -15,8 +17,8 @@ const CAJA = { x: 10.5, y: 5, ancho: 44, alto: 24 };
 // favicon, que el navegador pinta a 16–32 px.
 const ondas = (simple = false) => `
 <g stroke="black" fill="none" stroke-linecap="round">
-  <path stroke-width="${simple ? 3.2 : 2.4}" d="M-6.8 20.6c3.3-3.1 6.6-3.1 9.9 0s6.6 3.1 9.9 0 6.6-3.1 9.9 0 6.6 3.1 9.9 0 6.6-3.1 9.9 0 6.6 3.1 9.9 0 6.6-3.1 9.9 0"/>
-  ${simple ? "" : `<path stroke-width="2.2" d="M-2 26.6c3-2.8 6-2.8 9 0s6 2.8 9 0 6-2.8 9 0 6 2.8 9 0 6-2.8 9 0 6 2.8 9 0 6-2.8 9 0 6 2.8 9 0"/>`}
+  <path stroke-width="${simple ? 3.2 : 2.4}" d="M-6.8 20.6c3.3-3.1 6.6-3.1 9.9 0s6.6 3.1 9.9 0 6.6-3.1 9.9 0 6.6 3.1 9.9 0 6.6-3.1 9.9 0 6.6 3.1 9.9 0 6.6-3.1 9.9 0 6.6 3.1 9.9 0 6.6-3.1 9.9 0"/>
+  ${simple ? "" : `<path stroke-width="2.2" d="M-2 26.6c3-2.8 6-2.8 9 0s6 2.8 9 0 6-2.8 9 0 6 2.8 9 0 6-2.8 9 0 6 2.8 9 0 6-2.8 9 0 6 2.8 9 0 6-2.8 9 0"/>`}
 </g>`;
 
 const NUBE = `

@@ -53,7 +53,9 @@ export function LogoNube({
       viewBox="0 0 64 40"
       height={alto}
       width={(alto * 64) / 40}
-      className={className}
+      // shrink-0: en el header es un flex item y a 375 px la barra lo
+      // comprimía a 24,6 px de ancho — el calado caía a 1,2 px y se empastaba.
+      className={`shrink-0 ${className}`}
       role="img"
       aria-hidden
       focusable="false"
@@ -65,21 +67,23 @@ export function LogoNube({
         </linearGradient>
         <mask id={idMascara}>
           {/* Blanco = visible; negro = calado (las ondas). Los trazos se
-              extienden MÁS ALLÁ del lienzo (de −7 a ~72) para que el
-              preloader pueda desplazarlos un período completo sin que
-              aparezcan bordes: fuera de la nube la máscara no pinta nada. */}
+              extienden MÁS ALLÁ del lienzo (de −7 a ~82) para que el
+              preloader pueda desplazarlos un período completo SIN que se
+              destape el borde derecho de la nube al reiniciar el bucle: hace
+              falta un tramo de sobra por cada período de desplazamiento.
+              Fuera de la silueta la máscara no pinta nada. */}
           <rect width="64" height="40" fill="white" />
           <g stroke="black" fill="none" strokeLinecap="round">
             <path
               className={claseOndas}
               strokeWidth={simple ? "3.2" : "2.4"}
-              d="M-6.8 20.6c3.3-3.1 6.6-3.1 9.9 0s6.6 3.1 9.9 0 6.6-3.1 9.9 0 6.6 3.1 9.9 0 6.6-3.1 9.9 0 6.6 3.1 9.9 0 6.6-3.1 9.9 0 6.6 3.1 9.9 0"
+              d="M-6.8 20.6c3.3-3.1 6.6-3.1 9.9 0s6.6 3.1 9.9 0 6.6-3.1 9.9 0 6.6 3.1 9.9 0 6.6-3.1 9.9 0 6.6 3.1 9.9 0 6.6-3.1 9.9 0 6.6 3.1 9.9 0 6.6-3.1 9.9 0"
             />
             {!simple && (
               <path
                 className={claseOndas ? `${claseOndas}-lenta` : ""}
                 strokeWidth="2.2"
-                d="M-2 26.6c3-2.8 6-2.8 9 0s6 2.8 9 0 6-2.8 9 0 6 2.8 9 0 6-2.8 9 0 6 2.8 9 0 6-2.8 9 0 6 2.8 9 0"
+                d="M-2 26.6c3-2.8 6-2.8 9 0s6 2.8 9 0 6-2.8 9 0 6 2.8 9 0 6-2.8 9 0 6 2.8 9 0 6-2.8 9 0 6 2.8 9 0 6-2.8 9 0"
               />
             )}
           </g>

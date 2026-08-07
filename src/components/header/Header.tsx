@@ -109,8 +109,11 @@ export default function Header() {
             : "bg-fondo-0/40 backdrop-blur-md"
         }`}
       >
-        {/* Isotipo + wordmark. En móvil el nombre se acorta a la nube + "Cloud
-            Beauty" para no comerse la barra. */}
+        {/* Isotipo + wordmark. En móvil el nombre se acorta a "Cloud Beauty":
+            el completo con el tracking de marca no cabe en una línea a 375 px y
+            partirlo en dos (60 px de alto en una barra de 56) se ve amateur.
+            El aria-label siempre dice el nombre entero, así que el lector de
+            pantalla no pierde nada; por eso los dos spans van aria-hidden. */}
         <Link
           href={inicio}
           onClick={irAlInicio}
@@ -118,7 +121,16 @@ export default function Header() {
           className="marca-viva flex items-center gap-2.5"
         >
           <LogoNube alto={22} claseOndas="onda-marca" />
-          <span className="font-display text-sm uppercase tracking-[0.25em]">
+          <span
+            aria-hidden
+            className="font-display whitespace-nowrap text-xs uppercase tracking-[0.22em] sm:hidden"
+          >
+            {t("marca.nombre.corto")}
+          </span>
+          <span
+            aria-hidden
+            className="hidden font-display text-sm uppercase tracking-[0.25em] sm:inline"
+          >
             {t("marca.nombre")}
           </span>
         </Link>

@@ -5,6 +5,9 @@
 // rompe la compilación.
 export const es = {
   "marca.nombre": "Cloud Beauty Salon", // §9.5 RESUELTO (2026-07-19)
+  // Forma corta para la barra móvil: el nombre completo con el tracking de
+  // marca no cabe en una línea a 375 px y partirlo en dos se ve amateur.
+  "marca.nombre.corto": "Cloud Beauty",
   "meta.descripcion":
     "Cosmética capilar profesional TRUSS, diagnóstico capilar y rutinas a tu medida. Muy pronto: peluquería, manicura y pedicura.",
   "hero.tagline": "Tu pelo, versión profesional.", // TODO(guion): validar tagline (§4 Cap. 0)
