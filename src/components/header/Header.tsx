@@ -7,6 +7,7 @@ import { useT, useRuta, useLocale } from "@/lib/i18n/client";
 import { LOCALES } from "@/lib/i18n";
 import { rutaEnOtroIdioma } from "@/lib/i18n/rutas";
 import { prefiereMenosMovimiento } from "@/lib/webgl";
+import { LogoNube } from "@/components/marca/Logo";
 import { contarArticulos, useTienda } from "@/stores/carrito";
 import { useFavoritos } from "@/stores/favoritos";
 import { useVistos } from "@/stores/vistos";
@@ -108,12 +109,18 @@ export default function Header() {
             : "bg-fondo-0/40 backdrop-blur-md"
         }`}
       >
+        {/* Isotipo + wordmark. En móvil el nombre se acorta a la nube + "Cloud
+            Beauty" para no comerse la barra. */}
         <Link
           href={inicio}
           onClick={irAlInicio}
-          className="font-display text-sm uppercase tracking-[0.25em]"
+          aria-label={t("marca.nombre")}
+          className="marca-viva flex items-center gap-2.5"
         >
-          {t("marca.nombre")}
+          <LogoNube alto={22} claseOndas="onda-marca" />
+          <span className="font-display text-sm uppercase tracking-[0.25em]">
+            {t("marca.nombre")}
+          </span>
         </Link>
         <nav className="flex items-center gap-4 sm:gap-5">
           <Link

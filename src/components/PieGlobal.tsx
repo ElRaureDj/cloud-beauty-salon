@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { LogoNube } from "@/components/marca/Logo";
 import { useT, useRuta } from "@/lib/i18n/client";
 
 // Footer global (pulido pro): las páginas interiores terminaban "en seco", sin
@@ -48,7 +49,8 @@ export default function PieGlobal() {
       <div className="mx-auto max-w-5xl px-6 py-12">
         <div className="flex flex-col gap-10 sm:flex-row sm:justify-between">
           <div className="max-w-xs">
-            <p className="font-display text-sm uppercase tracking-[0.25em]">
+            <p className="flex items-center gap-2.5 font-display text-sm uppercase tracking-[0.25em]">
+              <LogoNube alto={20} />
               {t("marca.nombre")}
             </p>
             <p className="mt-3 text-sm leading-relaxed text-tinta-suave">

@@ -1,5 +1,6 @@
 import { ImageResponse } from "next/og";
 import { getT, resolverLocale, LOCALES } from "@/lib/i18n";
+import { comoDataUri, nubeSvg } from "@/lib/marca-svg";
 
 // Imagen de compartir por defecto (§ bloque 4): marca + tagline sobre el
 // degradado de marca. Generada por idioma; las fichas la sobrescriben con su
@@ -44,36 +45,30 @@ export default async function OgImage({
           color: "#f3ece7",
         }}
       >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={comoDataUri(nubeSvg(240))} width={240} height={150} alt="" />
         <div
           style={{
             fontSize: 30,
             letterSpacing: 14,
             textTransform: "uppercase",
             color: "#c9bab3",
+            marginTop: 24,
           }}
         >
           {marca}
         </div>
         <div
           style={{
-            fontSize: 82,
+            fontSize: 74,
             fontWeight: 600,
-            marginTop: 30,
+            marginTop: 22,
             maxWidth: 920,
             lineHeight: 1.05,
           }}
         >
           {tagline}
         </div>
-        <div
-          style={{
-            width: 72,
-            height: 6,
-            borderRadius: 3,
-            background: "#d99a63",
-            marginTop: 44,
-          }}
-        />
       </div>
     ),
     size,

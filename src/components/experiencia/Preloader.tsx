@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { LogoNube } from "@/components/marca/Logo";
 import { useT } from "@/lib/i18n/client";
 import { useExperiencia } from "@/stores/experiencia";
 
@@ -66,6 +67,9 @@ export default function Preloader({ listo }: { listo: boolean }) {
           fase === "saliendo" ? "-translate-y-3 opacity-0" : ""
         }`}
       >
+        {/* La nube de la marca flota y sus mechones ondean mientras carga: la
+            espera cuenta la historia del nombre en vez de ser una barra sola. */}
+        <LogoNube alto={64} claseNube="anima-nube" claseOndas="anima-ondas" />
         <span className="font-display text-lg uppercase tracking-[0.3em]">
           {t("marca.nombre")}
         </span>

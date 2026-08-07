@@ -152,6 +152,62 @@ dialog::backdrop {
   animation: deriva-desliza 1.8s ease-in-out infinite;
 }
 
+/* Preloader de marca: la nube flota y sus mechones ondean. El desplazamiento
+   es de UN PERÍODO EXACTO de cada onda (19.8 y 18 unidades del viewBox), así
+   el bucle es invisible; los trazos se extienden fuera del lienzo para que no
+   asome el borde. Solo transform/opacity → compositor, sin repintar. */
+@keyframes flotar-nube {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes ondear {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-19.8px);
+  }
+}
+
+@keyframes ondear-lento {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-18px);
+  }
+}
+
+.anima-nube {
+  animation: flotar-nube 4.5s ease-in-out infinite;
+}
+
+.anima-ondas {
+  animation: ondear 3.2s linear infinite;
+}
+
+.anima-ondas-lenta {
+  animation: ondear-lento 5s linear infinite;
+}
+
+/* Marca viva: el isotipo del header y del pie está quieto, pero al pasar el
+   puntero los mechones fluyen. Solo con `hover: hover` — en táctil el :hover se
+   queda pegado tras el toque y el logo animaría para siempre. */
+@media (hover: hover) {
+  .marca-viva:hover .onda-marca {
+    animation: ondear 3.2s linear infinite;
+  }
+  .marca-viva:hover .onda-marca-lenta {
+    animation: ondear-lento 5s linear infinite;
+  }
+}
+
 @keyframes aparecer-suave {
   from {
     opacity: 0;
@@ -186,6 +242,11 @@ dialog::backdrop {
   .anima-desliza,
   .anima-aparecer,
   .anima-entrar-derecha,
+  .anima-nube,
+  .anima-ondas,
+  .anima-ondas-lenta,
+  .marca-viva:hover .onda-marca,
+  .marca-viva:hover .onda-marca-lenta,
   dialog::backdrop {
     animation: none;
   }

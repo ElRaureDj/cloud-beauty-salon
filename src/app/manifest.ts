@@ -4,7 +4,11 @@ import type { MetadataRoute } from "next";
 // teléfono. Sin service worker a propósito: un SW mal invalidado puede servir
 // una tienda vieja (precios/stock) y el beneficio offline no compensa el
 // riesgo en un e-commerce pequeño. Instalable igualmente en Android/desktop;
-// en iOS manda el apple-icon (src/app/apple-icon.png).
+// en iOS manda el apple-icon (src/app/apple-icon.tsx).
+//
+// Los iconos ya no son PNG estáticos: se generan en servidor desde el mismo
+// isotipo que el resto de la marca (src/lib/marca-svg.ts), así el logo vive en
+// un único sitio. Las rutas /iconos/*.png son route handlers con next/og.
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Cloud Beauty Salon",
